@@ -1,2 +1,3 @@
-# ajmarks_ha_components
-Custom components for Home Assistant
+# Custom Components for Home Assistant
+
+Right now, there's only: Shark IQ
