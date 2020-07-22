@@ -80,7 +80,7 @@ class SharkVacuumEntity(StateVacuumEntity):
 
     @property
     def model(self) -> str:
-        if self.shark.vac_model_number:
+        if self.sharkiq.vac_model_number:
             return self.sharkiq.vac_model_number
         else:
             return self.sharkiq.oem_model_number
