@@ -3,7 +3,7 @@
   "name": "Shark IQ",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/sharkiq",
-  "requirements": ["sharkiq==0.3.4"],
+  "requirements": ["sharkiqpy==0.1.0"],
   "dependencies": [],
   "codeowners": ["@ajmarks"]
 }

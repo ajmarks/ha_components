@@ -21,8 +21,9 @@ from homeassistant.components.vacuum import (
     SUPPORT_STOP,
     StateVacuumEntity,
 )
-from sharkiq import SharkIqVacuum, PowerModes, OperatingModes, Properties
-from typing import Optional
+from sharkiqpy import SharkIqVacuum, PowerModes, OperatingModes, Properties
+from typing import Dict, Optional
+from .const import DOMAIN, SHARK
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -53,6 +54,8 @@ FAN_SPEEDS_MAP = {
     "Max": PowerModes.MAX,
 }
 
+STATE_RECHARGING_TO_RESUME = 'recharging_to_resume'  # TODO: Add strings for this
+
 
 class SharkVacuumEntity(StateVacuumEntity):
     """Shark IQ vacuum entity"""
@@ -76,6 +79,27 @@ class SharkVacuumEntity(StateVacuumEntity):
         return self.sharkiq.serial_number
 
     @property
+    def model(self) -> str:
+        if self.shark.vac_model_number:
+            return self.sharkiq.vac_model_number
+        else:
+            return self.sharkiq.oem_model_number
+
+    @property
+    def device_info(self) -> Dict:
+        return {
+            "identifiers": {
+                (DOMAIN, self.serial_number)
+            },
+            "name": self.name,
+            "manufacturer": SHARK,
+            "model": self.model,
+            "nav_module_fw_version": self.sharkiq.get_property_value(Properties.NAV_MODULE_FW_VERSION),
+            "robot_firmware_version": self.sharkiq.get_property_value(Properties.ROBOT_FIRMWARE_VERSION),
+            "rssi": self.sharkiq.get_property_value(Properties.RSSI),
+        }
+
+    @property
     def supported_features(self) -> int:
         """Flag vacuum cleaner robot features that are supported."""
         return SUPPORT_SHARKIQ
@@ -92,7 +116,11 @@ class SharkVacuumEntity(StateVacuumEntity):
     @property
     def error_code(self) -> Optional[int]:
         """Error code or None"""
-        return self.sharkiq.get_property_value(Properties.ERROR_CODE)
+        # Errors remain for a while, so we should only show an error if the device is stopped
+        if self.sharkiq.get_property_value(Properties.OPERATING_MODE) == OperatingModes.STOP:
+            return self.sharkiq.get_property_value(Properties.ERROR_CODE)
+        else:
+            return None
 
     @property
     def operating_mode(self) -> Optional[str]:
@@ -101,9 +129,15 @@ class SharkVacuumEntity(StateVacuumEntity):
         return OPERATING_STATE_MAP.get(op_mode)
 
     @property
+    def recharging_to_resume(self) -> Optional[int]:
+        return self.sharkiq.get_property_value(Properties.RECHARGING_TO_RESUME)
+
+    @property
     def state(self):
         """Current state"""
-        if self.is_docked:
+        if self.recharging_to_resume:
+            return STATE_RECHARGING_TO_RESUME
+        elif self.is_docked:
             return STATE_DOCKED
         elif self.error_code:
             return STATE_ERROR

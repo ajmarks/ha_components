@@ -2,4 +2,5 @@
 
 DOMAIN = "sharkiq"
 COMPONENTS = ["vacuum"]
-SHARKIQ_SESSION = 'sharkiq_session'
+SHARKIQ_SESSION = "sharkiq_session"
+SHARK = "Shark"
