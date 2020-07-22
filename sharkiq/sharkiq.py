@@ -94,9 +94,7 @@ class SharkVacuumEntity(StateVacuumEntity):
             "name": self.name,
             "manufacturer": SHARK,
             "model": self.model,
-            "nav_module_fw_version": self.sharkiq.get_property_value(Properties.NAV_MODULE_FW_VERSION),
-            "robot_firmware_version": self.sharkiq.get_property_value(Properties.ROBOT_FIRMWARE_VERSION),
-            "rssi": self.sharkiq.get_property_value(Properties.RSSI),
+            "sw_version": self.sharkiq.get_property_value(Properties.ROBOT_FIRMWARE_VERSION)
         }
 
     @property
