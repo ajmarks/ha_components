@@ -5,7 +5,7 @@ from .const import DOMAIN, SHARKIQ_SESSION
 from .sharkiq import SharkVacuumEntity
 
 if TYPE_CHECKING:
-    from sharkiq import AylaApi, SharkIqVacuum
+    from sharkiqpy import AylaApi, SharkIqVacuum
 
 
 _LOGGER = logging.getLogger(__name__)

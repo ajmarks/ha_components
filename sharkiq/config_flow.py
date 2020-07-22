@@ -6,7 +6,7 @@ import logging
 import voluptuous as vol
 from homeassistant import config_entries, core, exceptions
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-from sharkiq import get_ayla_api, SharkIqAuthError
+from sharkiqpy import get_ayla_api, SharkIqAuthError
 from .const import DOMAIN
 
 
