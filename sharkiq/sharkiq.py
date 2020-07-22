@@ -105,11 +105,7 @@ class SharkVacuumEntity(StateVacuumEntity):
     @property
     def is_docked(self) -> Optional[bool]:
         """Is vacuum docked"""
-        docked_status = self.sharkiq.get_property_value(Properties.DOCKED_STATUS)
-        if docked_status is None:
-            return None
-        else:
-            return docked_status == 1
+        return self.sharkiq.get_property_value(Properties.DOCKED_STATUS)
 
     @property
     def error_code(self) -> Optional[int]:
@@ -230,3 +226,14 @@ class SharkVacuumEntity(StateVacuumEntity):
     def fan_speed_list(self):
         """Get the list of available fan speed steps of the vacuum cleaner."""
         return list(FAN_SPEEDS_MAP.keys())
+
+    # Various attributes we want to expose
+    @property
+    def recharge_resume(self) -> Optional[bool]:
+        """Recharge and resume mode active"""
+        return self.sharkiq.get_property_value(Properties.RECHARGE_RESUME)
+
+    @property
+    def rssi(self) -> Optional[int]:
+        """WiFi RSSI"""
+        return self.sharkiq.get_property_value(Properties.RSSI)
