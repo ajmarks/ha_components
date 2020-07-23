@@ -56,6 +56,10 @@ FAN_SPEEDS_MAP = {
 
 STATE_RECHARGING_TO_RESUME = 'recharging_to_resume'  # TODO: Add strings for this
 
+# Attributes to expose
+ATTR_RECHARGE_RESUME = "recharge_and_resume"
+ATTR_RSSI = "rssi"
+
 
 class SharkVacuumEntity(StateVacuumEntity):
     """Shark IQ vacuum entity"""
@@ -237,3 +241,10 @@ class SharkVacuumEntity(StateVacuumEntity):
     def rssi(self) -> Optional[int]:
         """WiFi RSSI"""
         return self.sharkiq.get_property_value(Properties.RSSI)
+
+    @property
+    def state_attributes(self) -> Dict:
+        data = super().state_attributes
+        data[ATTR_RSSI] = self.rssi
+        data[ATTR_RECHARGE_RESUME] = self.recharge_resume
+        return data
