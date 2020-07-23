@@ -115,7 +115,7 @@ class SharkVacuumEntity(StateVacuumEntity):
     def error_code(self) -> Optional[int]:
         """Error code or None"""
         # Errors remain for a while, so we should only show an error if the device is stopped
-        if self.sharkiq.get_property_value(Properties.OPERATING_MODE) == OperatingModes.STOP:
+        if self.sharkiq.get_property_value(Properties.OPERATING_MODE) == OperatingModes.STOP and not self.is_docked:
             return self.sharkiq.get_property_value(Properties.ERROR_CODE)
         else:
             return None
