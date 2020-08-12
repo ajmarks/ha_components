@@ -131,3 +131,6 @@ dmypy.json
 # IDE files
 .idea/
 .vscode/
+
+# Secrets
+*/secrets.py

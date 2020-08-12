@@ -1,6 +1,11 @@
-"""Shark IQ Constants"""
+"""Shark IQ Constants."""
 
-DOMAIN = "sharkiq"
+from datetime import timedelta
+import logging
+
+API_TIMEOUT = 20
 COMPONENTS = ["vacuum"]
-SHARKIQ_SESSION = "sharkiq_session"
+DOMAIN = "sharkiq"
+LOGGER = logging.getLogger(__package__)
 SHARK = "Shark"
+UPDATE_INTERVAL = timedelta(seconds=30)
