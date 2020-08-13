@@ -1,17 +1,27 @@
 {
-  "title": "ge_kitchen",
+  "title": "GE Kitchen",
   "config": {
     "step": {
-      "pick_implementation": {
-        "title": "[%key:common::config_flow::title::oauth2_pick_implementation%]"
+      "init": {
+        "data": {
+          "username": "[%key:common::config_flow::data::username%]",
+          "password": "[%key:common::config_flow::data::password%]"
+        }
+      },
+      "user": {
+        "data": {
+          "username": "[%key:common::config_flow::data::username%]",
+          "password": "[%key:common::config_flow::data::password%]"
+        }
       }
     },
-    "abort": {
-      "missing_configuration": "[%key:common::config_flow::abort::oauth2_missing_configuration%]",
-      "authorize_url_timeout": "[%key:common::config_flow::abort::oauth2_authorize_url_timeout%]"
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
     },
-    "create_entry": {
-      "default": "[%key:common::config_flow::create_entry::authenticated%]"
+    "abort": {
+      "already_configured_account": "[%key:common::config_flow::abort::already_configured_account%]"
     }
   }
 }

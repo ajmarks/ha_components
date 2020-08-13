@@ -18,8 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: "HomeAssistant", config_entry, async_add_entities: Callable):
     """Set up the Shark IQ battery sensor"""
-    domain_data = hass.data[DOMAIN][config_entry.entry_id]
-    ayla_api = domain_data[SHARKIQ_SESSION]  # type: AylaApi
+    ayla_api = hass.data[DOMAIN][config_entry.entry_id]  # type: AylaApi
 
     devices = await ayla_api.async_get_devices()  # type: List[SharkIqVacuum]
     device_names = ', '.join([d.name for d in devices])

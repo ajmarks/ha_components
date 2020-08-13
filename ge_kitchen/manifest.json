@@ -1,16 +1,9 @@
 {
   "domain": "ge_kitchen",
-  "name": "ge_kitchen",
+  "name": "GE Kitchen",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/ge_kitchen",
-  "requirements": [
-    "gekitchen==0.1.2"
-  ],
-  "ssdp": [],
-  "zeroconf": [],
-  "homekit": {},
+  "requirements": ["gekitchen==0.1.8"],
   "dependencies": [],
-  "codeowners": [
-    "@ajmarks"
-  ]
+  "codeowners": ["@ajmarks"]
 }

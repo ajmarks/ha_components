@@ -1,74 +1,60 @@
 """The ge_kitchen integration."""
-import asyncio
 
+import asyncio
+import async_timeout
+import logging
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_CLIENT_ID, CONF_CLIENT_SECRET
+from homeassistant.config_entries import ConfigEntry, SOURCE_IMPORT
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import (
-    aiohttp_client,
-    config_entry_oauth2_flow,
-    config_validation as cv,
+from gekitchen.async_login_flow import async_do_full_login_flow
+from . import auth_api, config_flow
+from .const import (
+    AUTH_HANDLER,
+    COORDINATOR,
+    DOMAIN,
+    OAUTH2_AUTH_URL,
+    OAUTH2_TOKEN_URL,
 )
 
-from . import api, config_flow
-from .const import DOMAIN, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from .update_coordinator import GeKitchenUpdateCoordinator
 
-CONFIG_SCHEMA = vol.Schema(
-    {
-        DOMAIN: vol.Schema(
-            {
-                vol.Required(CONF_CLIENT_ID): cv.string,
-                vol.Required(CONF_CLIENT_SECRET): cv.string,
-            }
-        )
-    },
-    extra=vol.ALLOW_EXTRA,
-)
+CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
+PLATFORMS = ["sensor"]
 
-# TODO List the platforms that you want to support.
-# For your initial PR, limit it to 1 platform.
-PLATFORMS = ["light"]
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the ge_kitchen component."""
-    hass.data[DOMAIN] = {}
-
+    hass.data.setdefault(DOMAIN, {})
     if DOMAIN not in config:
         return True
-
-    config_flow.OAuth2FlowHandler.async_register_implementation(
-        hass,
-        config_entry_oauth2_flow.LocalOAuth2Implementation(
-            hass,
-            DOMAIN,
-            config[DOMAIN][CONF_CLIENT_ID],
-            config[DOMAIN][CONF_CLIENT_SECRET],
-            OAUTH2_AUTHORIZE,
-            OAUTH2_TOKEN,
-        ),
-    )
-
+    for index, conf in enumerate(config[DOMAIN]):
+        _LOGGER.debug(
+            "Importing GE Kitchen Account #%d (Username: %s)", index, conf[CONF_USERNAME]
+        )
+        hass.async_create_task(
+            hass.config_entries.flow.async_init(
+                DOMAIN, context={"source": SOURCE_IMPORT}, data=conf,
+            )
+        )
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up ge_kitchen from a config entry."""
-    implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
-        hass, entry
+    session = hass.helpers.aiohttp_client.async_get_clientsession()
+    xmpp_credentials = await async_do_full_login_flow(
+        session, entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD]
     )
+    coordinator = GeKitchenUpdateCoordinator(hass, entry, xmpp_credentials)
+    hass.data[DOMAIN][entry.entry_id] = coordinator
 
-    session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)
-
-    # If using a requests-based API lib
-    hass.data[DOMAIN][entry.entry_id] = api.ConfigEntryAuth(hass, entry, session)
-
-    # If using an aiohttp-based API lib
-    hass.data[DOMAIN][entry.entry_id] = api.AsyncConfigEntryAuth(
-        aiohttp_client.async_get_clientsession(hass), session
-    )
+    coordinator.start_client()
+    with async_timeout.timeout(120):
+        await coordinator.initialization_future
 
     for component in PLATFORMS:
         hass.async_create_task(
