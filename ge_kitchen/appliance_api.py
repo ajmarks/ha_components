@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Type
 
 from gekitchen import ErdCodeType, GeAppliance, translate_erd_code
@@ -41,11 +42,13 @@ TIMER_ERD_CODES = {
     ErdCode.LOWER_OVEN_KITCHEN_TIMER,
     ErdCode.LOWER_OVEN_DELAY_TIME_REMAINING,
     ErdCode.LOWER_OVEN_COOK_TIME_REMAINING,
+    ErdCode.LOWER_OVEN_ELAPSED_COOK_TIME,
     ErdCode.ELAPSED_ON_TIME,
     ErdCode.TIME_REMAINING,
     ErdCode.UPPER_OVEN_ELAPSED_COOK_TIME,
     ErdCode.UPPER_OVEN_KITCHEN_TIMER,
     ErdCode.UPPER_OVEN_DELAY_TIME_REMAINING,
+    ErdCode.UPPER_OVEN_ELAPSED_COOK_TIME,
     ErdCode.UPPER_OVEN_COOK_TIME_REMAINING,
 }
 
@@ -69,8 +72,6 @@ def stringify_erd_value(erd_code: ErdCodeType, value: Any, units: str) -> Option
     :param units: Units to apply, if applicable
     :return: The value converted to a string
     """
-    if value is None:
-        return None
     erd_code = translate_erd_code(erd_code)
 
     if isinstance(value, ErdOvenState):
@@ -79,13 +80,16 @@ def stringify_erd_value(erd_code: ErdCodeType, value: Any, units: str) -> Option
         return oven_cook_setting_to_str(value, units)
 
     if erd_code == ErdCode.CLOCK_TIME:
-        return value.strftime('%H:%M:%S')
+        return value.strftime('%H:%M:%S') if value else None
     if erd_code in RAW_TEMPERATURE_ERD_CODES:
         return f"{value}{units}"
     if erd_code in NONZERO_TEMPERATURE_ERD_CODES:
-        return f"{value}{units}" if value else None
+        return f"{value}{units}" if value else ''
     if erd_code in TIMER_ERD_CODES:
-        return str(value) if value else None
+        return str(value)[:-3] if value else ''
+    if value is None:
+        return None
+    return str(value)
 
 
 def get_erd_units(erd_code: ErdCodeType, measurement_units: ErdMeasurementUnits):
@@ -93,10 +97,29 @@ def get_erd_units(erd_code: ErdCodeType, measurement_units: ErdMeasurementUnits)
     if not measurement_units:
         return None
 
-    if erd_code in TEMPERATURE_ERD_CODES:
+    if erd_code in TEMPERATURE_ERD_CODES or erd_code in {ErdCode.LOWER_OVEN_COOK_MODE, ErdCode.UPPER_OVEN_COOK_MODE}:
         if measurement_units == ErdMeasurementUnits.METRIC:
             return TEMP_CELSIUS
         return TEMP_FAHRENHEIT
+    return None
+
+
+def get_erd_icon(erd_code: ErdCodeType) -> Optional[str]:
+    erd_code = translate_erd_code(erd_code)
+    if not isinstance(erd_code, ErdCode):
+        return None
+    if erd_code in TIMER_ERD_CODES:
+        return 'mdi:timer-outline'
+    if erd_code in {
+        ErdCode.LOWER_OVEN_COOK_MODE,
+        ErdCode.LOWER_OVEN_CURRENT_STATE,
+        ErdCode.LOWER_OVEN_WARMING_DRAWER_STATE,
+        ErdCode.UPPER_OVEN_COOK_MODE,
+        ErdCode.UPPER_OVEN_CURRENT_STATE,
+        ErdCode.UPPER_OVEN_WARMING_DRAWER_STATE,
+        ErdCode.WARMING_DRAWER_STATE,
+    }:
+        return 'mdi:stove'
     return None
 
 
@@ -167,7 +190,11 @@ class ApplianceApi:
 
     def build_entities_list(self) -> None:
         """Build the entities list, adding anything new."""
-        entities = self.get_all_entities()
+        entities = [
+            e for e in self.get_all_entities()
+            if not isinstance(e, GeErdEntity) or e.erd_code in self.appliance.known_properties
+        ]
+
         for entity in entities:
             if entity.unique_id not in self._entities:
                 self._entities[entity.unique_id] = entity
@@ -280,12 +307,19 @@ class GeErdEntity(GeEntity):
     def unique_id(self) -> Optional[str]:
         return f'{DOMAIN}_{self.serial_number}_{self.erd_string.lower()}'
 
+    @property
+    def icon(self) -> Optional[str]:
+        return get_erd_icon(self.erd_code)
+
 
 class GeSensor(GeErdEntity):
     """GE Entity for sensors"""
     @property
     def state(self) -> Optional[str]:
-        value = self.appliance.get_erd_value(self.erd_code)
+        try:
+            value = self.appliance.get_erd_value(self.erd_code)
+        except KeyError:
+            return None
         return stringify_erd_value(self.erd_code, value, self.units)
 
     @property
@@ -295,6 +329,12 @@ class GeSensor(GeErdEntity):
     @property
     def units(self) -> Optional[str]:
         return get_erd_units(self.erd_code, self.measurement_system)
+
+    @property
+    def device_class(self) -> Optional[str]:
+        if self.erd_code in TEMPERATURE_ERD_CODES:
+            return 'temperature'
+        return None
 
 
 class GeBinarySensor(GeErdEntity):

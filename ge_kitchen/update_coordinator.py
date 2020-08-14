@@ -113,7 +113,9 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         except KeyError:
             return
         for entity in api.entities:
-            entity.async_write_ha_state()
+            if entity.hass is self.hass:
+                _LOGGER.debug(f'Updating {entity} ({entity.unique_id}, {entity.entity_id})')
+                entity.async_write_ha_state()
 
     @property
     def all_appliances_updated(self) -> bool:
