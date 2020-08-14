@@ -3,6 +3,10 @@
 ## `sharkiq`
 Integration for Shark IQ Robot Vacuums
 
+![Shark Vacuum Lovelace Card](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/shark_vacuum_card.png)
+
+![Shark Vacuum Lovelace Card](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/shark_vacuum_control.png)
+
 ## `ge_kitchen`
 Integration for GE WiFi-enabled kitchen appliances.  Right now, this is largely a proof of concept as HA doesn't yet
 have entity types for ovens, refrigerators, etc., but I'm hoping this may provide some motivation to expand the platform
