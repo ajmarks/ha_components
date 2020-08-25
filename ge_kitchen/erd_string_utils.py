@@ -1,7 +1,14 @@
 """Utilities to make nice strings from ERD values."""
 
-from gekitchen.erd_types import OvenCookSetting
-from gekitchen.erd_constants import ErdOvenState
+__all__ = (
+    "hot_water_status_str",
+    "oven_display_state_to_str",
+    "oven_cook_setting_to_str",
+    "bucket_status_to_str",
+)
+
+from gekitchen.erd_types import OvenCookSetting, FridgeIceBucketStatus, HotWaterStatus
+from gekitchen.erd_constants import ErdOvenState, ErdFullNotFull, ErdHotWaterStatus
 from .erd_constants.oven_constants import (
     OVEN_DISPLAY_STATE_MAP,
     STATE_OVEN_DELAY,
@@ -37,3 +44,17 @@ def oven_cook_setting_to_str(cook_setting: OvenCookSetting, units: str) -> str:
     modifier_str = f" ({', '.join(modifiers)})" if modifiers else ""
     display_state = oven_display_state_to_str(cook_state)
     return f"{display_state}{temp_str}{modifier_str}"
+
+
+def bucket_status_to_str(bucket_status: FridgeIceBucketStatus) -> str:
+    status = bucket_status.total_status
+    if status == ErdFullNotFull.FULL:
+        return "Full"
+    if status == ErdFullNotFull.NOT_FULL:
+        return "Not Full"
+    if status == ErdFullNotFull.NA:
+        return "NA"
+
+
+def hot_water_status_str(water_status: HotWaterStatus) -> str:
+    raise NotImplementedError

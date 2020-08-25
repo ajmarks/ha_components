@@ -6,7 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from typing import Callable
 from .update_coordinator import GeKitchenUpdateCoordinator
-from .appliance_api import GeBinarySensor
+from .appliance_api import GeBinarySensor, GeErdSwitch
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,10 +22,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
         await coordinator.initialization_future
 
     apis = coordinator.appliance_apis.values()
-    sensors = [
+    _LOGGER.debug(f'Found {len(apis):d} appliance APIs')
+    entities = [
         entity
         for api in apis
         for entity in api.entities
-        if isinstance(entity, GeBinarySensor)
+        if isinstance(entity, GeBinarySensor) and not isinstance(entity, GeErdSwitch)
     ]
-    async_add_entities(sensors)
+    _LOGGER.debug(f'Found {len(entities):d} binary sensors  ')
+    async_add_entities(entities)

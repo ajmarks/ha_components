@@ -7,12 +7,14 @@ from typing import Any, Dict, Iterable, Optional, Tuple
 from gekitchen import (
     EVENT_APPLIANCE_STATE_CHANGE,
     EVENT_APPLIANCE_INITIAL_UPDATE,
+    EVENT_GOT_APPLIANCE_LIST,
     ErdCodeType,
     GeAppliance,
-    GeClient
+    GeWebsocketClient,
 )
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -25,36 +27,33 @@ _LOGGER = logging.getLogger(__name__)
 class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
     """Define a wrapper class to update Shark IQ data."""
 
-    def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry, xmpp_credentials: Dict) -> None:
+    def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry) -> None:
         """Set up the SharkIqUpdateCoordinator class."""
         self._hass = hass
         self._config_entry = config_entry
-        self._xmpp_credentials = xmpp_credentials
-        self.client = None  # type: Optional[GeClient]
+        self._username = config_entry.data[CONF_USERNAME]
+        self._password = config_entry.data[CONF_PASSWORD]
+        self.client = None  # type: Optional[GeWebsocketClient]
         self._appliance_apis = {}  # type: Dict[str, ApplianceApi]
 
         # Some record keeping to let us know when we can start generating entities
-        self._got_roster = True
+        self._got_roster = False
         self._init_done = False
         self.initialization_future = asyncio.Future()
 
         super().__init__(hass, _LOGGER, name=DOMAIN)
 
-    def create_ge_client(self, xmpp_credentials: Dict, event_loop: Optional[asyncio.AbstractEventLoop]) -> GeClient:
+    def create_ge_client(self, event_loop: Optional[asyncio.AbstractEventLoop]) -> GeWebsocketClient:
         """
-        Create a new GeClient object with some helfpull callbacks.
+        Create a new GeClient object with some helpfull callbacks.
 
-        :param xmpp_credentials: XMPP credentials
         :param event_loop: Event loop
-        :return: GeClient
+        :return: GeWebsocketClient
         """
-        client = GeClient(xmpp_credentials, event_loop=event_loop)
-        client.ssl_context.set_ciphers('HIGH:!DH:!aNULL')  # GE's XMPP server uses a weak cipher.
+        client = GeWebsocketClient(event_loop=event_loop, username=self._username, password=self._password)
         client.add_event_handler(EVENT_APPLIANCE_INITIAL_UPDATE, self.on_device_initial_update)
         client.add_event_handler(EVENT_APPLIANCE_STATE_CHANGE, self.on_device_update)
-        client.add_event_handler('session_start', self.on_start)
-        client.add_event_handler('roster_update', self.on_roster_update)
-        client.use_ssl = True
+        client.add_event_handler(EVENT_GOT_APPLIANCE_LIST, self.on_appliance_list)
         return client
 
     @property
@@ -76,40 +75,34 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
                 self._appliance_apis[jid] = self._get_appliance_api(appliance)
 
     def maybe_add_appliance_api(self, appliance: GeAppliance):
-        bare_jid = appliance.jid.bare
-        if bare_jid not in self.appliance_apis:
-            _LOGGER.debug(f"Adding appliance api for appliance {bare_jid} ({appliance.appliance_type})")
+        mac_addr = appliance.mac_addr
+        if mac_addr not in self.appliance_apis:
+            _LOGGER.debug(f"Adding appliance api for appliance {mac_addr} ({appliance.appliance_type})")
             api = self._get_appliance_api(appliance)
             api.build_entities_list()
-            self.appliance_apis[bare_jid] = api
+            self.appliance_apis[mac_addr] = api
 
-    def get_new_client(self, xmpp_credentials: Optional[Dict] = None):
+    def get_new_client(self) -> GeWebsocketClient:
         if self.client is not None:
             self.client.disconnect()
-        if xmpp_credentials is not None:
-            self._xmpp_credentials = xmpp_credentials
-
         loop = self._hass.loop
-        self.client = self.create_ge_client(self._xmpp_credentials, event_loop=loop)
+        self.client = self.create_ge_client(event_loop=loop)
+        return self.client
 
-    def start_client(self, xmpp_credentials: Optional[Dict] = None):
+    def start_client(self):
         """Start a new GeClient in the HASS event loop."""
         _LOGGER.debug('Running client')
-        self.get_new_client(xmpp_credentials)
-        self.client.connect()
-        asyncio.ensure_future(self.client.process_in_running_loop(120), loop=self._hass.loop)
-        _LOGGER.debug('Client running')
+        client = self.get_new_client()
 
-    async def on_start(self, _):
-        """When we join, announce ourselves and request a roster update"""
-        self.client.send_presence()
-        self.client.get_roster()
+        session = self._hass.helpers.aiohttp_client.async_get_clientsession()
+        asyncio.ensure_future(client.async_get_credentials_and_run(session), loop=self._hass.loop)
+        _LOGGER.debug('Client running')
 
     async def on_device_update(self, data: Tuple[GeAppliance, Dict[ErdCodeType, Any]]):
         """Let HA know there's new state."""
         appliance, _ = data
         try:
-            api = self.appliance_apis[appliance.jid.bare]
+            api = self.appliance_apis[appliance.mac_addr]
         except KeyError:
             return
         for entity in api.entities:
@@ -122,21 +115,23 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         """True if all appliances have had an initial update."""
         return all([a.initialized for a in self.appliances])
 
-    async def on_roster_update(self, _):
-        """When there's a roster update, mark it and maybe trigger all ready."""
+    async def on_appliance_list(self, _):
+        """When we get an appliance list, mark it and maybe trigger all ready."""
         _LOGGER.debug('Got roster update')
-        self._got_roster = True
-        await self.async_maybe_trigger_all_ready()
+        if not self._got_roster:
+            self._got_roster = True
+            await asyncio.sleep(5)  # After the initial roster update, wait a bit and hit go
+            await self.async_maybe_trigger_all_ready()
 
     async def on_device_initial_update(self, appliance: GeAppliance):
         """When an appliance first becomes ready, let the system know and schedule periodic updates."""
-        _LOGGER.debug(f'Got initial update for {appliance.jid}')
+        _LOGGER.debug(f'Got initial update for {appliance.mac_addr}')
         _LOGGER.debug(f'Known appliances: {", ".join(self.client.appliances.keys())}')
         self.maybe_add_appliance_api(appliance)
         await self.async_maybe_trigger_all_ready()
-        while self.client.is_connected() and appliance.available:
+        while not self.client.websocket.closed and appliance.available:
             await asyncio.sleep(UPDATE_INTERVAL)
-            appliance.request_update()
+            await appliance.async_request_update()
 
     async def async_maybe_trigger_all_ready(self):
         """See if we're all ready to go, and if so, let the games begin."""
@@ -149,4 +144,4 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
             self._init_done = True
             await asyncio.sleep(2)
             self.initialization_future.set_result(True)
-            self.client.event(EVENT_ALL_APPLIANCES_READY, None)
+            await self.client.async_event(EVENT_ALL_APPLIANCES_READY, None)

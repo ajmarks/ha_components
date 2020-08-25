@@ -2,26 +2,19 @@
 
 import asyncio
 import logging
-from datetime import datetime
 from typing import Any, Dict, List, Optional, Type
 
 from gekitchen import ErdCodeType, GeAppliance, translate_erd_code
-from gekitchen.erd_types import OvenCookSetting, OvenConfiguration
-from gekitchen.erd_constants import (
-    ErdCode,
-    ErdApplianceType,
-    ErdMeasurementUnits,
-    ErdOvenState,
-)
+from gekitchen.erd_types import *
+from gekitchen.erd_constants import *
+from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN
-from .erd_string_utils import (
-    oven_display_state_to_str,
-    oven_cook_setting_to_str,
-)
+from .erd_string_utils import *
 
 RAW_TEMPERATURE_ERD_CODES = {
     ErdCode.HOT_WATER_SET_TEMP,
@@ -29,6 +22,8 @@ RAW_TEMPERATURE_ERD_CODES = {
     ErdCode.LOWER_OVEN_USER_TEMP_OFFSET,
     ErdCode.UPPER_OVEN_RAW_TEMPERATURE,
     ErdCode.UPPER_OVEN_USER_TEMP_OFFSET,
+    ErdCode.CURRENT_TEMPERATURE,
+    ErdCode.TEMPERATURE_SETTING,
 }
 NONZERO_TEMPERATURE_ERD_CODES = {
     ErdCode.LOWER_OVEN_DISPLAY_TEMPERATURE,
@@ -59,6 +54,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
     """Get the appropriate appliance type"""
     if appliance_type == ErdApplianceType.OVEN:
         return OvenApi
+    if appliance_type == ErdApplianceType.FRIDGE:
+        return FridgeApi
     # Fallback
     return ApplianceApi
 
@@ -78,6 +75,14 @@ def stringify_erd_value(erd_code: ErdCodeType, value: Any, units: str) -> Option
         return oven_display_state_to_str(value)
     if isinstance(value, OvenCookSetting):
         return oven_cook_setting_to_str(value, units)
+    if isinstance(value, FridgeDoorStatus):
+        return value.status
+    if isinstance(value, FridgeIceBucketStatus):
+        return bucket_status_to_str(value)
+    if isinstance(value, ErdFilterStatus):
+        return value.name.capitalize()
+    if isinstance(value, HotWaterStatus):
+        return hot_water_status_str(value)
 
     if erd_code == ErdCode.CLOCK_TIME:
         return value.strftime('%H:%M:%S') if value else None
@@ -120,6 +125,14 @@ def get_erd_icon(erd_code: ErdCodeType) -> Optional[str]:
         ErdCode.WARMING_DRAWER_STATE,
     }:
         return 'mdi:stove'
+    if erd_code in {
+        ErdCode.TURBO_COOL_STATUS,
+        ErdCode.TURBO_FREEZE_STATUS,
+    }:
+        return 'mdi:snowflake'
+    if erd_code == ErdCode.SABBATH_MODE:
+        return 'mdi:judaism'
+
     return None
 
 
@@ -164,7 +177,12 @@ class ApplianceApi:
 
     @property
     def name(self) -> str:
-        return f"GE Appliance {self.serial_number}"
+        appliance_type = self.appliance.appliance_type
+        if appliance_type is None or appliance_type == ErdApplianceType.UNKNOWN:
+            appliance_type = "Appliance"
+        else:
+            appliance_type = appliance_type.name.replace("_", " ").title()
+        return f"GE {appliance_type} {self.serial_number}"
 
     @property
     def device_info(self) -> Dict:
@@ -183,8 +201,8 @@ class ApplianceApi:
     def get_all_entities(self) -> List[Entity]:
         """Create Entities for this device."""
         entities = [
-            GeSensor(self, ErdCode.CLOCK_TIME),
-            GeBinarySensor(self, ErdCode.SABBATH_MODE),
+            GeErdSensor(self, ErdCode.CLOCK_TIME),
+            GeErdSwitch(self, ErdCode.SABBATH_MODE),
         ]
         return entities
 
@@ -209,39 +227,67 @@ class OvenApi(ApplianceApi):
         oven_config = self.appliance.get_erd_value(ErdCode.OVEN_CONFIGURATION)  # type: OvenConfiguration
         _LOGGER.debug(f'Oven Config: {oven_config}')
         oven_entities = [
-            GeSensor(self, ErdCode.UPPER_OVEN_COOK_MODE),
-            GeSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING),
-            GeSensor(self, ErdCode.UPPER_OVEN_CURRENT_STATE),
-            GeSensor(self, ErdCode.UPPER_OVEN_DELAY_TIME_REMAINING),
-            GeSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE),
-            GeSensor(self, ErdCode.UPPER_OVEN_ELAPSED_COOK_TIME),
-            GeSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER),
-            GeSensor(self, ErdCode.UPPER_OVEN_PROBE_DISPLAY_TEMP),
-            GeSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET),
-            GeSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_CURRENT_STATE),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_DELAY_TIME_REMAINING),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_ELAPSED_COOK_TIME),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_PROBE_DISPLAY_TEMP),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE),
             GeBinarySensor(self, ErdCode.UPPER_OVEN_PROBE_PRESENT),
             GeBinarySensor(self, ErdCode.UPPER_OVEN_REMOTE_ENABLED),
         ]
 
         if oven_config.has_lower_oven:
             oven_entities.extend([
-                GeSensor(self, ErdCode.LOWER_OVEN_COOK_MODE),
-                GeSensor(self, ErdCode.LOWER_OVEN_COOK_TIME_REMAINING),
-                GeSensor(self, ErdCode.LOWER_OVEN_CURRENT_STATE),
-                GeSensor(self, ErdCode.LOWER_OVEN_DELAY_TIME_REMAINING),
-                GeSensor(self, ErdCode.LOWER_OVEN_DISPLAY_TEMPERATURE),
-                GeSensor(self, ErdCode.LOWER_OVEN_ELAPSED_COOK_TIME),
-                GeSensor(self, ErdCode.LOWER_OVEN_KITCHEN_TIMER),
-                GeSensor(self, ErdCode.LOWER_OVEN_PROBE_DISPLAY_TEMP),
-                GeSensor(self, ErdCode.LOWER_OVEN_USER_TEMP_OFFSET),
-                GeSensor(self, ErdCode.LOWER_OVEN_RAW_TEMPERATURE),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_COOK_MODE),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_COOK_TIME_REMAINING),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_CURRENT_STATE),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_DELAY_TIME_REMAINING),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_DISPLAY_TEMPERATURE),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_ELAPSED_COOK_TIME),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_KITCHEN_TIMER),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_PROBE_DISPLAY_TEMP),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_USER_TEMP_OFFSET),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_RAW_TEMPERATURE),
                 GeBinarySensor(self, ErdCode.LOWER_OVEN_PROBE_PRESENT),
                 GeBinarySensor(self, ErdCode.LOWER_OVEN_REMOTE_ENABLED),
             ])
         return base_entities + oven_entities
 
 
-class GeEntity(Entity):
+class FridgeApi(ApplianceApi):
+    """API class for oven objects"""
+    APPLIANCE_TYPE = ErdApplianceType.FRIDGE
+
+    def get_all_entities(self) -> List[Entity]:
+        base_entities = super().get_all_entities()
+
+        fridge_entities = [
+            # GeErdSensor(self, ErdCode.AIR_FILTER_STATUS),
+            GeErdSensor(self, ErdCode.DOOR_STATUS),
+            GeErdSensor(self, ErdCode.FRIDGE_MODEL_INFO),
+            # GeErdSensor(self, ErdCode.HOT_WATER_LOCAL_USE),
+            # GeErdSensor(self, ErdCode.HOT_WATER_SET_TEMP),
+            # GeErdSensor(self, ErdCode.HOT_WATER_STATUS),
+            GeErdSensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS),
+            # GeErdSensor(self, ErdCode.ICE_MAKER_CONTROL),
+            # GeErdSensor(self, ErdCode.SETPOINT_LIMITS),
+            GeErdPropertySensor(self, ErdCode.TEMPERATURE_SETTING, 'fridge'),
+            GeErdPropertySensor(self, ErdCode.TEMPERATURE_SETTING, 'freezer'),
+            GeErdPropertySensor(self, ErdCode.CURRENT_TEMPERATURE, 'fridge'),
+            GeErdPropertySensor(self, ErdCode.CURRENT_TEMPERATURE, 'freezer'),
+            GeErdSwitch(self, ErdCode.TURBO_COOL_STATUS),
+            GeErdSwitch(self, ErdCode.TURBO_FREEZE_STATUS),
+            GeErdSensor(self, ErdCode.WATER_FILTER_STATUS),
+        ]
+        return base_entities + fridge_entities
+
+
+class GeEntity:
     """Base class for all GE Entities"""
     def __init__(self, api: ApplianceApi):
         self._api = api
@@ -312,7 +358,7 @@ class GeErdEntity(GeEntity):
         return get_erd_icon(self.erd_code)
 
 
-class GeSensor(GeErdEntity):
+class GeErdSensor(GeErdEntity, Entity):
     """GE Entity for sensors"""
     @property
     def state(self) -> Optional[str]:
@@ -337,7 +383,65 @@ class GeSensor(GeErdEntity):
         return None
 
 
-class GeBinarySensor(GeErdEntity):
+class GeErdPropertySensor(GeErdSensor):
+    """GE Entity for sensors"""
+    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str):
+        super().__init__(api, erd_code)
+        self.erd_property = erd_property
+
+    @property
+    def unique_id(self) -> Optional[str]:
+        return f"{super().unique_id}_{self.erd_property}"
+
+    @property
+    def name(self) -> Optional[str]:
+        base_string = super().name
+        property_name = self.erd_property.replace("_", " ").title()
+        return f"{base_string} {property_name}"
+
+    @property
+    def state(self) -> Optional[str]:
+        try:
+            value = getattr(self.appliance.get_erd_value(self.erd_code), self.erd_property)
+        except KeyError:
+            return None
+        return stringify_erd_value(self.erd_code, value, self.units)
+
+    @property
+    def measurement_system(self) -> Optional[ErdMeasurementUnits]:
+        return self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
+
+    @property
+    def units(self) -> Optional[str]:
+        return get_erd_units(self.erd_code, self.measurement_system)
+
+    @property
+    def device_class(self) -> Optional[str]:
+        if self.erd_code in TEMPERATURE_ERD_CODES:
+            return 'temperature'
+        return None
+
+
+class GeBinarySensor(GeErdEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
+        """Return True if entity is on."""
         return bool(self.appliance.get_erd_value(self.erd_code))
+
+
+class GeErdSwitch(GeBinarySensor, SwitchEntity):
+    """Switches for boolean ERD codes."""
+    device_class = "switch"
+
+    @property
+    def is_on(self) -> bool:
+        """Return True if switch is on."""
+        return bool(self.appliance.get_erd_value(self.erd_code))
+
+    async def async_turn_on(self, **kwargs):
+        """Turn the switch on."""
+        await self.appliance.async_set_erd_value(self.erd_code, True)
+
+    async def async_turn_off(self, **kwargs):
+        """Turn the switch off."""
+        await self.appliance.async_set_erd_value(self.erd_code, False)

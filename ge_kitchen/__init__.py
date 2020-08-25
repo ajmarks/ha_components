@@ -7,7 +7,6 @@ import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry, SOURCE_IMPORT
 from homeassistant.core import HomeAssistant
-from gekitchen.async_login_flow import async_do_full_login_flow
 from . import auth_api, config_flow
 from .const import (
     AUTH_HANDLER,
@@ -17,11 +16,11 @@ from .const import (
     OAUTH2_TOKEN_URL,
 )
 
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_USERNAME
 from .update_coordinator import GeKitchenUpdateCoordinator
 
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
-PLATFORMS = ["sensor"]
+PLATFORMS = ["sensor", "binary_sensor", "switch"]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,11 +44,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up ge_kitchen from a config entry."""
-    session = hass.helpers.aiohttp_client.async_get_clientsession()
-    xmpp_credentials = await async_do_full_login_flow(
-        session, entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD]
-    )
-    coordinator = GeKitchenUpdateCoordinator(hass, entry, xmpp_credentials)
+    coordinator = GeKitchenUpdateCoordinator(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
     coordinator.start_client()
