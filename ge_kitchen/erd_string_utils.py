@@ -5,10 +5,13 @@ __all__ = (
     "oven_display_state_to_str",
     "oven_cook_setting_to_str",
     "bucket_status_to_str",
+    "door_status_to_str",
 )
 
+from typing import Optional
+
 from gekitchen.erd_types import OvenCookSetting, FridgeIceBucketStatus, HotWaterStatus
-from gekitchen.erd_constants import ErdOvenState, ErdFullNotFull, ErdHotWaterStatus
+from gekitchen.erd_constants import ErdOvenState, ErdFullNotFull, ErdDoorStatus
 from .erd_constants.oven_constants import (
     OVEN_DISPLAY_STATE_MAP,
     STATE_OVEN_DELAY,
@@ -58,3 +61,9 @@ def bucket_status_to_str(bucket_status: FridgeIceBucketStatus) -> str:
 
 def hot_water_status_str(water_status: HotWaterStatus) -> str:
     raise NotImplementedError
+
+
+def door_status_to_str(door_status: ErdDoorStatus) -> Optional[str]:
+    if door_status == ErdDoorStatus.NA:
+        return None
+    return door_status.name.title()

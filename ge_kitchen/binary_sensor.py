@@ -6,7 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from typing import Callable
 from .update_coordinator import GeKitchenUpdateCoordinator
-from .appliance_api import GeBinarySensor, GeErdSwitch
+from .appliance_api import GeErdBinarySensor, GeErdSwitch
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
         entity
         for api in apis
         for entity in api.entities
-        if isinstance(entity, GeBinarySensor) and not isinstance(entity, GeErdSwitch)
+        if isinstance(entity, GeErdBinarySensor) and not isinstance(entity, GeErdSwitch)
     ]
     _LOGGER.debug(f'Found {len(entities):d} binary sensors  ')
     async_add_entities(entities)

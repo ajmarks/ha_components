@@ -6,13 +6,14 @@ from typing import Dict, Optional
 
 import aiohttp
 import async_timeout
-from gekitchen import async_get_oauth2_token
+from gekitchen import GeAuthError, GeServerError, async_get_oauth2_token
 import voluptuous as vol
 
 from homeassistant import config_entries, core, exceptions
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
 from .const import DOMAIN  # pylint:disable=unused-import
+from .exceptions import AuthError, CannotConnect
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,10 +31,14 @@ async def validate_input(hass: core.HomeAssistant, data):
     try:
         with async_timeout.timeout(10):
             _ = await async_get_oauth2_token(session, data[CONF_USERNAME], data[CONF_PASSWORD])
-    except (asyncio.TimeoutError, aiohttp.ClientError):
-        raise CannotConnect
-    except Exception:  # pylint: disable=broad-except
-        raise InvalidAuth
+    except (asyncio.TimeoutError, aiohttp.ClientError) as exc:
+        raise CannotConnect('Connection failure') from exc
+    except GeAuthError as exc:
+        raise AuthError('Authentication failure') from exc
+    except GeServerError as exc:
+        raise CannotConnect('Cannot connect (server error)') from exc
+    except Exception as exc:
+        raise CannotConnect('Unknown connection failure') from exc
 
     # Return info that you want to store in the config entry.
     return {"title": f"GE Kitchen ({data[CONF_USERNAME]:s})"}
@@ -56,7 +61,7 @@ class GeKitchenConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 info = await validate_input(self.hass, user_input)
             except CannotConnect:
                 errors["base"] = "cannot_connect"
-            except InvalidAuth:
+            except AuthError:
                 errors["base"] = "invalid_auth"
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")
@@ -81,6 +86,7 @@ class GeKitchenConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             _, errors = await self._async_validate_input(user_input)
+            _LOGGER.critical(f"errors: {errors})")
 
             if not errors:
                 for entry in self._async_current_entries():
@@ -88,7 +94,7 @@ class GeKitchenConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         self.hass.config_entries.async_update_entry(
                             entry, data=user_input
                         )
-
+                        await self.hass.config_entries.async_reload(entry.entry_id)
                         return self.async_abort(reason="reauth_successful")
 
             if errors["base"] != "invalid_auth":
@@ -97,11 +103,3 @@ class GeKitchenConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="reauth", data_schema=GEKITCHEN_SCHEMA, errors=errors,
         )
-
-
-class CannotConnect(exceptions.HomeAssistantError):
-    """Error to indicate we cannot connect."""
-
-
-class InvalidAuth(exceptions.HomeAssistantError):
-    """Error to indicate there is invalid auth."""

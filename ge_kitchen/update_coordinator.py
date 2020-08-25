@@ -7,6 +7,7 @@ from typing import Any, Dict, Iterable, Optional, Tuple
 from gekitchen import (
     EVENT_APPLIANCE_STATE_CHANGE,
     EVENT_APPLIANCE_INITIAL_UPDATE,
+    EVENT_DISCONNECTED,
     EVENT_GOT_APPLIANCE_LIST,
     ErdCodeType,
     GeAppliance,
@@ -54,6 +55,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         client.add_event_handler(EVENT_APPLIANCE_INITIAL_UPDATE, self.on_device_initial_update)
         client.add_event_handler(EVENT_APPLIANCE_STATE_CHANGE, self.on_device_update)
         client.add_event_handler(EVENT_GOT_APPLIANCE_LIST, self.on_appliance_list)
+        client.add_event_handler(EVENT_DISCONNECTED, self.on_disconnect)
         return client
 
     @property
@@ -89,17 +91,26 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         self.client = self.create_ge_client(event_loop=loop)
         return self.client
 
-    def start_client(self):
+    async def async_start_client(self):
         """Start a new GeClient in the HASS event loop."""
         _LOGGER.debug('Running client')
         client = self.get_new_client()
 
         session = self._hass.helpers.aiohttp_client.async_get_clientsession()
-        asyncio.ensure_future(client.async_get_credentials_and_run(session), loop=self._hass.loop)
+        await client.async_get_credentials(session)
+        fut = asyncio.ensure_future(client.async_run_client(), loop=self._hass.loop)
         _LOGGER.debug('Client running')
+        return fut
+
+    async def _kill_client(self):
+        """Kill the client.  Leaving this in for testing purposes."""
+        await asyncio.sleep(30)
+        _LOGGER.critical('Killing the connection.  Popcorn time.')
+        await self.client.websocket.close()
 
     async def on_device_update(self, data: Tuple[GeAppliance, Dict[ErdCodeType, Any]]):
         """Let HA know there's new state."""
+        self.last_update_success = True
         appliance, _ = data
         try:
             api = self.appliance_apis[appliance.mac_addr]
@@ -118,6 +129,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
     async def on_appliance_list(self, _):
         """When we get an appliance list, mark it and maybe trigger all ready."""
         _LOGGER.debug('Got roster update')
+        self.last_update_success = True
         if not self._got_roster:
             self._got_roster = True
             await asyncio.sleep(5)  # After the initial roster update, wait a bit and hit go
@@ -127,11 +139,35 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         """When an appliance first becomes ready, let the system know and schedule periodic updates."""
         _LOGGER.debug(f'Got initial update for {appliance.mac_addr}')
         _LOGGER.debug(f'Known appliances: {", ".join(self.client.appliances.keys())}')
+        self.last_update_success = True
         self.maybe_add_appliance_api(appliance)
         await self.async_maybe_trigger_all_ready()
         while not self.client.websocket.closed and appliance.available:
             await asyncio.sleep(UPDATE_INTERVAL)
             await appliance.async_request_update()
+
+    async def on_disconnect(self, _):
+        _LOGGER.info("GE Kitchen Disconnected. Attempting to reconnect.")
+        self.last_update_success = False
+
+        flow_context = {
+            "source": "reauth",
+            "unique_id": self._config_entry.unique_id,
+        }
+
+        matching_flows = [
+            flow
+            for flow in self.hass.config_entries.flow.async_progress()
+            if flow["context"] == flow_context
+        ]
+
+        if not matching_flows:
+            _LOGGER.critical(f"Creating reauth task")
+            self.hass.async_create_task(
+                self.hass.config_entries.flow.async_init(
+                    DOMAIN, context=flow_context, data=self._config_entry.data,
+                )
+            )
 
     async def async_maybe_trigger_all_ready(self):
         """See if we're all ready to go, and if so, let the games begin."""

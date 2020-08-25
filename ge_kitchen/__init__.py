@@ -5,9 +5,12 @@ import async_timeout
 import logging
 import voluptuous as vol
 
+from gekitchen import GeAuthError, GeServerError
+
 from homeassistant.config_entries import ConfigEntry, SOURCE_IMPORT
+from homeassistant.const import CONF_USERNAME
 from homeassistant.core import HomeAssistant
-from . import auth_api, config_flow
+from . import config_flow
 from .const import (
     AUTH_HANDLER,
     COORDINATOR,
@@ -15,8 +18,7 @@ from .const import (
     OAUTH2_AUTH_URL,
     OAUTH2_TOKEN_URL,
 )
-
-from homeassistant.const import CONF_USERNAME
+from .exceptions import AuthError, CannotConnect
 from .update_coordinator import GeKitchenUpdateCoordinator
 
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
@@ -47,9 +49,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     coordinator = GeKitchenUpdateCoordinator(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
-    coordinator.start_client()
-    with async_timeout.timeout(120):
-        await coordinator.initialization_future
+    try:
+        await coordinator.async_start_client()
+    except GeAuthError as exc:
+        raise AuthError('Authentication failure') from exc
+    except GeServerError as exc:
+        raise CannotConnect('Cannot connect (server error)') from exc
+    except Exception as exc:
+        raise CannotConnect('Unknown connection failure') from exc
+
+    try:
+        with async_timeout.timeout(30):
+            await coordinator.initialization_future
+    except TimeoutError as exc:
+        raise CannotConnect('Initialization timed out') from exc
 
     for component in PLATFORMS:
         hass.async_create_task(
@@ -73,3 +86,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
+
+async def async_update_options(hass, config_entry):
+    """Update options."""
+    await hass.config_entries.async_reload(config_entry.entry_id)
