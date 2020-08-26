@@ -5,14 +5,17 @@ import logging
 from typing import Dict, List, Optional, Type
 
 from gekitchen import GeAppliance
-from gekitchen.erd_types import *
 from gekitchen.erd_constants import *
+from gekitchen.erd_types import *
+
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 
+from .binary_sensor import GeErdBinarySensor, GeErdPropertyBinarySensor
 from .const import DOMAIN
-from .entities import *
-from .erd_string_utils import *
+from .entities import GeErdEntity
+from .sensor import GeErdPropertySensor, GeErdSensor
+from .switch import GeErdSwitch
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -83,7 +86,8 @@ class ApplianceApi:
             "identifiers": {(DOMAIN, self.serial_number)},
             "name": self.name,
             "manufacturer": "GE",
-            "model": self.model_number
+            "model": self.model_number,
+            "sw_version": self.appliance.get_erd_value(ErdCode.WIFI_MODULE_SW_VERSION),
         }
 
     @property
@@ -116,7 +120,7 @@ class OvenApi(ApplianceApi):
 
     def get_all_entities(self) -> List[Entity]:
         base_entities = super().get_all_entities()
-        oven_config = self.appliance.get_erd_value(ErdCode.OVEN_CONFIGURATION)  # type: OvenConfiguration
+        oven_config: OvenConfiguration = self.appliance.get_erd_value(ErdCode.OVEN_CONFIGURATION)
         _LOGGER.debug(f"Oven Config: {oven_config}")
         oven_entities = [
             GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE),

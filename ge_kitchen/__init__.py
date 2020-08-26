@@ -32,16 +32,6 @@ async def async_setup(hass: HomeAssistant, config: dict):
     hass.data.setdefault(DOMAIN, {})
     if DOMAIN not in config:
         return True
-    for index, conf in enumerate(config[DOMAIN]):
-        _LOGGER.debug(
-            "Importing GE Kitchen Account #%d (Username: %s)", index, conf[CONF_USERNAME]
-        )
-        hass.async_create_task(
-            hass.config_entries.flow.async_init(
-                DOMAIN, context={"source": SOURCE_IMPORT}, data=conf,
-            )
-        )
-    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):

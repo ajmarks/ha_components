@@ -86,7 +86,6 @@ class GeKitchenConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             _, errors = await self._async_validate_input(user_input)
-            _LOGGER.critical(f"errors: {errors})")
 
             if not errors:
                 for entry in self._async_current_entries():
