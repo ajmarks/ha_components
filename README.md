@@ -18,7 +18,9 @@ Entities card:
 ![Entities](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/appliance_entities.png)
 
 Fridge Controls:
+
 ![Fridge controls](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/fridge_control.png)
 
 Oven Controls:
+
 ![Fridge controls](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/oven_controls.png)
