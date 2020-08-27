@@ -15,10 +15,10 @@ sees this and wants to pitch in, please shoot me a message or make a PR.
 
 Entities card:
 
-![Entities](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/appliance_entities.png)
+![Entities](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/appliance_entities.png)
 
 Fridge Controls:
-![Fridge controls](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/fridge_controls.png)
+![Fridge controls](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/fridge_control.png)
 
 Oven Controls:
-![Fridge controls](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/fridge_controls.png)
+![Fridge controls](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/oven_controls.png)
