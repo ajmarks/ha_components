@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional, TYPE_CHECKING
 from gekitchen import ErdCodeType, GeAppliance, translate_erd_code
 from gekitchen.erd_types import *
 from gekitchen.erd_constants import *
-from homeassistant.const import DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.core import HomeAssistant
 
 
@@ -23,7 +23,6 @@ DOOR_ERD_CODES = {
     ErdCode.DOOR_STATUS
 }
 RAW_TEMPERATURE_ERD_CODES = {
-    ErdCode.HOT_WATER_SET_TEMP,
     ErdCode.LOWER_OVEN_RAW_TEMPERATURE,
     ErdCode.LOWER_OVEN_USER_TEMP_OFFSET,
     ErdCode.UPPER_OVEN_RAW_TEMPERATURE,
@@ -32,6 +31,7 @@ RAW_TEMPERATURE_ERD_CODES = {
     ErdCode.TEMPERATURE_SETTING,
 }
 NONZERO_TEMPERATURE_ERD_CODES = {
+    ErdCode.HOT_WATER_SET_TEMP,
     ErdCode.LOWER_OVEN_DISPLAY_TEMPERATURE,
     ErdCode.LOWER_OVEN_PROBE_DISPLAY_TEMP,
     ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE,
@@ -72,7 +72,7 @@ def boolify_erd_value(erd_code: ErdCodeType, value: Any) -> Optional[bool]:
     return bool(value)
 
 
-def stringify_erd_value(erd_code: ErdCodeType, value: Any, units: str) -> Optional[str]:
+def stringify_erd_value(erd_code: ErdCodeType, value: Any, units: Optional[str] = None) -> Optional[str]:
     """
     Convert an erd property value to a nice string
 

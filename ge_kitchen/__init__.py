@@ -22,7 +22,7 @@ from .exceptions import AuthError, CannotConnect
 from .update_coordinator import GeKitchenUpdateCoordinator
 
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
-PLATFORMS = ["sensor", "binary_sensor", "switch"]
+PLATFORMS = ["binary_sensor", "sensor", "switch", "water_heater"]
 
 _LOGGER = logging.getLogger(__name__)
 

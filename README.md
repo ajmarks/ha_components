@@ -8,11 +8,17 @@ Integration for Shark IQ Robot Vacuums
 ![Shark Vacuum Lovelace Card](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/shark_vacuum_control.png)
 
 ## `ge_kitchen`
-Integration for GE WiFi-enabled kitchen appliances.  Right now, this is largely a proof of concept as HA doesn't yet
-have entity types for ovens, refrigerators, etc., but I'm hoping this may provide some motivation to expand the platform
-roster.  Currently, I've only really built out ovens, and that's purely as sensors, though I'll add some switches soon.
-If anybody who has other GE appliances sees this and wants to pitch in, please shoot me a message or make a PR.  
+Integration for GE WiFi-enabled kitchen appliances.  So far, I've only done fridges and ovens (because that's what I
+have), but I hope to to dishwashers next.  Because HA doesn't have Fridge or Oven platforms, both fridges and ovens are
+primarily represented as water heater entities, which works surprisingly well.  If anybody who has other GE appliances
+sees this and wants to pitch in, please shoot me a message or make a PR.  
 
-Oven sensors in action:
+Entities card:
 
-![Oven Sensor Example](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/oven_sensors.jpg)
+![Entities](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/appliance_entities.png)
+
+Fridge Controls:
+![Fridge controls](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/fridge_controls.png)
+
+Oven Controls:
+![Fridge controls](https://raw.githubusercontent.com/ajmarks/ajmarks_ha_components/master/img/fridge_controls.png)
