@@ -163,6 +163,8 @@ def get_erd_icon(erd_code: ErdCodeType, value: Any = None) -> Optional[str]:
 
 class GeEntity:
     """Base class for all GE Entities"""
+    should_poll = False
+
     def __init__(self, api: "ApplianceApi"):
         self._api = api
         self.hass = None  # type: Optional[HomeAssistant]
@@ -182,11 +184,6 @@ class GeEntity:
     @property
     def serial_number(self):
         return self.api.serial_number
-
-    @property
-    def should_poll(self) -> bool:
-        """Don"t poll."""
-        return False
 
     @property
     def available(self) -> bool:

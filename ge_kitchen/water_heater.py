@@ -128,7 +128,10 @@ class GeAbstractFridgeEntity(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta)
     def current_temperature(self) -> int:
         """Return the current temperature."""
         current_temps = self.appliance.get_erd_value(ErdCode.CURRENT_TEMPERATURE)
-        return getattr(current_temps, self.heater_type)
+        current_temp = getattr(current_temps, self.heater_type)
+        if current_temp is None:
+            _LOGGER.exception(f"{self.name} has None for current_temperature (available: {self.available})!")
+        return current_temp
 
     async def async_set_temperature(self, **kwargs):
         target_temp = kwargs.get(ATTR_TEMPERATURE)
@@ -208,7 +211,7 @@ class GeAbstractFridgeEntity(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta)
         erd_val: IceMakerControlStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_CONTROL)
         ice_control_status = getattr(erd_val, f"status_{self.heater_type}")
         if ice_control_status != ErdOnOff.NA:
-            data["ice_maker"] = ice_control_status.name.replace("_", " ").title()
+            data["ice_maker"] = ice_control_status.name.replace("_", " ").lower()
 
         return data
 
@@ -235,6 +238,14 @@ class GeFridgeEntity(GeAbstractFridgeEntity):
     turbo_erd_code = ErdCode.TURBO_COOL_STATUS
     turbo_mode = OP_MODE_TURBO_COOL
     icon = "mdi:fridge-bottom"
+
+    @property
+    def available(self) -> bool:
+        available = super().available
+        if not available:
+            app = self.appliance
+            _LOGGER.critical(f"{self.name} unavailable. Appliance info: Availaible - {app._available} and Init - {app.initialized}")
+        return available
 
     @property
     def other_state_attrs(self) -> Dict[str, Any]:
@@ -510,13 +521,13 @@ class GeOvenHeaterEntity(GeEntity, WaterHeaterEntity):
         kitchen_timer = self.get_erd_value("KITCHEN_TIMER")
         delay_time = self.get_erd_value("DELAY_TIME_REMAINING")
         if elapsed_time:
-            data["cook_time_elapsed"] = elapsed_time
+            data["cook_time_elapsed"] = str(elapsed_time)
         if cook_time_left:
-            data["cook_time_left"] = cook_time_left
+            data["cook_time_left"] = str(cook_time_left)
         if kitchen_timer:
-            data["cook_time_remaining"] = kitchen_timer
+            data["cook_time_remaining"] = str(kitchen_timer)
         if delay_time:
-            data["delay_time_remaining"] = delay_time
+            data["delay_time_remaining"] = str(delay_time)
         return data
 
 

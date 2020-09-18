@@ -9,7 +9,7 @@ import async_timeout
 from gekitchen import GeAuthError, GeServerError, async_get_oauth2_token
 import voluptuous as vol
 
-from homeassistant import config_entries, core, exceptions
+from homeassistant import config_entries, core
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
 from .const import DOMAIN  # pylint:disable=unused-import
@@ -31,14 +31,15 @@ async def validate_input(hass: core.HomeAssistant, data):
     try:
         with async_timeout.timeout(10):
             _ = await async_get_oauth2_token(session, data[CONF_USERNAME], data[CONF_PASSWORD])
-    except (asyncio.TimeoutError, aiohttp.ClientError) as exc:
-        raise CannotConnect('Connection failure') from exc
-    except GeAuthError as exc:
-        raise AuthError('Authentication failure') from exc
-    except GeServerError as exc:
-        raise CannotConnect('Cannot connect (server error)') from exc
+    except (asyncio.TimeoutError, aiohttp.ClientError):
+        raise CannotConnect('Connection failure')
+    except GeAuthError:
+        raise AuthError('Authentication failure')
+    except GeServerError:
+        raise CannotConnect('Cannot connect (server error)')
     except Exception as exc:
-        raise CannotConnect('Unknown connection failure') from exc
+        _LOGGER.exception("Unkown connection failure", exc_info=exc)
+        raise CannotConnect('Unknown connection failure')
 
     # Return info that you want to store in the config entry.
     return {"title": f"GE Kitchen ({data[CONF_USERNAME]:s})"}

@@ -41,18 +41,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     try:
         await coordinator.async_start_client()
-    except GeAuthError as exc:
-        raise AuthError('Authentication failure') from exc
-    except GeServerError as exc:
-        raise CannotConnect('Cannot connect (server error)') from exc
-    except Exception as exc:
-        raise CannotConnect('Unknown connection failure') from exc
+    except GeAuthError:
+        raise AuthError('Authentication failure')
+    except GeServerError:
+        raise CannotConnect('Cannot connect (server error)')
+    except Exception:
+        raise CannotConnect('Unknown connection failure')
 
     try:
         with async_timeout.timeout(30):
             await coordinator.initialization_future
-    except TimeoutError as exc:
-        raise CannotConnect('Initialization timed out') from exc
+    except TimeoutError:
+        raise CannotConnect('Initialization timed out')
 
     for component in PLATFORMS:
         hass.async_create_task(

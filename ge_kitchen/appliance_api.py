@@ -2,7 +2,7 @@
 
 import asyncio
 import logging
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional, Type, TYPE_CHECKING
 
 from gekitchen import GeAppliance
 from gekitchen.erd_constants import *
@@ -10,6 +10,7 @@ from gekitchen.erd_types import *
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .binary_sensor import GeErdBinarySensor
 from .const import DOMAIN
@@ -23,6 +24,8 @@ from .water_heater import (
     LOWER_OVEN,
     UPPER_OVEN,
 )
+
+
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,12 +49,13 @@ class ApplianceApi:
     """
     APPLIANCE_TYPE = None  # type: Optional[ErdApplianceType]
 
-    def __init__(self, hass: HomeAssistant, appliance: GeAppliance):
+    def __init__(self, coordinator: DataUpdateCoordinator, appliance: GeAppliance):
         if not appliance.initialized:
             raise RuntimeError("Appliance not ready")
         self._appliance = appliance
         self._loop = appliance.client.loop
-        self._hass = hass
+        self._hass = coordinator.hass
+        self.coordinator = coordinator
         self.initial_update = False
         self._entities = {}  # type: Optional[Dict[str, Entity]]
 
