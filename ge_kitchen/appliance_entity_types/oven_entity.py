@@ -49,7 +49,7 @@ COOK_MODE_OP_MAP = bidict({
     ErdOvenCookMode.CONVMULTIBAKE_NOOPTION: OP_MODE_CONVMULTIBAKE,
     ErdOvenCookMode.CONVBAKE_NOOPTION: OP_MODE_CONVBAKE,
     ErdOvenCookMode.CONVROAST_NOOPTION: OP_MODE_CONVROAST,
-    ErdOvenCookMode.BAKE_NOOPTION: OP_MODE_BAKE,
+    ErdOvenCookMode.BAKE_NOOPTION: OP_MODE_BAKE
 })
 
 class GeOvenHeaterEntity(GeEntity, WaterHeaterEntity):
@@ -118,8 +118,13 @@ class GeOvenHeaterEntity(GeEntity, WaterHeaterEntity):
 
     @property
     def operation_list(self) -> List[str]:
+        #lookup all the available cook modes
         erd_code = self.get_erd_code("AVAILABLE_COOK_MODES")
         cook_modes: Set[ErdOvenCookMode] = self.appliance.get_erd_value(erd_code)
+        #make sure that we limit them to the list of known codes
+        cook_modes = cook_modes.intersection(COOK_MODE_OP_MAP.keys())
+        
+        _LOGGER.debug(f"found cook modes {cook_modes}")
         op_modes = [o for o in (COOK_MODE_OP_MAP[c] for c in cook_modes) if o]
         op_modes = [OP_MODE_OFF] + op_modes
         return op_modes
