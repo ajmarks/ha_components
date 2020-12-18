@@ -81,7 +81,7 @@ class GeOvenHeaterEntity(GeEntity, WaterHeaterEntity):
         else:
             oven_title = "Oven"
 
-        return f"{oven_title} {self.serial_number}"
+        return f"{self.serial_number} {oven_title}"
 
     @property
     def temperature_unit(self):

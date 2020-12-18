@@ -200,10 +200,11 @@ class GeEntity:
 
 class GeErdEntity(GeEntity):
     """Parent class for GE entities tied to a specific ERD"""
-    def __init__(self, api: "ApplianceApi", erd_code: ErdCodeType):
+    def __init__(self, api: "ApplianceApi", erd_code: ErdCodeType, erd_override: str = None):
         super().__init__(api)
         self._erd_code = translate_erd_code(erd_code)
-
+        self._erd_override = erd_override
+        
     @property
     def erd_code(self) -> ErdCodeType:
         return self._erd_code
@@ -218,6 +219,11 @@ class GeErdEntity(GeEntity):
     @property
     def name(self) -> Optional[str]:
         erd_string = self.erd_string
+        
+        #override the name if specified
+        if self._erd_override != None:
+            erd_string = self._erd_override
+
         erd_title = " ".join(erd_string.split("_")).title()
         return f"{self.serial_number} {erd_title}"
 
