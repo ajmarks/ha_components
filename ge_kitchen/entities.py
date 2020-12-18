@@ -218,7 +218,8 @@ class GeErdEntity(GeEntity):
     @property
     def name(self) -> Optional[str]:
         erd_string = self.erd_string
-        return " ".join(erd_string.split("_")).title()
+        erd_title = " ".join(erd_string.split("_")).title()
+        return f"{self.appliance.serial_number} {erd_title}"
 
     @property
     def unique_id(self) -> Optional[str]:

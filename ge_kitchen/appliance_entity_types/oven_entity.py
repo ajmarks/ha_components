@@ -25,6 +25,7 @@ from homeassistant.components.water_heater import (
 )
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from ..entities import GeEntity, stringify_erd_value
+from ..const import DOMAIN
 
 if TYPE_CHECKING:
     from ..appliance_api import ApplianceApi
@@ -71,7 +72,7 @@ class GeOvenHeaterEntity(GeEntity, WaterHeaterEntity):
 
     @property
     def unique_id(self) -> str:
-        return f"{self.serial_number}-{self.oven_select.lower()}"
+        return f"{DOMAIN}_{self.serial_number}_{self.oven_select.lower()}"
 
     @property
     def name(self) -> Optional[str]:
@@ -80,7 +81,7 @@ class GeOvenHeaterEntity(GeEntity, WaterHeaterEntity):
         else:
             oven_title = "Oven"
 
-        return f"GE {oven_title}"
+        return f"{oven_title} {self.serial_number}"
 
     @property
     def temperature_unit(self):
