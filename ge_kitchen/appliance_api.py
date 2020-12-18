@@ -17,7 +17,7 @@ from .const import DOMAIN
 from .entities import GeErdEntity
 from .sensor import GeErdSensor
 from .switch import GeErdSwitch
-from .water_heater import (
+from .appliance_entity_types import (
     GeFreezerEntity,
     GeFridgeEntity,
     GeOvenHeaterEntity,
@@ -25,18 +25,18 @@ from .water_heater import (
     UPPER_OVEN,
 )
 
-
-
-
 _LOGGER = logging.getLogger(__name__)
 
 
 def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
+    _LOGGER.debug(f"Found device type: {appliance_type}")
     """Get the appropriate appliance type"""
     if appliance_type == ErdApplianceType.OVEN:
         return OvenApi
     if appliance_type == ErdApplianceType.FRIDGE:
         return FridgeApi
+    if appliance_type == ErdApplianceType.DISH_WASHER:
+        return DishwasherApi
     # Fallback
     return ApplianceApi
 
@@ -174,4 +174,23 @@ class FridgeApi(ApplianceApi):
             GeFridgeEntity(self),
         ]
         entities = base_entities + fridge_entities
+        return entities
+
+class DishwasherApi(ApplianceApi):
+    """API class for oven objects"""
+    APPLIANCE_TYPE = ErdApplianceType.DISH_WASHER
+
+    def get_all_entities(self) -> List[Entity]:
+        base_entities = super().get_all_entities()
+
+        dishwasher_entities = [
+            GeErdSensor(self, ErdCode.CYCLE_NAME),
+            GeErdSensor(self, ErdCode.CYCLE_STATE),
+            GeErdSensor(self, ErdCode.OPERATING_MODE),
+            GeErdSensor(self, ErdCode.PODS_REMAINING_VALUE),
+            GeErdSensor(self, ErdCode.RINSE_AGENT),
+            GeErdSensor(self, ErdCode.SOUND),
+            GeErdSensor(self, ErdCode.TIME_REMAINING),
+        ]
+        entities = base_entities + dishwasher_entities
         return entities
