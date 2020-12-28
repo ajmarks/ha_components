@@ -1,11 +1,8 @@
-"""Exceptions go here."""
+""" Home Assistant derived exceptions"""
 
 from homeassistant import exceptions as ha_exc
 
-
-class CannotConnect(ha_exc.HomeAssistantError):
+class HaCannotConnect(ha_exc.HomeAssistantError):
     """Error to indicate we cannot connect."""
-
-
-class AuthError(ha_exc.HomeAssistantError):
+class HaAuthError(ha_exc.HomeAssistantError):
     """Error to indicate authentication failure."""

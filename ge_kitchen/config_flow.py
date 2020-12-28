@@ -1,26 +1,26 @@
 """Config flow for GE Kitchen integration."""
 
-import asyncio
 import logging
 from typing import Dict, Optional
 
 import aiohttp
+import asyncio
 import async_timeout
-from gekitchen import GeAuthError, GeServerError, async_get_oauth2_token
+
+from gekitchen import GeAuthFailedError, GeNotAuthenticatedError, GeGeneralServerError, async_get_oauth2_token
 import voluptuous as vol
 
 from homeassistant import config_entries, core
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
 from .const import DOMAIN  # pylint:disable=unused-import
-from .exceptions import AuthError, CannotConnect
+from .exceptions import HaAuthError, HaCannotConnect
 
 _LOGGER = logging.getLogger(__name__)
 
 GEKITCHEN_SCHEMA = vol.Schema(
     {vol.Required(CONF_USERNAME): str, vol.Required(CONF_PASSWORD): str}
 )
-
 
 async def validate_input(hass: core.HomeAssistant, data):
     """Validate the user input allows us to connect."""
@@ -32,18 +32,17 @@ async def validate_input(hass: core.HomeAssistant, data):
         with async_timeout.timeout(10):
             _ = await async_get_oauth2_token(session, data[CONF_USERNAME], data[CONF_PASSWORD])
     except (asyncio.TimeoutError, aiohttp.ClientError):
-        raise CannotConnect('Connection failure')
-    except GeAuthError:
-        raise AuthError('Authentication failure')
-    except GeServerError:
-        raise CannotConnect('Cannot connect (server error)')
+        raise HaCannotConnect('Connection failure')
+    except (GeAuthFailedError, GeNotAuthenticatedError):
+        raise HaAuthError('Authentication failure')
+    except GeGeneralServerError:
+        raise HaCannotConnect('Cannot connect (server error)')
     except Exception as exc:
-        _LOGGER.exception("Unkown connection failure", exc_info=exc)
-        raise CannotConnect('Unknown connection failure')
+        _LOGGER.exception("Unknown connection failure", exc_info=exc)
+        raise HaCannotConnect('Unknown connection failure')
 
     # Return info that you want to store in the config entry.
     return {"title": f"GE Kitchen ({data[CONF_USERNAME]:s})"}
-
 
 class GeKitchenConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for GE Kitchen."""
@@ -60,9 +59,9 @@ class GeKitchenConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             # noinspection PyBroadException
             try:
                 info = await validate_input(self.hass, user_input)
-            except CannotConnect:
+            except HaCannotConnect:
                 errors["base"] = "cannot_connect"
-            except AuthError:
+            except HaAuthError:
                 errors["base"] = "invalid_auth"
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")

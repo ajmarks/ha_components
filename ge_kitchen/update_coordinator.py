@@ -1,4 +1,4 @@
-"""Data update coordinator for shark iq vacuums."""
+"""Data update coordinator for GE Kitchen Appliances"""
 
 import asyncio
 import logging
@@ -21,16 +21,15 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN, EVENT_ALL_APPLIANCES_READY, UPDATE_INTERVAL
-from .appliance_api import ApplianceApi, get_appliance_api_type
+from .devices import ApplianceApi, get_appliance_api_type
 
 _LOGGER = logging.getLogger(__name__)
 
-
 class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
-    """Define a wrapper class to update Shark IQ data."""
+    """Define a wrapper class to update GE Kitchen data."""
 
     def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry) -> None:
-        """Set up the SharkIqUpdateCoordinator class."""
+        """Set up the GeKitchenUpdateCoordinator class."""
         self._hass = hass
         self._config_entry = config_entry
         self._username = config_entry.data[CONF_USERNAME]
