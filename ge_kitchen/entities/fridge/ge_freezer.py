@@ -1,24 +1,22 @@
 """GE Kitchen Sensor Entities - Freezer"""
 import logging
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TYPE_CHECKING
+from typing import Any, Dict, Optional
 
 from gekitchen import (
     ErdCode,
     ErdDoorStatus
 )
 
-from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
-from ..entities import GeEntity
-from .abstract_fridge_entity import (
+from .ge_abstract_fridge import (
     ATTR_DOOR_STATUS, 
     HEATER_TYPE_FREEZER, 
     OP_MODE_TURBO_FREEZE,
-    GeAbstractFridgeEntity
+    GeAbstractFridge
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeFreezerEntity(GeAbstractFridgeEntity):
+class GeFreezer(GeAbstractFridge):
     """A freezer is basically a fridge."""
 
     heater_type = HEATER_TYPE_FREEZER
@@ -32,4 +30,3 @@ class GeFreezerEntity(GeAbstractFridgeEntity):
         if door_status and door_status != ErdDoorStatus.NA:
             return {ATTR_DOOR_STATUS: door_status.name.title()}
         return {}
-

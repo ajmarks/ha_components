@@ -2,62 +2,28 @@
 import sys
 import os
 import abc
-import async_timeout
-from datetime import timedelta
 import logging
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TYPE_CHECKING
+from typing import Any, Dict, List, Optional
 
-sys.path.append(os.getcwd() + '/..')
+from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 
-from bidict import bidict
 from gekitchen import (
     ErdCode,
     ErdOnOff,
-    ErdDoorStatus,
-    ErdFilterStatus,
     ErdFullNotFull,
-    ErdHotWaterStatus,
-    ErdMeasurementUnits,
-    ErdPodStatus
-)
-from gekitchen.erd_types import (
     FridgeDoorStatus,
     FridgeSetPointLimits,
     FridgeSetPoints,
     FridgeIceBucketStatus,
-    HotWaterStatus,
     IceMakerControlStatus
 )
-
-from homeassistant.components.water_heater import (
-    SUPPORT_OPERATION_MODE,
-    SUPPORT_TARGET_TEMPERATURE,
-    WaterHeaterEntity,
-)
-from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
-
-from ..entities import GeEntity, stringify_erd_value
-from ..const import DOMAIN
-
-if TYPE_CHECKING:
-    from ..appliance_api import ApplianceApi
-    from ..update_coordinator import GeKitchenUpdateCoordinator
-
-ATTR_DOOR_STATUS = "door_status"
-GE_FRIDGE_SUPPORT = (SUPPORT_OPERATION_MODE | SUPPORT_TARGET_TEMPERATURE)
-HEATER_TYPE_FRIDGE = "fridge"
-HEATER_TYPE_FREEZER = "freezer"
-
-# Fridge/Freezer
-OP_MODE_K_CUP = "K-Cup Brewing"
-OP_MODE_NORMAL = "Normal"
-OP_MODE_SABBATH = "Sabbath Mode"
-OP_MODE_TURBO_COOL = "Turbo Cool"
-OP_MODE_TURBO_FREEZE = "Turbo Freeze"
+from ge_kitchen.const import DOMAIN
+from ..common import GeWaterHeater
+from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeAbstractFridgeEntity(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
+class GeAbstractFridge(GeWaterHeater):
     """Mock a fridge or freezer as a water heater."""
 
     @property
@@ -83,13 +49,6 @@ class GeAbstractFridgeEntity(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta)
     @property
     def name(self) -> Optional[str]:
         return f"{self.serial_number} {self.heater_type.title()}"
-
-    @property
-    def temperature_unit(self):
-        measurement_system = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
-        if measurement_system == ErdMeasurementUnits.METRIC:
-            return TEMP_CELSIUS
-        return TEMP_FAHRENHEIT
 
     @property
     def target_temps(self) -> FridgeSetPoints:
@@ -195,11 +154,6 @@ class GeAbstractFridgeEntity(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta)
     @property
     def door_state_attrs(self) -> Dict[str, Any]:
         """Get state attributes for the doors."""
-        return {}
-
-    @property
-    def other_state_attrs(self) -> Dict[str, Any]:
-        """State attributes to be optionally overridden in subclasses."""
         return {}
 
     @property

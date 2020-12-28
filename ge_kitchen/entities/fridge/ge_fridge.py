@@ -1,6 +1,6 @@
 """GE Kitchen Sensor Entities - Fridge"""
 import logging
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TYPE_CHECKING
+from typing import Any, Dict
 
 from gekitchen import (
     ErdCode,
@@ -8,30 +8,21 @@ from gekitchen import (
     ErdFilterStatus
 )
 
-from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
-from ..entities import GeEntity
-from .abstract_fridge_entity import (
+from .const import *
+from .ge_abstract_fridge import (
     ATTR_DOOR_STATUS,
     HEATER_TYPE_FRIDGE, 
     OP_MODE_TURBO_COOL,
-    GeAbstractFridgeEntity
+    GeAbstractFridge
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeFridgeEntity(GeAbstractFridgeEntity):
+class GeFridge(GeAbstractFridge):
     heater_type = HEATER_TYPE_FRIDGE
     turbo_erd_code = ErdCode.TURBO_COOL_STATUS
     turbo_mode = OP_MODE_TURBO_COOL
     icon = "mdi:fridge-bottom"
-
-    @property
-    def available(self) -> bool:
-        available = super().available
-        if not available:
-            app = self.appliance
-            _LOGGER.critical(f"{self.name} unavailable. Appliance info: Availaible - {app._available} and Init - {app.initialized}")
-        return available
 
     @property
     def other_state_attrs(self) -> Dict[str, Any]:

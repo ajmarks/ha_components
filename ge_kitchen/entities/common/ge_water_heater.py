@@ -1,4 +1,5 @@
 import abc
+import logging
 from typing import Any, Dict, List, Optional
 
 from homeassistant.components.water_heater import WaterHeaterEntity
@@ -10,8 +11,18 @@ from gekitchen import ErdCode, ErdMeasurementUnits
 from ge_kitchen.const import DOMAIN
 from .ge_erd_entity import GeEntity
 
+_LOGGER = logging.getLogger(__name__)
+
 class GeWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
     """Mock temperature/operation mode supporting device as a water heater"""
+
+    @property
+    def available(self) -> bool:
+        available = super().available
+        if not available:
+            app = self.appliance
+            _LOGGER.critical(f"{self.name} unavailable. Appliance info: Availaible - {app._available} and Init - {app.initialized}")
+        return available
 
     @property
     def heater_type(self) -> str:
@@ -49,9 +60,3 @@ class GeWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
     def device_state_attributes(self) -> Dict[str, Any]:
         other_attrs = self.other_state_attrs
         return {**other_attrs}
-
-    async def async_set_sabbath_mode(self, sabbath_on: bool = True):
-        """Set sabbath mode if it's changed"""
-        if self.appliance.get_erd_value(ErdCode.SABBATH_MODE) == sabbath_on:
-            return
-        await self.appliance.async_set_erd_value(ErdCode.SABBATH_MODE, sabbath_on)
