@@ -49,11 +49,11 @@ class GeEntity:
         return self._get_device_class()    
 
     def _stringify(self, value: any, **kwargs) -> Optional[str]:
-        if isinstance(timedelta):
+        if isinstance(value, timedelta):
             return str(value)[:-3] if value else ""
         if value is None:
             return None
-        return self.appliance.stringify_erd_value(value, kwargs)
+        return self.appliance.stringify_erd_value(value, **kwargs)
 
     def _boolify(self, value: any) -> Optional[bool]:
         return self.appliance.boolify_erd_value(value)

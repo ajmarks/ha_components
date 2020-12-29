@@ -15,6 +15,7 @@ from .base import ApplianceApi
 from ..entities import (
     GeErdSensor, 
     GeErdBinarySensor, 
+    GeErdPropertySensor,
     GeErdPropertyBinarySensor,
     GeOven, 
     UPPER_OVEN, 
@@ -58,12 +59,12 @@ class OvenApi(ApplianceApi):
             ])
         else:
             oven_entities.extend([
-                GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE, self.single_name(ErdCode.UPPER_OVEN_COOK_MODE)),
-                GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, self.single_name(ErdCode.UPPER_OVEN_COOK_TIME_REMAINING)),
-                GeErdSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER, self.single_name(ErdCode.UPPER_OVEN_KITCHEN_TIMER)),
-                GeErdSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, self.single_name(ErdCode.LOWER_OVEN_USER_TEMP_OFFSET)),
-                GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE, self.single_name(ErdCode.UPPER_OVEN_RAW_TEMPERATURE)),
-                GeErdBinarySensor(self, ErdCode.UPPER_OVEN_REMOTE_ENABLED, self.single_name(ErdCode.UPPER_OVEN_REMOTE_ENABLED)),
+                GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE, self._single_name(ErdCode.UPPER_OVEN_COOK_MODE)),
+                GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, self._single_name(ErdCode.UPPER_OVEN_COOK_TIME_REMAINING)),
+                GeErdSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER, self._single_name(ErdCode.UPPER_OVEN_KITCHEN_TIMER)),
+                GeErdSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, self._single_name(ErdCode.UPPER_OVEN_USER_TEMP_OFFSET)),
+                GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_RAW_TEMPERATURE)),
+                GeErdBinarySensor(self, ErdCode.UPPER_OVEN_REMOTE_ENABLED, self._single_name(ErdCode.UPPER_OVEN_REMOTE_ENABLED)),
                 GeOven(self, UPPER_OVEN, False)
             ])
 
@@ -73,12 +74,16 @@ class OvenApi(ApplianceApi):
             
             for (k, v) in cooktop_status.burners.items():
                 if v.exists:
-                    cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, k+".on"))
-                    cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, k+".synchronized"))                    
+                    prop = self._camel_to_snake(k)
+                    cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, prop+".on"))
+                    cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, prop+".synchronized"))                    
                     if not v.on_off_only:
-                        cooktop_entities.append(GeErdSensor(self, ErdCode.COOKTOP_STATUS, k+".power_pct", icon_override="mdi:fire", device_class_override=DEVICE_CLASS_POWER_FACTOR))
+                        cooktop_entities.append(GeErdPropertySensor(self, ErdCode.COOKTOP_STATUS, prop+".power_pct", icon_override="mdi:fire", device_class_override=DEVICE_CLASS_POWER_FACTOR))
 
         return base_entities + oven_entities + cooktop_entities
 
-    def single_name(erd_code: ErdCode):
+    def _single_name(self, erd_code: ErdCode):
         return erd_code.name.replace(UPPER_OVEN+"_","").replace("_", " ").title()
+
+    def _camel_to_snake(self, s):
+        return ''.join(['_'+c.lower() if c.isupper() else c for c in s]).lstrip('_')    

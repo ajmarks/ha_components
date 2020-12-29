@@ -8,7 +8,7 @@ from .ge_erd_entity import GeErdEntity
 
 
 class GeErdBinarySensor(GeErdEntity, BinarySensorEntity):
-    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_override: str, icon_on_override: str, icon_off_override: str, device_class_override: str):
+    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_override: str = None, icon_on_override: str = None, icon_off_override: str = None, device_class_override: str = None):
         super().__init__(api, erd_code, erd_override=erd_override, icon_override=icon_on_override, device_class_override=device_class_override)
         self._icon_on_override = icon_on_override
         self._icon_off_override = icon_off_override

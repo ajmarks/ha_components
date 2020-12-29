@@ -9,7 +9,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from ..entities import GeErdEntity, GeErdSensor, GeErdSwitch
 from ..const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -80,6 +79,7 @@ class ApplianceApi:
 
     def get_all_entities(self) -> List[Entity]:
         """Create Entities for this device."""
+        from ..entities import GeErdSensor, GeErdSwitch
         entities = [
             GeErdSensor(self, ErdCode.CLOCK_TIME),
             GeErdSwitch(self, ErdCode.SABBATH_MODE),
@@ -88,6 +88,7 @@ class ApplianceApi:
 
     def build_entities_list(self) -> None:
         """Build the entities list, adding anything new."""
+        from ..entities import GeErdEntity
         entities = [
             e for e in self.get_all_entities()
             if not isinstance(e, GeErdEntity) or e.erd_code in self.appliance.known_properties

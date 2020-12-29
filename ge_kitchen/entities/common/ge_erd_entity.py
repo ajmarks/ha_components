@@ -18,6 +18,9 @@ class GeErdEntity(GeEntity):
         self._erd_override = erd_override
         self._icon_override = icon_override
         self._device_class_override = device_class_override
+
+        if not self._erd_code_class:
+            self._erd_code_class = ErdCodeClass.GENERAL
         
     @property
     def erd_code(self) -> ErdCodeType:
@@ -62,7 +65,7 @@ class GeErdEntity(GeEntity):
             return str(value)[:-3] if value else ""
         if value is None:
             return None
-        return self.appliance.stringify_erd_value(value, kwargs)
+        return self.appliance.stringify_erd_value(value, **kwargs)
 
     @property
     def _temp_measurement_system(self) -> Optional[ErdMeasurementUnits]:

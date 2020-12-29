@@ -8,7 +8,7 @@ from .ge_erd_sensor import GeErdSensor
 
 class GeErdPropertySensor(GeErdSensor):
     """GE Entity for sensors"""
-    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str, erd_override: str, icon_override: str, device_class_override: str):
+    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str, erd_override: str = None, icon_override: str = None, device_class_override: str = None):
         super().__init__(api, erd_code, erd_override=erd_override, icon_override=icon_override, device_class_override=device_class_override)
         self.erd_property = erd_property
         self._erd_property_cleansed = erd_property.replace(".","_").replace("[","_").replace("]","_")
@@ -29,4 +29,4 @@ class GeErdPropertySensor(GeErdSensor):
             value = magicattr.get(self.appliance.get_erd_value(self.erd_code), self.erd_property)
         except KeyError:
             return None
-        return self._stringify(value, units=self.units)
+        return self._stringify(value, units=self.unit_of_measurement)
