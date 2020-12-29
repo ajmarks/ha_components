@@ -40,6 +40,14 @@ class GeEntity:
     def name(self) -> Optional[str]:
         raise NotImplementedError
 
+    @property
+    def icon(self) -> Optional[str]:
+        return self._get_icon()
+
+    @property
+    def device_class(self) -> Optional[str]:
+        return self._get_device_class()    
+
     def _stringify(self, value: any, **kwargs) -> Optional[str]:
         if isinstance(timedelta):
             return str(value)[:-3] if value else ""
@@ -49,3 +57,9 @@ class GeEntity:
 
     def _boolify(self, value: any) -> Optional[bool]:
         return self.appliance.boolify_erd_value(value)
+
+    def _get_icon(self) -> Optional[str]:
+        return None
+
+    def _get_device_class(self) -> Optional[str]:
+        return None

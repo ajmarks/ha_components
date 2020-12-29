@@ -7,8 +7,8 @@ from .ge_erd_binary_sensor import GeErdBinarySensor
 
 class GeErdPropertyBinarySensor(GeErdBinarySensor):
     """GE Entity for property binary sensors"""
-    def __init__(self, api: "ApplianceApi", erd_code: ErdCodeType, erd_property: str):
-        super().__init__(api, erd_code)
+    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str, erd_override: str, icon_on_override: str, icon_off_override: str, device_class_override: str):
+        super().__init__(api, erd_code, erd_override, icon_on_override, icon_off_override, device_class_override)
         self.erd_property = erd_property
         self._erd_property_cleansed = erd_property.replace(".","_").replace("[","_").replace("]","_")
 
@@ -20,10 +20,6 @@ class GeErdPropertyBinarySensor(GeErdBinarySensor):
         except KeyError:
             return None
         return self._boolify(self.erd_code, value)
-
-    @property
-    def icon(self) -> Optional[str]:
-        return get_erd_icon(self.erd_code, self.is_on)
 
     @property
     def unique_id(self) -> Optional[str]:

@@ -8,8 +8,8 @@ from .ge_erd_sensor import GeErdSensor
 
 class GeErdPropertySensor(GeErdSensor):
     """GE Entity for sensors"""
-    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str):
-        super().__init__(api, erd_code)
+    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str, erd_override: str, icon_override: str, device_class_override: str):
+        super().__init__(api, erd_code, erd_override=erd_override, icon_override=icon_override, device_class_override=device_class_override)
         self.erd_property = erd_property
         self._erd_property_cleansed = erd_property.replace(".","_").replace("[","_").replace("]","_")
 
@@ -30,17 +30,3 @@ class GeErdPropertySensor(GeErdSensor):
         except KeyError:
             return None
         return self._stringify(value, units=self.units)
-
-    @property
-    def measurement_system(self) -> Optional[ErdMeasurementUnits]:
-        return self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
-
-    @property
-    def units(self) -> Optional[str]:
-        return get_erd_units(self.erd_code, self.measurement_system)
-
-    @property
-    def device_class(self) -> Optional[str]:
-        if self.erd_code in TEMPERATURE_ERD_CODES:
-            return "temperature"
-        return None

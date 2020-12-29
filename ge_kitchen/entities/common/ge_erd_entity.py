@@ -1,7 +1,8 @@
 from datetime import timedelta
 from typing import Optional
 
-from gekitchen import ErdCode, ErdCodeType, ErdCodeClass
+from homeassistant.const import DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
+from gekitchen import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
 
 from ge_kitchen.const import DOMAIN
 from ge_kitchen.devices import ApplianceApi
@@ -48,11 +49,8 @@ class GeErdEntity(GeEntity):
     def unique_id(self) -> Optional[str]:
         return f"{DOMAIN}_{self.serial_number}_{self.erd_string.lower()}"
 
-    @property
-    def icon(self) -> Optional[str]:
-        return get_erd_icon(self.erd_code)
-
     def _stringify(self, value: any, **kwargs) -> Optional[str]:
+        """ Stringify a value """
         # perform special processing before passing over to the default method
         if self.erd_code == ErdCode.CLOCK_TIME:
             return value.strftime("%H:%M:%S") if value else None        
@@ -65,3 +63,43 @@ class GeErdEntity(GeEntity):
         if value is None:
             return None
         return self.appliance.stringify_erd_value(value, kwargs)
+
+    @property
+    def _temp_measurement_system(self) -> Optional[ErdMeasurementUnits]:
+        try:
+            value = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
+        except KeyError:
+            return None
+        return value
+
+    def _get_icon(self):
+        """Select an appropriate icon."""
+
+        if self._icon_override:
+            return self._icon_override
+        if not isinstance(self.erd_code, ErdCode):
+            return None
+        if self.erd_code_class == ErdCodeClass.CLOCK:
+            return "mdi:clock"
+        if self.erd_code_class == ErdCodeClass.DOOR:
+            return "mdi:door"
+        if self.erd_code_class == ErdCodeClass.TIMER:
+            return "mdi:timer-outline"
+        if self.erd_code_class == ErdCodeClass.LOCK_CONTROL:
+            return "mdi:lock-outline"
+        if self.erd_code_class == ErdCodeClass.SABBATH_CONTROL:
+            return "mdi:judaism"
+        if self.erd_code_class == ErdCodeClass.COOLING_CONTROL:
+            return "mdi:snowflake"
+        if self.erd_code_class == ErdCodeClass.OVEN_SENSOR:
+            return "mdi:stove"
+        if self.erd_code_class == ErdCodeClass.FRIDGE_SENSOR:
+            return "mdi:fridge-bottom"
+        if self.erd_code_class == ErdCodeClass.FREEZER_SENSOR:
+            return "mdi:fridge-top"
+        if self.erd_code_class == ErdCodeClass.DISPENSER_SENSOR:
+            return "mdi:cup-water"
+        if self.erd_code_class == ErdCodeClass.DISWASHER_SENSOR:
+            return "mdi:dishwasher"
+
+        return None
