@@ -1,5 +1,6 @@
 from typing import Optional
 
+import magicattr
 from gekitchen import ErdCode, ErdCodeType, ErdMeasurementUnits
 from ge_kitchen.devices import ApplianceApi
 from .ge_erd_sensor import GeErdSensor
@@ -10,24 +11,25 @@ class GeErdPropertySensor(GeErdSensor):
     def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str):
         super().__init__(api, erd_code)
         self.erd_property = erd_property
+        self._erd_property_cleansed = erd_property.replace(".","_").replace("[","_").replace("]","_")
 
     @property
     def unique_id(self) -> Optional[str]:
-        return f"{super().unique_id}_{self.erd_property}"
+        return f"{super().unique_id}_{self._erd_property_cleansed}"
 
     @property
     def name(self) -> Optional[str]:
         base_string = super().name
-        property_name = self.erd_property.replace("_", " ").title()
+        property_name = self._erd_property_cleansed.replace("_", " ").title()
         return f"{base_string} {property_name}"
 
     @property
     def state(self) -> Optional[str]:
         try:
-            value = getattr(self.appliance.get_erd_value(self.erd_code), self.erd_property)
+            value = magicattr.get(self.appliance.get_erd_value(self.erd_code), self.erd_property)
         except KeyError:
             return None
-        return stringify_erd_value(self.erd_code, value, self.units)
+        return self.appliance.stringify_erd_value(self.erd_code, value, units=self.units)
 
     @property
     def measurement_system(self) -> Optional[ErdMeasurementUnits]:

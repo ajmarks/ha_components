@@ -1,0 +1,28 @@
+import bidict
+
+from homeassistant.components.water_heater import (
+    SUPPORT_OPERATION_MODE,
+    SUPPORT_TARGET_TEMPERATURE
+)
+from gekitchen import ErdOvenCookMode
+
+GE_OVEN_SUPPORT = (SUPPORT_OPERATION_MODE | SUPPORT_TARGET_TEMPERATURE)
+
+OP_MODE_OFF = "Off"
+OP_MODE_BAKE = "Bake"
+OP_MODE_CONVMULTIBAKE = "Conv. Multi-Bake"
+OP_MODE_CONVBAKE = "Convection Bake"
+OP_MODE_CONVROAST = "Convection Roast"
+OP_MODE_COOK_UNK = "Unknown"
+
+UPPER_OVEN = "UPPER_OVEN"
+LOWER_OVEN = "LOWER_OVEN"
+
+COOK_MODE_OP_MAP = bidict({
+    ErdOvenCookMode.NOMODE: OP_MODE_OFF,
+    ErdOvenCookMode.CONVMULTIBAKE_NOOPTION: OP_MODE_CONVMULTIBAKE,
+    ErdOvenCookMode.CONVBAKE_NOOPTION: OP_MODE_CONVBAKE,
+    ErdOvenCookMode.CONVROAST_NOOPTION: OP_MODE_CONVROAST,
+    ErdOvenCookMode.BAKE_NOOPTION: OP_MODE_BAKE
+})
+

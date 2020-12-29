@@ -1,64 +1,29 @@
 """GE Kitchen Sensor Entities - Oven"""
-import sys
-import os
 import logging
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Set
 
-sys.path.append(os.getcwd() + '/..')
-
-from bidict import bidict
 from gekitchen import (
     ErdCode,
     ErdMeasurementUnits,
     ErdOvenCookMode,
     OVEN_COOK_MODE_MAP,
-)
-from gekitchen.erd_types import (
-    OvenCookMode,
-    OvenCookSetting,
+    OvenCookSetting
 )
 
-from homeassistant.components.water_heater import (
-    SUPPORT_OPERATION_MODE,
-    SUPPORT_TARGET_TEMPERATURE,
-    WaterHeaterEntity,
-)
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
-from ..entities import GeEntity, stringify_erd_value
-from ..const import DOMAIN
-
-if TYPE_CHECKING:
-    from ..appliance_api import ApplianceApi
-    from ..update_coordinator import GeKitchenUpdateCoordinator
+from ge_kitchen.const import DOMAIN
+from ge_kitchen.devices import ApplianceApi
+from ..common import GeWaterHeater
+from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-GE_OVEN_SUPPORT = (SUPPORT_OPERATION_MODE | SUPPORT_TARGET_TEMPERATURE)
-
-OP_MODE_OFF = "Off"
-OP_MODE_BAKE = "Bake"
-OP_MODE_CONVMULTIBAKE = "Conv. Multi-Bake"
-OP_MODE_CONVBAKE = "Convection Bake"
-OP_MODE_CONVROAST = "Convection Roast"
-OP_MODE_COOK_UNK = "Unknown"
-
-UPPER_OVEN = "UPPER_OVEN"
-LOWER_OVEN = "LOWER_OVEN"
-
-COOK_MODE_OP_MAP = bidict({
-    ErdOvenCookMode.NOMODE: OP_MODE_OFF,
-    ErdOvenCookMode.CONVMULTIBAKE_NOOPTION: OP_MODE_CONVMULTIBAKE,
-    ErdOvenCookMode.CONVBAKE_NOOPTION: OP_MODE_CONVBAKE,
-    ErdOvenCookMode.CONVROAST_NOOPTION: OP_MODE_CONVROAST,
-    ErdOvenCookMode.BAKE_NOOPTION: OP_MODE_BAKE
-})
-
-class GeOvenHeaterEntity(GeEntity, WaterHeaterEntity):
-    """Water Heater entity for ovens"""
+class GeOven(GeWaterHeater):
+    """GE Appliance Oven"""
 
     icon = "mdi:stove"
 
-    def __init__(self, api: "ApplianceApi", oven_select: str = UPPER_OVEN, two_cavity: bool = False):
+    def __init__(self, api: ApplianceApi, oven_select: str = UPPER_OVEN, two_cavity: bool = False):
         if oven_select not in (UPPER_OVEN, LOWER_OVEN):
             raise ValueError(f"Invalid `oven_select` value ({oven_select})")
 
@@ -199,7 +164,7 @@ class GeOvenHeaterEntity(GeEntity, WaterHeaterEntity):
     def display_state(self) -> Optional[str]:
         erd_code = self.get_erd_code("CURRENT_STATE")
         erd_value = self.appliance.get_erd_value(erd_code)
-        return stringify_erd_value(erd_code, erd_value, self.temperature_unit)
+        return self.appliance.stringify_erd_value(erd_code, erd_value, units=self.temperature_unit)
 
     @property
     def device_state_attributes(self) -> Optional[Dict[str, Any]]:
