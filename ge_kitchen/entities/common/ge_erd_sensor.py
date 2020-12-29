@@ -6,7 +6,7 @@ from gekitchen import ErdCode, ErdCodeClass, ErdMeasurementUnits
 
 from .ge_erd_entity import GeErdEntity
 
-class GeErdSensor(GeErdEntity, Entity):
+class GeErdSensor(GeErdEntity, Entity):  
     """GE Entity for sensors"""
     @property
     def state(self) -> Optional[str]:
@@ -14,7 +14,7 @@ class GeErdSensor(GeErdEntity, Entity):
             value = self.appliance.get_erd_value(self.erd_code)
         except KeyError:
             return None
-        return self._stringify_erd_value(self.erd_code, value, units=self.units)
+        return self._stringify(value, units=self.units)
 
     @property
     def measurement_system(self) -> Optional[ErdMeasurementUnits]:

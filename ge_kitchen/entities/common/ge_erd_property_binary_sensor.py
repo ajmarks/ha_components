@@ -19,7 +19,7 @@ class GeErdPropertyBinarySensor(GeErdBinarySensor):
             value = magicattr.get(self.appliance.get_erd_value(self.erd_code), self.erd_property)
         except KeyError:
             return None
-        return self.appliance.boolify_erd_value(self.erd_code, value)
+        return self._boolify(self.erd_code, value)
 
     @property
     def icon(self) -> Optional[str]:

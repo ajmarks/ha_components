@@ -10,11 +10,13 @@ from .ge_entity import GeEntity
 
 class GeErdEntity(GeEntity):
     """Parent class for GE entities tied to a specific ERD"""
-    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_override: str = None):
+    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_override: str = None, icon_override: str = None, device_class_override: str = None):
         super().__init__(api)
         self._erd_code = api.appliance.translate_erd_code(erd_code)
         self._erd_code_class = api.appliance.get_erd_code_class(self._erd_code)
         self._erd_override = erd_override
+        self._icon_override = icon_override
+        self._device_class_override = device_class_override
         
     @property
     def erd_code(self) -> ErdCodeType:
@@ -50,7 +52,7 @@ class GeErdEntity(GeEntity):
     def icon(self) -> Optional[str]:
         return get_erd_icon(self.erd_code)
 
-    def _stringify_erd_value(self, value: any, **kwargs) -> Optional[str]:
+    def _stringify(self, value: any, **kwargs) -> Optional[str]:
         # perform special processing before passing over to the default method
         if self.erd_code == ErdCode.CLOCK_TIME:
             return value.strftime("%H:%M:%S") if value else None        
@@ -63,6 +65,3 @@ class GeErdEntity(GeEntity):
         if value is None:
             return None
         return self.appliance.stringify_erd_value(value, kwargs)
-
-    def _boolify_erd_value(self, value: any) -> Optional[bool]:
-        return self.appliance.boolify_erd_value(value)

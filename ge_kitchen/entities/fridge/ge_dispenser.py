@@ -115,10 +115,10 @@ class GeDispenser(GeWaterHeater):
         
         data["target_temperature"] = self.target_temperature
         if self.hot_water_status.status in [ErdHotWaterStatus.FAULT_LOCKED_OUT, ErdHotWaterStatus.FAULT_NEED_CLEARED]:
-            data["fault_status"] = self._stringify_erd_value(self.hot_water_status.status)
+            data["fault_status"] = self._stringify(self.hot_water_status.status)
         if self.supports_k_cups:
-            data["pod_status"] = self._stringify_erd_value(self.hot_water_status.pod_status)
+            data["pod_status"] = self._stringify(self.hot_water_status.pod_status)
         if self.hot_water_status.time_until_ready:
-            data["time_until_ready"] = self._stringify_erd_value(self.hot_water_status.time_until_ready)
+            data["time_until_ready"] = self._stringify(self.hot_water_status.time_until_ready)
         if self.hot_water_status.tank_full != ErdFullNotFull.NA:
-            data["tank_status"] = self._stringify_erd_value(self.hot_water_status.tank_full)
+            data["tank_status"] = self._stringify(self.hot_water_status.tank_full)

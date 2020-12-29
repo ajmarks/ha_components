@@ -30,7 +30,7 @@ class GeFridge(GeAbstractFridge):
         filter_status: ErdFilterStatus = self.appliance.get_erd_value(ErdCode.WATER_FILTER_STATUS)
         if filter_status == ErdFilterStatus.NA:
             return {}
-        return {"water_filter_status": filter_status.name.replace("_", " ").title()}
+        return {"water_filter_status": self._stringify(filter_status)}
 
     @property
     def door_state_attrs(self) -> Dict[str, Any]:

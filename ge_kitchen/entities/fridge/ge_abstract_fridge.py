@@ -142,12 +142,12 @@ class GeAbstractFridge(GeWaterHeater):
         erd_val: FridgeIceBucketStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_BUCKET_STATUS)
         ice_bucket_status = getattr(erd_val, f"state_full_{self.heater_type}")
         if ice_bucket_status != ErdFullNotFull.NA:
-            data["ice_bucket"] = ice_bucket_status.name.replace("_", " ").title()
+            data["ice_bucket"] = self._stringify(ice_bucket_status)
 
         erd_val: IceMakerControlStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_CONTROL)
         ice_control_status = getattr(erd_val, f"status_{self.heater_type}")
         if ice_control_status != ErdOnOff.NA:
-            data["ice_maker"] = ice_control_status.name.replace("_", " ").lower()
+            data["ice_maker"] = self._stringify(ice_control_status)
 
         return data
 

@@ -28,5 +28,5 @@ class GeFreezer(GeAbstractFridge):
     def door_state_attrs(self) -> Optional[Dict[str, Any]]:
         door_status = self.door_status.freezer
         if door_status and door_status != ErdDoorStatus.NA:
-            return {ATTR_DOOR_STATUS: door_status.name.title()}
+            return {ATTR_DOOR_STATUS: self._stringify(door_status)}
         return {}

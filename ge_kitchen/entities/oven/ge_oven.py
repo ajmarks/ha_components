@@ -164,7 +164,7 @@ class GeOven(GeWaterHeater):
     def display_state(self) -> Optional[str]:
         erd_code = self.get_erd_code("CURRENT_STATE")
         erd_value = self.appliance.get_erd_value(erd_code)
-        return self.appliance.stringify_erd_value(erd_code, erd_value, units=self.temperature_unit)
+        return self._stringify(erd_value, units=self.temperature_unit)
 
     @property
     def device_state_attributes(self) -> Optional[Dict[str, Any]]:
@@ -181,11 +181,11 @@ class GeOven(GeWaterHeater):
         kitchen_timer = self.get_erd_value("KITCHEN_TIMER")
         delay_time = self.get_erd_value("DELAY_TIME_REMAINING")
         if elapsed_time:
-            data["cook_time_elapsed"] = str(elapsed_time)
+            data["cook_time_elapsed"] = self._stringify(elapsed_time)
         if cook_time_left:
-            data["cook_time_left"] = str(cook_time_left)
+            data["cook_time_left"] = self._stringify(cook_time_left)
         if kitchen_timer:
-            data["cook_time_remaining"] = str(kitchen_timer)
+            data["cook_time_remaining"] = self._stringify(kitchen_timer)
         if delay_time:
-            data["delay_time_remaining"] = str(delay_time)
+            data["delay_time_remaining"] = self._stringify(delay_time)
         return data
