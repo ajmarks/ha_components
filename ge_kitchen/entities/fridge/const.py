@@ -11,6 +11,8 @@ HEATER_TYPE_FREEZER = "freezer"
 HEATER_TYPE_DISPENSER = "dispenser"
 
 # Fridge/Freezer
+OP_MODE_OFF = "Off"
+OP_MODE_HEAT = "Heat"
 OP_MODE_K_CUP = "K-Cup Brewing"
 OP_MODE_NORMAL = "Normal"
 OP_MODE_SABBATH = "Sabbath Mode"

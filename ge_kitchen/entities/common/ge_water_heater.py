@@ -21,7 +21,7 @@ class GeWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
         available = super().available
         if not available:
             app = self.appliance
-            _LOGGER.critical(f"{self.name} unavailable. Appliance info: Availaible - {app._available} and Init - {app.initialized}")
+            _LOGGER.critical(f"{self.name} unavailable. Appliance info: Available - {app._available} and Init - {app.initialized}")
         return available
 
     @property

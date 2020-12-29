@@ -1,20 +1,27 @@
 """GE Kitchen Sensor Entities - Dispenser"""
 
 import logging
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
+
+from homeassistant.const import ATTR_TEMPERATURE, TEMP_FAHRENHEIT
+from homeassistant.util.temperature import convert as convert_temperature
 
 from gekitchen import (
     ErdCode,
+    ErdHotWaterStatus,
     ErdPresent,
     ErdPodStatus,
+    ErdFullNotFull,
     HotWaterStatus
 )
 
 from ..common import GeWaterHeater
 from .const import (
-    HEATER_TYPE_DISPENSER, OP_MODE_K_CUP,
-    OP_MODE_NORMAL,
-    OP_MODE_SABBATH
+    HEATER_TYPE_DISPENSER, 
+    OP_MODE_OFF,
+    OP_MODE_HEAT,
+    OP_MODE_SABBATH,
+    GE_FRIDGE_SUPPORT
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,10 +29,13 @@ _LOGGER = logging.getLogger(__name__)
 class GeDispenser(GeWaterHeater):
     """Entity for in-fridge dispensers"""
     
-    # These values are from FridgeHotWaterFragment.smali in the android app
-    min_temp = 90
-    max_temp = 185
-
+    # These values are from FridgeHotWaterFragment.smali in the android app (in imperial units)
+    # However, the k-cup temperature max appears to be 190.  Since there doesn't seem to be any
+    # Difference between normal heating and k-cup heating based on what I see in the app, 
+    # we will just set the max temp to 190 instead of the 185
+    _min_temp = 90
+    _max_temp = 190 #185
+    icon = "mdi:cup-water"
     heater_type = HEATER_TYPE_DISPENSER
 
     @property
@@ -42,29 +52,74 @@ class GeDispenser(GeWaterHeater):
     @property
     def operation_list(self) -> List[str]:
         """Supported Operations List"""
-        ops_list = [OP_MODE_NORMAL, OP_MODE_SABBATH]
-        if self.supports_k_cups:
-            ops_list.append(OP_MODE_K_CUP)
+        ops_list = [OP_MODE_OFF, OP_MODE_HEAT, OP_MODE_SABBATH]
         return ops_list
 
     async def async_set_temperature(self, **kwargs):
-        pass
+        target_temp = kwargs.get(ATTR_TEMPERATURE)
+        if target_temp is None:
+            return
+        if not self.min_temp <= target_temp <= self.max_temp:
+            raise ValueError("Tried to set temperature out of device range")
+    
+        await self.appliance.async_set_erd_value(ErdCode.HOT_WATER_SET_TEMP, target_temp)
+
+    async def async_set_sabbath_mode(self, sabbath_on: bool = True):
+        """Set sabbath mode if it's changed"""
+        if self.appliance.get_erd_value(ErdCode.SABBATH_MODE) == sabbath_on:
+            return
+        await self.appliance.async_set_erd_value(ErdCode.SABBATH_MODE, sabbath_on)
 
     async def async_set_operation_mode(self, operation_mode):
-        pass
+        """Set the operation mode."""
+        if operation_mode not in self.operation_list:
+            raise ValueError("Invalid operation mode")
+        if operation_mode == self.current_operation:
+            return
+        sabbath_mode = operation_mode == OP_MODE_SABBATH
+        await self.async_set_sabbath_mode(sabbath_mode)
+        if not sabbath_mode:
+            if operation_mode == OP_MODE_HEAT:
+                await self.async_set_temperature(temperature=self.max_temp)
+            else:
+                await self.async_set_temperature(temperature=self.min_temp)
 
     @property
     def supported_features(self):
-        pass
+        return GE_FRIDGE_SUPPORT
 
     @property
     def current_operation(self) -> str:
         """Get the current operation mode."""
         if self.appliance.get_erd_value(ErdCode.SABBATH_MODE):
             return OP_MODE_SABBATH
-        return OP_MODE_NORMAL
+        if self.hot_water_status.status in (ErdHotWaterStatus.HEATING, ErdHotWaterStatus.READY):
+            return OP_MODE_HEAT
+        return OP_MODE_OFF
 
     @property
     def current_temperature(self) -> Optional[int]:
         """Return the current temperature."""
         return self.hot_water_status.current_temp
+
+    @property
+    def min_temp(self):
+        """Return the minimum temperature."""
+        return convert_temperature(self._min_temp, TEMP_FAHRENHEIT, self.temperature_unit)
+
+    @property
+    def max_temp(self):
+        """Return the maximum temperature."""
+        return convert_temperature(self._max_temp, TEMP_FAHRENHEIT, self.temperature_unit)
+
+    @property
+    def other_state_attrs(self) -> Dict[str, Any]:
+        data = {}
+        if self.hot_water_status.status in [ErdHotWaterStatus.FAULT_LOCKED_OUT, ErdHotWaterStatus.FAULT_NEED_CLEARED]:
+            data["fault_status"] = self.hot_water_status.status.name.replace("_", " ").title()
+        if self.supports_k_cups:
+            data["pod_status"] = self.hot_water_status.pod_status.name.replace("_", "").title()
+        if self.hot_water_status.time_until_ready:
+            data["time_until_ready"] = str(self.hot_water_status.time_until_ready)[:-3]
+        if self.hot_water_status.tank_full != ErdFullNotFull.NA:
+            data["tank_status"] = self.hot_water_status.tank_full.name.replace("_", " ").title()
