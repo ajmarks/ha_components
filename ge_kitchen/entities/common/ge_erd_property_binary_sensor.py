@@ -2,7 +2,7 @@ from typing import Optional
 
 import magicattr
 from gekitchensdk import ErdCodeType
-from ge_kitchen.devices import ApplianceApi
+from ...devices import ApplianceApi
 from .ge_erd_binary_sensor import GeErdBinarySensor
 
 class GeErdPropertyBinarySensor(GeErdBinarySensor):

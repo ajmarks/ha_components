@@ -11,8 +11,8 @@ from gekitchensdk import (
 )
 
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
-from ge_kitchen.const import DOMAIN
-from ge_kitchen.devices import ApplianceApi
+from ...const import DOMAIN
+from ...devices import ApplianceApi
 from ..common import GeWaterHeater
 from .const import *
 

@@ -8,7 +8,7 @@ from homeassistant.const import (
     TEMP_CELSIUS
 )
 from gekitchensdk import ErdCode, ErdMeasurementUnits
-from ge_kitchen.const import DOMAIN
+from ...const import DOMAIN
 from .ge_erd_entity import GeEntity
 
 _LOGGER = logging.getLogger(__name__)

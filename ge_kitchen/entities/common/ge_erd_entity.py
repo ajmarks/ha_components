@@ -4,8 +4,8 @@ from typing import Optional
 from homeassistant.const import DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from gekitchensdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
 
-from ge_kitchen.const import DOMAIN
-from ge_kitchen.devices import ApplianceApi
+from ...const import DOMAIN
+from ...devices import ApplianceApi
 from .ge_entity import GeEntity
 
 

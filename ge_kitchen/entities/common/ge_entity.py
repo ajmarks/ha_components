@@ -2,7 +2,7 @@ from datetime import timedelta
 from typing import Optional, Dict, Any
 
 from gekitchensdk import GeAppliance
-from ge_kitchen.devices import ApplianceApi
+from ...devices import ApplianceApi
 
 class GeEntity:
     """Base class for all GE Entities"""

@@ -3,7 +3,7 @@ from typing import Optional
 from homeassistant.components.binary_sensor import BinarySensorEntity
 
 from gekitchensdk import ErdCode, ErdCodeType, ErdCodeClass
-from ge_kitchen.devices import ApplianceApi
+from ...devices import ApplianceApi
 from .ge_erd_entity import GeErdEntity
 
 

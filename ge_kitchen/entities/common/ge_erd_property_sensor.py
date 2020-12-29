@@ -2,7 +2,7 @@ from typing import Optional
 
 import magicattr
 from gekitchensdk import ErdCode, ErdCodeType, ErdMeasurementUnits
-from ge_kitchen.devices import ApplianceApi
+from ...devices import ApplianceApi
 from .ge_erd_sensor import GeErdSensor
 
 

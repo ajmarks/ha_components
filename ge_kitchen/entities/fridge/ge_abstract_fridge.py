@@ -17,7 +17,7 @@ from gekitchensdk import (
     FridgeIceBucketStatus,
     IceMakerControlStatus
 )
-from ge_kitchen.const import DOMAIN
+from ...const import DOMAIN
 from ..common import GeWaterHeater
 from .const import *
 
