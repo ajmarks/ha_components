@@ -6,7 +6,7 @@ from typing import List, Optional, Dict, Any
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_FAHRENHEIT
 from homeassistant.util.temperature import convert as convert_temperature
 
-from gekitchen import (
+from gekitchensdk import (
     ErdCode,
     ErdHotWaterStatus,
     ErdPresent,

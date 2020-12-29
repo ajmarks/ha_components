@@ -8,7 +8,7 @@ from homeassistant.const import (
     TEMP_FAHRENHEIT
 )
 from homeassistant.helpers.entity import Entity
-from gekitchen import ErdCode, ErdCodeClass, ErdMeasurementUnits
+from gekitchensdk import ErdCode, ErdCodeClass, ErdMeasurementUnits
 
 from .ge_erd_entity import GeErdEntity
 

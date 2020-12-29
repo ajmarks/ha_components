@@ -2,7 +2,7 @@ import logging
 from typing import List
 
 from homeassistant.helpers.entity import Entity
-from gekitchen.erd import ErdCode, ErdApplianceType
+from gekitchensdk.erd import ErdCode, ErdApplianceType
 
 from .base import ApplianceApi
 from ..entities import GeErdSensor, GeDishwasherControlLockedSwitch

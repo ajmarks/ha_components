@@ -3,7 +3,7 @@ from typing import List
 
 from homeassistant.const import DEVICE_CLASS_POWER_FACTOR
 from homeassistant.helpers.entity import Entity
-from gekitchen import (
+from gekitchensdk import (
     ErdCode, 
     ErdApplianceType, 
     OvenConfiguration, 

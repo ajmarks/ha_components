@@ -1,5 +1,5 @@
 """Constants for the ge_kitchen integration."""
-from gekitchen.const import LOGIN_URL
+from gekitchensdk.const import LOGIN_URL
 
 DOMAIN = "ge_kitchen"
 

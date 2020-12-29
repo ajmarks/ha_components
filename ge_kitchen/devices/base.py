@@ -2,8 +2,8 @@ import asyncio
 import logging
 from typing import Dict, List, Optional
 
-from gekitchen import GeAppliance
-from gekitchen.erd import ErdCode, ErdApplianceType
+from gekitchensdk import GeAppliance
+from gekitchensdk.erd import ErdCode, ErdApplianceType
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity

@@ -2,7 +2,7 @@
 import logging
 from typing import Any, Dict, List, Optional, Set
 
-from gekitchen import (
+from gekitchensdk import (
     ErdCode,
     ErdMeasurementUnits,
     ErdOvenCookMode,

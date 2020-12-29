@@ -2,7 +2,7 @@
 import logging
 from typing import Any, Dict, Optional
 
-from gekitchen import (
+from gekitchensdk import (
     ErdCode,
     ErdDoorStatus
 )

@@ -1,7 +1,7 @@
 import logging
 from typing import Type
 
-from gekitchen.erd import ErdApplianceType
+from gekitchensdk.erd import ErdApplianceType
 
 from .base import ApplianceApi
 from .oven import OvenApi

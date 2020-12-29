@@ -1,7 +1,7 @@
 from typing import Optional
 
 import magicattr
-from gekitchen import ErdCodeType
+from gekitchensdk import ErdCodeType
 from ge_kitchen.devices import ApplianceApi
 from .ge_erd_binary_sensor import GeErdBinarySensor
 

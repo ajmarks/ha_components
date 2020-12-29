@@ -2,7 +2,7 @@
   "domain": "ge_kitchen",
   "name": "GE Kitchen",
   "config_flow": true,
-  "documentation": "https://www.home-assistant.io/integrations/ge_kitchen",
-  "requirements": ["gekitchen==0.2.19","magicattr==0.1.15"],
-  "codeowners": ["@ajmarks"]
+  "documentation": "https://github.com/simbaja/ha_components",
+  "requirements": ["gekitchensdk==0.3.0","magicattr==0.1.15"],
+  "codeowners": ["@simbaja"]
 }

@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 
-from gekitchen import (
+from gekitchensdk import (
     ErdCode,
     ErdOnOff,
     ErdFullNotFull,

@@ -4,7 +4,7 @@ import asyncio
 import logging
 from typing import Any, Dict, Iterable, Optional, Tuple
 
-from gekitchen import (
+from gekitchensdk import (
     EVENT_APPLIANCE_INITIAL_UPDATE,
     EVENT_APPLIANCE_UPDATE_RECEIVED,
     EVENT_CONNECTED,

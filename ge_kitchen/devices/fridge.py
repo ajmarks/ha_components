@@ -4,7 +4,7 @@ import logging
 from typing import List
 
 from homeassistant.helpers.entity import Entity
-from gekitchen import (
+from gekitchensdk import (
     ErdCode, 
     ErdApplianceType,
     ErdOnOff,

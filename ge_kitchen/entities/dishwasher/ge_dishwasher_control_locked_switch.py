@@ -1,4 +1,4 @@
-from gekitchen import ErdCode, ErdOperatingMode
+from gekitchensdk import ErdCode, ErdOperatingMode
 
 from ..common import GeErdSwitch
 

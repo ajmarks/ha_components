@@ -7,7 +7,7 @@ import aiohttp
 import asyncio
 import async_timeout
 
-from gekitchen import GeAuthFailedError, GeNotAuthenticatedError, GeGeneralServerError, async_get_oauth2_token
+from gekitchensdk import GeAuthFailedError, GeNotAuthenticatedError, GeGeneralServerError, async_get_oauth2_token
 import voluptuous as vol
 
 from homeassistant import config_entries, core

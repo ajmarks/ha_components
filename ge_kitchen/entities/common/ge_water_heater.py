@@ -7,7 +7,7 @@ from homeassistant.const import (
     TEMP_FAHRENHEIT,
     TEMP_CELSIUS
 )
-from gekitchen import ErdCode, ErdMeasurementUnits
+from gekitchensdk import ErdCode, ErdMeasurementUnits
 from ge_kitchen.const import DOMAIN
 from .ge_erd_entity import GeEntity
 

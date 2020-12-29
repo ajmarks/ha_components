@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Optional, Dict, Any
 
-from gekitchen import GeAppliance
+from gekitchensdk import GeAppliance
 from ge_kitchen.devices import ApplianceApi
 
 class GeEntity:

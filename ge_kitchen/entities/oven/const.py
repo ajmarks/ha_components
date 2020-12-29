@@ -4,7 +4,7 @@ from homeassistant.components.water_heater import (
     SUPPORT_OPERATION_MODE,
     SUPPORT_TARGET_TEMPERATURE
 )
-from gekitchen import ErdOvenCookMode
+from gekitchensdk import ErdOvenCookMode
 
 GE_OVEN_SUPPORT = (SUPPORT_OPERATION_MODE | SUPPORT_TARGET_TEMPERATURE)
 

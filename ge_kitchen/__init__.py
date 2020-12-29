@@ -5,7 +5,7 @@ import async_timeout
 import logging
 import voluptuous as vol
 
-from gekitchen import GeAuthFailedError, GeGeneralServerError, GeNotAuthenticatedError
+from gekitchensdk import GeAuthFailedError, GeGeneralServerError, GeNotAuthenticatedError
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
