@@ -5,7 +5,7 @@ from homeassistant.helpers.entity import Entity
 from gekitchen.erd import ErdCode, ErdApplianceType
 
 from .base import ApplianceApi
-from ..entities import GeErdSensor, GeErdSwitch, GeFridgeEntity, GeFreezerEntity
+from ..entities import GeErdSensor, GeDishwasherControlLockedSwitch
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,6 +18,7 @@ class DishwasherApi(ApplianceApi):
         base_entities = super().get_all_entities()
 
         dishwasher_entities = [
+            GeDishwasherControlLockedSwitch(self, ErdCode.USER_INTERFACE_LOCKED),
             GeErdSensor(self, ErdCode.CYCLE_NAME),
             GeErdSensor(self, ErdCode.CYCLE_STATE),
             GeErdSensor(self, ErdCode.OPERATING_MODE),
