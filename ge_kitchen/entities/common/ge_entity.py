@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Optional, Dict, Any
 
 from gekitchen import GeAppliance
@@ -38,3 +39,13 @@ class GeEntity:
     @property
     def name(self) -> Optional[str]:
         raise NotImplementedError
+
+    def _stringify_erd_value(self, value: any, **kwargs) -> Optional[str]:
+        if isinstance(timedelta):
+            return str(value)[:-3] if value else ""
+        if value is None:
+            return None
+        return self.appliance.stringify_erd_value(value, kwargs)
+
+    def _boolify_erd_value(self, value: any) -> Optional[bool]:
+        return self.appliance.boolify_erd_value(value)

@@ -18,8 +18,7 @@ from gekitchen import (
 from ..common import GeWaterHeater
 from .const import (
     HEATER_TYPE_DISPENSER, 
-    OP_MODE_OFF,
-    OP_MODE_HEAT,
+    OP_MODE_NORMAL,
     OP_MODE_SABBATH,
     GE_FRIDGE_SUPPORT
 )
@@ -52,7 +51,7 @@ class GeDispenser(GeWaterHeater):
     @property
     def operation_list(self) -> List[str]:
         """Supported Operations List"""
-        ops_list = [OP_MODE_OFF, OP_MODE_HEAT, OP_MODE_SABBATH]
+        ops_list = [OP_MODE_NORMAL, OP_MODE_SABBATH]
         return ops_list
 
     async def async_set_temperature(self, **kwargs):
@@ -78,11 +77,6 @@ class GeDispenser(GeWaterHeater):
             return
         sabbath_mode = operation_mode == OP_MODE_SABBATH
         await self.async_set_sabbath_mode(sabbath_mode)
-        if not sabbath_mode:
-            if operation_mode == OP_MODE_HEAT:
-                await self.async_set_temperature(temperature=self.max_temp)
-            else:
-                await self.async_set_temperature(temperature=self.min_temp)
 
     @property
     def supported_features(self):
@@ -93,14 +87,17 @@ class GeDispenser(GeWaterHeater):
         """Get the current operation mode."""
         if self.appliance.get_erd_value(ErdCode.SABBATH_MODE):
             return OP_MODE_SABBATH
-        if self.hot_water_status.status in (ErdHotWaterStatus.HEATING, ErdHotWaterStatus.READY):
-            return OP_MODE_HEAT
-        return OP_MODE_OFF
+        return OP_MODE_NORMAL
 
     @property
     def current_temperature(self) -> Optional[int]:
         """Return the current temperature."""
         return self.hot_water_status.current_temp
+
+    @property
+    def target_temperature(self) -> Optional[int]:
+        """Return the target temperature."""
+        return self.appliance.get_erd_value(ErdCode.HOT_WATER_SET_TEMP)
 
     @property
     def min_temp(self):
@@ -115,11 +112,13 @@ class GeDispenser(GeWaterHeater):
     @property
     def other_state_attrs(self) -> Dict[str, Any]:
         data = {}
+        
+        data["target_temperature"] = self.target_temperature
         if self.hot_water_status.status in [ErdHotWaterStatus.FAULT_LOCKED_OUT, ErdHotWaterStatus.FAULT_NEED_CLEARED]:
-            data["fault_status"] = self.hot_water_status.status.name.replace("_", " ").title()
+            data["fault_status"] = self._stringify_erd_value(self.hot_water_status.status)
         if self.supports_k_cups:
-            data["pod_status"] = self.hot_water_status.pod_status.name.replace("_", "").title()
+            data["pod_status"] = self._stringify_erd_value(self.hot_water_status.pod_status)
         if self.hot_water_status.time_until_ready:
-            data["time_until_ready"] = str(self.hot_water_status.time_until_ready)[:-3]
+            data["time_until_ready"] = self._stringify_erd_value(self.hot_water_status.time_until_ready)
         if self.hot_water_status.tank_full != ErdFullNotFull.NA:
-            data["tank_status"] = self.hot_water_status.tank_full.name.replace("_", " ").title()
+            data["tank_status"] = self._stringify_erd_value(self.hot_water_status.tank_full)

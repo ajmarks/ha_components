@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Optional
 
 from gekitchen import ErdCode, ErdCodeType, ErdCodeClass
@@ -57,11 +58,11 @@ class GeErdEntity(GeEntity):
             return f"{value}"
         if self.erd_code_class == ErdCodeClass.NON_ZERO_TEMPERATURE:
             return f"{value}" if value else ""
-        if self.erd_code_class == ErdCodeClass.TIMER:
+        if self.erd_code_class == ErdCodeClass.TIMER or isinstance(value, timedelta):
             return str(value)[:-3] if value else ""
         if value is None:
             return None
-        return self.appliance.stringify_erd_value(self.erd_code, value, kwargs)
+        return self.appliance.stringify_erd_value(value, kwargs)
 
     def _boolify_erd_value(self, value: any) -> Optional[bool]:
-        return self.appliance.boolify_erd_value(self.erd_code, value)
+        return self.appliance.boolify_erd_value(value)
