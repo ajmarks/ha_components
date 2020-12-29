@@ -81,6 +81,8 @@ class GeErdEntity(GeEntity):
             return None
         if self.erd_code_class == ErdCodeClass.CLOCK:
             return "mdi:clock"
+        if self.erd_code_class == ErdCodeClass.COUNTER:
+            return "mdi:counter"
         if self.erd_code_class == ErdCodeClass.DOOR:
             return "mdi:door"
         if self.erd_code_class == ErdCodeClass.TIMER:

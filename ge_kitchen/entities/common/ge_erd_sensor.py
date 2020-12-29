@@ -47,3 +47,11 @@ class GeErdSensor(GeErdEntity, Entity):
             return DEVICE_CLASS_BATTERY
 
         return None
+
+    def _get_icon(self):
+        if self.erd_code_class == ErdCodeClass.DOOR:
+            if self.state.lower().endswith("open"):
+                return "mdi:door-open"
+            if self.state.lower().endswith("closed"):
+                return "mdi:door-closed"
+        return super()._get_icon()

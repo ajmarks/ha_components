@@ -1,6 +1,7 @@
 import logging
 from typing import List
 
+from homeassistant.const import DEVICE_CLASS_POWER_FACTOR
 from homeassistant.helpers.entity import Entity
 from gekitchen import (
     ErdCode, 
@@ -16,7 +17,6 @@ from ..entities import (
     GeErdBinarySensor, 
     GeErdPropertyBinarySensor,
     GeOven, 
-    GeErdCooktopBurnerSensor, 
     UPPER_OVEN, 
     LOWER_OVEN
 )
@@ -76,7 +76,7 @@ class OvenApi(ApplianceApi):
                     cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, k+".on"))
                     cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, k+".synchronized"))                    
                     if not v.on_off_only:
-                        cooktop_entities.append(GeErdCooktopBurnerSensor(self, ErdCode.COOKTOP_STATUS, k+".power_pct"))
+                        cooktop_entities.append(GeErdSensor(self, ErdCode.COOKTOP_STATUS, k+".power_pct", icon_override="mdi:fire", device_class_override=DEVICE_CLASS_POWER_FACTOR))
 
         return base_entities + oven_entities + cooktop_entities
 
