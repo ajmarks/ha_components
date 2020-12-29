@@ -101,7 +101,7 @@ class GeErdEntity(GeEntity):
             return "mdi:fridge-top"
         if self.erd_code_class == ErdCodeClass.DISPENSER_SENSOR:
             return "mdi:cup-water"
-        if self.erd_code_class == ErdCodeClass.DISWASHER_SENSOR:
+        if self.erd_code_class == ErdCodeClass.DISHWASHER_SENSOR:
             return "mdi:dishwasher"
 
         return None
