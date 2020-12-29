@@ -23,7 +23,6 @@ class DishwasherApi(ApplianceApi):
             GeErdSensor(self, ErdCode.OPERATING_MODE),
             GeErdSensor(self, ErdCode.PODS_REMAINING_VALUE),
             GeErdSensor(self, ErdCode.RINSE_AGENT),
-            GeErdSensor(self, ErdCode.SOUND),
             GeErdSensor(self, ErdCode.TIME_REMAINING),
         ]
         entities = base_entities + dishwasher_entities
