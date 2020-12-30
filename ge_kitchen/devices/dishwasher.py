@@ -18,7 +18,7 @@ class DishwasherApi(ApplianceApi):
         base_entities = super().get_all_entities()
 
         dishwasher_entities = [
-            GeDishwasherControlLockedSwitch(self, ErdCode.USER_INTERFACE_LOCKED),
+            #GeDishwasherControlLockedSwitch(self, ErdCode.USER_INTERFACE_LOCKED),
             GeErdSensor(self, ErdCode.CYCLE_NAME),
             GeErdSensor(self, ErdCode.CYCLE_STATE),
             GeErdSensor(self, ErdCode.OPERATING_MODE),
