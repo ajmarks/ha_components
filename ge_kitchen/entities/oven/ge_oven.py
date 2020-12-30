@@ -33,7 +33,10 @@ class GeOven(GeWaterHeater):
 
     @property
     def supported_features(self):
-        return GE_OVEN_SUPPORT
+        if self.remote_enabled:
+            return GE_OVEN_SUPPORT
+        else:
+            return SUPPORT_NONE
 
     @property
     def unique_id(self) -> str:
@@ -62,6 +65,12 @@ class GeOven(GeWaterHeater):
     def get_erd_code(self, suffix: str) -> ErdCode:
         """Return the appropriate ERD code for this oven_select"""
         return ErdCode[f"{self.oven_select}_{suffix}"]
+
+    @property
+    def remote_enabled(self) -> bool:
+        """Returns whether the oven is remote enabled"""
+        value = self.get_erd_value("REMOTE_ENABLED")
+        return value == True
 
     @property
     def current_temperature(self) -> Optional[int]:
@@ -124,37 +133,40 @@ class GeOven(GeWaterHeater):
     async def async_set_operation_mode(self, operation_mode: str):
         """Set the operation mode."""
 
-        erd_cook_mode = COOK_MODE_OP_MAP.inverse[operation_mode]
-        # Pick a temperature to set.  If there's not one already set, default to
-        # good old 350F.
-        if operation_mode == OP_MODE_OFF:
-            target_temp = 0
-        elif self.target_temperature:
-            target_temp = self.target_temperature
-        elif self.temperature_unit == TEMP_FAHRENHEIT:
-            target_temp = 350
-        else:
-            target_temp = 177
+        if self.remote_enabled:
+            erd_cook_mode = COOK_MODE_OP_MAP.inverse[operation_mode]
+            # Pick a temperature to set.  If there's not one already set, default to
+            # good old 350F.
+            if operation_mode == OP_MODE_OFF:
+                target_temp = 0
+            elif self.target_temperature:
+                target_temp = self.target_temperature
+            elif self.temperature_unit == TEMP_FAHRENHEIT:
+                target_temp = 350
+            else:
+                target_temp = 177
 
-        new_cook_mode = OvenCookSetting(OVEN_COOK_MODE_MAP[erd_cook_mode], target_temp)
-        erd_code = self.get_erd_code("COOK_MODE")
-        await self.appliance.async_set_erd_value(erd_code, new_cook_mode)
+            new_cook_mode = OvenCookSetting(OVEN_COOK_MODE_MAP[erd_cook_mode], target_temp)
+            erd_code = self.get_erd_code("COOK_MODE")
+            await self.appliance.async_set_erd_value(erd_code, new_cook_mode)
 
     async def async_set_temperature(self, **kwargs):
         """Set the cook temperature"""
-        target_temp = kwargs.get(ATTR_TEMPERATURE)
-        if target_temp is None:
-            return
 
-        current_op = self.current_operation
-        if current_op != OP_MODE_OFF:
-            erd_cook_mode = COOK_MODE_OP_MAP.inverse[current_op]
-        else:
-            erd_cook_mode = ErdOvenCookMode.BAKE_NOOPTION
+        if self.remote_enabled:
+            target_temp = kwargs.get(ATTR_TEMPERATURE)
+            if target_temp is None:
+                return
 
-        new_cook_mode = OvenCookSetting(OVEN_COOK_MODE_MAP[erd_cook_mode], target_temp)
-        erd_code = self.get_erd_code("COOK_MODE")
-        await self.appliance.async_set_erd_value(erd_code, new_cook_mode)
+            current_op = self.current_operation
+            if current_op != OP_MODE_OFF:
+                erd_cook_mode = COOK_MODE_OP_MAP.inverse[current_op]
+            else:
+                erd_cook_mode = ErdOvenCookMode.BAKE_NOOPTION
+
+            new_cook_mode = OvenCookSetting(OVEN_COOK_MODE_MAP[erd_cook_mode], target_temp)
+            erd_code = self.get_erd_code("COOK_MODE")
+            await self.appliance.async_set_erd_value(erd_code, new_cook_mode)
 
     def get_erd_value(self, suffix: str) -> Any:
         erd_code = self.get_erd_code(suffix)
