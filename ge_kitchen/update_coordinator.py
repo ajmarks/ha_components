@@ -23,7 +23,14 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN, EVENT_ALL_APPLIANCES_READY, UPDATE_INTERVAL, RETRY_TIMER
+from .const import (
+    DOMAIN, 
+    EVENT_ALL_APPLIANCES_READY, 
+    UPDATE_INTERVAL, 
+    MIN_RETRY_DELAY, 
+    MAX_RETRY_DELAY, 
+    ASYNC_TIMEOUT
+)
 from .devices import ApplianceApi, get_appliance_api_type
 
 PLATFORMS = ["binary_sensor", "sensor", "switch", "water_heater"]
@@ -44,6 +51,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         # Some record keeping to let us know when we can start generating entities
         self._got_roster = False
         self._init_done = False
+        self._retry_count = 0
         self.initialization_future = asyncio.Future()
 
         super().__init__(hass, _LOGGER, name=DOMAIN)
@@ -179,16 +187,18 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
 
     async def async_reconnect(self) -> None:
         """Try to reconnect ge_kitchen session."""
-        _LOGGER.info("attempting to reconnect to ge_kitchen service")
+        self._retry_count += 1
+        _LOGGER.info(f"attempting to reconnect to ge_kitchen service (attempt {self._retry_count})")
+        
         try:
-            with async_timeout.timeout(RETRY_TIMER):
+            with async_timeout.timeout(ASYNC_TIMEOUT):
                 #it was easier to just get a new client here
                 #TODO:  rewrite to potentially re-establish the connection instead
                 #       of tossing it completely
                 await self.async_start_client()
         except Exception as err:
-            _LOGGER.warn(f"could not reconnect: {err}, will retry in {RETRY_TIMER} seconds")
-            self.hass.loop.call_later(RETRY_TIMER, self.reconnect)
+            _LOGGER.warn(f"could not reconnect: {err}, will retry in {self._get_retry_delay()} seconds")
+            self.hass.loop.call_later(self._get_retry_delay(), self.reconnect)
 
     @callback
     def shutdown(self, event) -> None:
@@ -197,6 +207,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         """
         _LOGGER.info("ge_kitchen shutting down")
         if self.client:
+            self.client.clear_event_handlers()
             self.client.disconnect()
 
     async def on_device_update(self, data: Tuple[GeAppliance, Dict[ErdCodeType, Any]]):
@@ -241,14 +252,14 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
 
     async def on_disconnect(self, _):
         """Handle disconnection."""
-        _LOGGER.debug("Disconnected. Attempting to reconnect.")
+        _LOGGER.debug(f"Disconnected. Attempting to reconnect in {MIN_RETRY_DELAY} seconds")
         self.last_update_success = False
-
-        self.hass.loop.call_later(RETRY_TIMER, self.reconnect, True)
+        self.hass.loop.call_later(MIN_RETRY_DELAY, self.reconnect, True)
 
     async def on_connect(self, _):
         """Set state upon connection."""
         self.last_update_success = True
+        self._retry_count = 0
 
     async def async_maybe_trigger_all_ready(self):
         """See if we're all ready to go, and if so, let the games begin."""
@@ -262,3 +273,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
             await asyncio.sleep(2)
             self.initialization_future.set_result(True)
             await self.client.async_event(EVENT_ALL_APPLIANCES_READY, None)
+
+    def _get_retry_delay(self) -> int:
+        delay = MIN_RETRY_DELAY * 2 ** (self._retry_count - 1)
+        return min(delay, MAX_RETRY_DELAY) 
