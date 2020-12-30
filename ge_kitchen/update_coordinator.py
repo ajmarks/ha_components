@@ -95,7 +95,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
             try:
                 #for now, just clear the one we care about using internals... 
                 #new version of sdk needed to clear handles
-                self.client._event_handlers[EVENT_DISCONNECTED].clear()
+                self.client.clear_event_handlers()
                 await self.client.disconnect()
             except Exception as err:
                 _LOGGER.warn(f'exception while disconnecting client {err}')
