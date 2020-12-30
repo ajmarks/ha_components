@@ -176,7 +176,7 @@ class GeOven(GeWaterHeater):
     def display_state(self) -> Optional[str]:
         erd_code = self.get_erd_code("CURRENT_STATE")
         erd_value = self.appliance.get_erd_value(erd_code)
-        return self._stringify(erd_value, units=self.temperature_unit)
+        return self._stringify(erd_value, temp_units=self.temperature_unit)
 
     @property
     def device_state_attributes(self) -> Optional[Dict[str, Any]]:

@@ -29,4 +29,4 @@ class GeErdPropertySensor(GeErdSensor):
             value = magicattr.get(self.appliance.get_erd_value(self.erd_code), self.erd_property)
         except KeyError:
             return None
-        return self._stringify(value, units=self.unit_of_measurement)
+        return self._stringify(value, temp_units=self._temp_units)

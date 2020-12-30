@@ -20,10 +20,9 @@ class GeErdSensor(GeErdEntity, Entity):
             value = self.appliance.get_erd_value(self.erd_code)
         except KeyError:
             return None
-        # TODO: change "units" to "temp_units" (so both are available)"
         # TODO: perhaps enhance so that there's a list of variables available
         #       for the stringify function to consume...
-        return self._stringify(value, units=self._temp_units)
+        return self._stringify(value, temp_units=self._temp_units)
 
     @property
     def unit_of_measurement(self) -> Optional[str]:
