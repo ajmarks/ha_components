@@ -1,6 +1,7 @@
 """Data update coordinator for GE Kitchen Appliances"""
 
 import asyncio
+import async_timeout
 import logging
 from typing import Any, Dict, Iterable, Optional, Tuple
 
@@ -14,15 +15,18 @@ from gekitchensdk import (
     GeAppliance,
     GeWebsocketClient,
 )
+from gekitchensdk import GeAuthFailedError, GeGeneralServerError, GeNotAuthenticatedError
+from .exceptions import HaAuthError, HaCannotConnect
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN, EVENT_ALL_APPLIANCES_READY, UPDATE_INTERVAL
+from .const import DOMAIN, EVENT_ALL_APPLIANCES_READY, UPDATE_INTERVAL, RETRY_TIMER
 from .devices import ApplianceApi, get_appliance_api_type
 
+PLATFORMS = ["binary_sensor", "sensor", "switch", "water_heater"]
 _LOGGER = logging.getLogger(__name__)
 
 class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
@@ -87,29 +91,113 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
 
     async def get_client(self) -> GeWebsocketClient:
         """Get a new GE Websocket client."""
-        if self.client is not None:
-            await self.client.disconnect()
-
+        if self.client:
+            try:
+                #for now, just clear the one we care about using internals... 
+                #new version of sdk needed to clear handles
+                self.client._event_handlers[EVENT_DISCONNECTED].clear()
+                await self.client.disconnect()
+            except Exception as err:
+                _LOGGER.warn(f'exception while disconnecting client {err}')
+            finally:
+                self.client = None
+            
         loop = self._hass.loop
         self.client = self.create_ge_client(event_loop=loop)
         return self.client
 
+    async def async_setup(self):
+        """Setup a new coordinator"""
+        _LOGGER.debug("Setting up coordinator")
+
+        for component in PLATFORMS:
+            self.hass.async_create_task(
+                self.hass.config_entries.async_forward_entry_setup(self._config_entry, component)
+            )
+
+        try:
+            await self.async_start_client()
+        except (GeNotAuthenticatedError, GeAuthFailedError):
+            raise HaAuthError('Authentication failure')
+        except GeGeneralServerError:
+            raise HaCannotConnect('Cannot connect (server error)')
+        except Exception:
+            raise HaCannotConnect('Unknown connection failure')
+
+        try:
+            with async_timeout.timeout(30):
+                await self.initialization_future
+        except TimeoutError:
+            raise HaCannotConnect('Initialization timed out')
+
     async def async_start_client(self):
         """Start a new GeClient in the HASS event loop."""
-        _LOGGER.debug('Running client')
-        client = await self.get_client()
-
+        try:
+            _LOGGER.debug('Creating and starting client')
+            await self.get_client()
+            await self.async_begin_session()
+        except:
+            _LOGGER.debug('could not start the client')
+            self.client = None
+            raise
+                
+    async def async_begin_session(self):
+        """Begins the ge_kitchen session."""
+        _LOGGER.debug("Beginning session")
         session = self._hass.helpers.aiohttp_client.async_get_clientsession()
-        await client.async_get_credentials(session)
-        fut = asyncio.ensure_future(client.async_run_client(), loop=self._hass.loop)
+        await self.client.async_get_credentials(session)
+        fut = asyncio.ensure_future(self.client.async_run_client(), loop=self._hass.loop)
         _LOGGER.debug('Client running')
         return fut
+
+    async def async_reset(self):
+        """Resets the coordinator."""
+        _LOGGER.debug("resetting the coordinator")
+        entry = self._config_entry
+        unload_ok = all(
+            await asyncio.gather(
+                *[
+                    self.hass.config_entries.async_forward_entry_unload(entry, component)
+                    for component in PLATFORMS
+                ]
+            )
+        )
+        return unload_ok            
 
     async def _kill_client(self):
         """Kill the client.  Leaving this in for testing purposes."""
         await asyncio.sleep(30)
         _LOGGER.critical('Killing the connection.  Popcorn time.')
         await self.client.websocket.close()
+
+    @callback
+    def reconnect(self, log=False) -> None:
+        """Prepare to reconnect ge_kitchen session."""
+        if log:
+            _LOGGER.info("Will try to reconnect to ge_kitchen service")
+        self.hass.loop.create_task(self.async_reconnect())
+
+    async def async_reconnect(self) -> None:
+        """Try to reconnect ge_kitchen session."""
+        _LOGGER.info("attempting to reconnect to ge_kitchen service")
+        try:
+            with async_timeout.timeout(RETRY_TIMER):
+                #it was easier to just get a new client here
+                #TODO:  rewrite to potentially re-establish the connection instead
+                #       of tossing it completely
+                await self.async_start_client()
+        except Exception as err:
+            _LOGGER.warn(f"could not reconnect: {err}, will retry in {RETRY_TIMER} seconds")
+            self.hass.loop.call_later(RETRY_TIMER, self.reconnect)
+
+    @callback
+    def shutdown(self, event) -> None:
+        """Close the connection on shutdown.
+        Used as an argument to EventBus.async_listen_once.
+        """
+        _LOGGER.info("ge_kitchen shutting down")
+        if self.client:
+            self.client.disconnect()
 
     async def on_device_update(self, data: Tuple[GeAppliance, Dict[ErdCodeType, Any]]):
         """Let HA know there's new state."""
@@ -144,9 +232,11 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         self.maybe_add_appliance_api(appliance)
         await self.async_maybe_trigger_all_ready()
         _LOGGER.debug(f'Requesting updates for {appliance.mac_addr}')
-        while not self.client.websocket.closed and appliance.available:
+        while self.client and not self.client.websocket.closed and appliance.available:
             await asyncio.sleep(UPDATE_INTERVAL)
-            await appliance.async_request_update()
+            if self.client and not self.client.websocket.closed:
+                await appliance.async_request_update()
+
         _LOGGER.debug(f'No longer requesting updates for {appliance.mac_addr}')
 
     async def on_disconnect(self, _):
@@ -154,23 +244,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Disconnected. Attempting to reconnect.")
         self.last_update_success = False
 
-        flow_context = {
-            "source": "reauth",
-            "unique_id": self._config_entry.unique_id,
-        }
-
-        matching_flows = [
-            flow
-            for flow in self.hass.config_entries.flow.async_progress()
-            if flow["context"] == flow_context
-        ]
-
-        if not matching_flows:
-            self.hass.async_create_task(
-                self.hass.config_entries.flow.async_init(
-                    DOMAIN, context=flow_context, data=self._config_entry.data,
-                )
-            )
+        self.hass.loop.call_later(RETRY_TIMER, self.reconnect, True)
 
     async def on_connect(self, _):
         """Set state upon connection."""
