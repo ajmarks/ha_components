@@ -25,10 +25,11 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
     DOMAIN, 
-    EVENT_ALL_APPLIANCES_READY, 
+    EVENT_ALL_APPLIANCES_READY,  
     UPDATE_INTERVAL, 
     MIN_RETRY_DELAY, 
     MAX_RETRY_DELAY, 
+    RETRY_OFFLINE_COUNT,
     ASYNC_TIMEOUT
 )
 from .devices import ApplianceApi, get_appliance_api_type
@@ -78,6 +79,14 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
     @property
     def appliance_apis(self) -> Dict[str, ApplianceApi]:
         return self._appliance_apis
+    
+    @property
+    def online(self) -> bool:
+        """ 
+        Indicates whether the services is online.  If it's retried several times, it's assumed
+        that it's offline for some reason
+        """
+        return self.client is not None or self._retry_count <= RETRY_OFFLINE_COUNT
 
     def _get_appliance_api(self, appliance: GeAppliance) -> ApplianceApi:
         api_type = get_appliance_api_type(appliance.appliance_type)
@@ -199,6 +208,8 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         except Exception as err:
             _LOGGER.warn(f"could not reconnect: {err}, will retry in {self._get_retry_delay()} seconds")
             self.hass.loop.call_later(self._get_retry_delay(), self.reconnect)
+            _LOGGER.debug("forcing a state refresh while disconnected")
+            await self._refresh_ha_state()
 
     @callback
     def shutdown(self, event) -> None:
@@ -221,6 +232,19 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         for entity in api.entities:
             _LOGGER.debug(f'Updating {entity} ({entity.unique_id}, {entity.entity_id})')
             entity.async_write_ha_state()
+
+    async def _refresh_ha_state(self):
+        entities = [
+            entity
+            for api in self.appliance_apis.values()
+            for entity in api.entities
+        ]
+        for entity in entities:
+            try:
+                _LOGGER.debug(f'Refreshing state for {entity} ({entity.unique_id}, {entity.entity_id}')
+                entity.async_write_ha_state()
+            except:
+                _LOGGER.debug(f'Could not refresh state for {entity} ({entity.unique_id}, {entity.entity_id}')
 
     @property
     def all_appliances_updated(self) -> bool:

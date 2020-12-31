@@ -46,6 +46,13 @@ class ApplianceApi:
         return self._appliance
 
     @property
+    def available(self) -> bool:
+        #Note - online will be there since we're using the GE coordinator
+        #Didn't want to deal with the circular references to get the type hints
+        #working.
+        return self.appliance.available and self.coordinator.online
+
+    @property
     def serial_number(self) -> str:
         return self.appliance.get_erd_value(ErdCode.SERIAL_NUMBER)
 

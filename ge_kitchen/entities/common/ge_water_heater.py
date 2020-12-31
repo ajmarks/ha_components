@@ -17,14 +17,6 @@ class GeWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
     """Mock temperature/operation mode supporting device as a water heater"""
 
     @property
-    def available(self) -> bool:
-        available = super().available
-        if not available:
-            app = self.appliance
-            _LOGGER.critical(f"{self.name} unavailable. Appliance info: Available - {app._available} and Init - {app.initialized}")
-        return available
-
-    @property
     def heater_type(self) -> str:
         raise NotImplementedError
 

@@ -30,7 +30,7 @@ class GeEntity:
 
     @property
     def available(self) -> bool:
-        return self.appliance.available
+        return self.api.available
 
     @property
     def appliance(self) -> GeAppliance:
