@@ -74,9 +74,12 @@ class GeOven(GeWaterHeater):
 
     @property
     def current_temperature(self) -> Optional[int]:
-        current_temp = self.get_erd_value("DISPLAY_TEMPERATURE")
-        if current_temp:
-            return current_temp
+        #DISPLAY_TEMPERATURE appears to be out of line with what's
+        #actually going on in the oven, RAW_TEMPERATURE seems to be
+        #accurate.
+        #current_temp = self.get_erd_value("DISPLAY_TEMPERATURE")
+        #if current_temp:
+        #    return current_temp
         return self.get_erd_value("RAW_TEMPERATURE")
 
     @property
