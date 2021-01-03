@@ -27,6 +27,7 @@ from .const import (
     DOMAIN, 
     EVENT_ALL_APPLIANCES_READY,  
     UPDATE_INTERVAL, 
+    APPLIANCE_LIST_UPDATE_INTERVAL,
     MIN_RETRY_DELAY, 
     MAX_RETRY_DELAY, 
     RETRY_OFFLINE_COUNT,
@@ -46,6 +47,11 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         self._config_entry = config_entry
         self._username = config_entry.data[CONF_USERNAME]
         self._password = config_entry.data[CONF_PASSWORD]
+        self._reset_initialization()
+
+        super().__init__(hass, _LOGGER, name=DOMAIN)
+
+    def _reset_initialization(self):
         self.client = None  # type: Optional[GeWebsocketClient]
         self._appliance_apis = {}  # type: Dict[str, ApplianceApi]
 
@@ -54,8 +60,6 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         self._init_done = False
         self._retry_count = 0
         self.initialization_future = asyncio.Future()
-
-        super().__init__(hass, _LOGGER, name=DOMAIN)
 
     def create_ge_client(self, event_loop: Optional[asyncio.AbstractEventLoop]) -> GeWebsocketClient:
         """
@@ -88,6 +92,14 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         """
         return self.client is not None or self._retry_count <= RETRY_OFFLINE_COUNT
 
+    @property
+    def connected(self) -> bool:
+        """
+        Indicates whether the coordinator is connected
+        TODO: Make this a part of the client properties as websocket is not applicable for all
+        """
+        return self.client and self.client.websocket and not self.client.websocket.closed
+
     def _get_appliance_api(self, appliance: GeAppliance) -> ApplianceApi:
         api_type = get_appliance_api_type(appliance.appliance_type)
         return api_type(self, appliance)
@@ -105,20 +117,18 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
             api = self._get_appliance_api(appliance)
             api.build_entities_list()
             self.appliance_apis[mac_addr] = api
-
+        
     async def get_client(self) -> GeWebsocketClient:
         """Get a new GE Websocket client."""
         if self.client:
             try:
-                #for now, just clear the one we care about using internals... 
-                #new version of sdk needed to clear handles
                 self.client.clear_event_handlers()
                 await self.client.disconnect()
             except Exception as err:
                 _LOGGER.warn(f'exception while disconnecting client {err}')
             finally:
-                self.client = None
-            
+                self._reset_initialization()
+        
         loop = self._hass.loop
         self.client = self.create_ge_client(event_loop=loop)
         return self.client
@@ -212,6 +222,19 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
             await self._refresh_ha_state()
 
     @callback
+    def appliance_list_refresh(self) -> None:
+        self.hass.loop.create_task(self.async_appliance_list_refresh())
+
+    async def async_appliance_list_refresh(self) -> None:
+        """Try to refresh the appliance list, including online/offline state"""
+        _LOGGER.debug("refreshing appliance list/states")
+        try:
+            if(self.connected):
+                await self.client.get_appliance_list()
+        except:
+            _LOGGER.debug("could not refresh appliance list")
+
+    @callback
     def shutdown(self, event) -> None:
         """Close the connection on shutdown.
         Used as an argument to EventBus.async_listen_once.
@@ -257,8 +280,12 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         self.last_update_success = True
         if not self._got_roster:
             self._got_roster = True
+            #TODO: Probably should have a better way of confirming we're good to go...
             await asyncio.sleep(5)  # After the initial roster update, wait a bit and hit go
             await self.async_maybe_trigger_all_ready()
+        
+        #initialize the next refresh
+        self.hass.loop.call_later(APPLIANCE_LIST_UPDATE_INTERVAL, self.appliance_list_refresh)
 
     async def on_device_initial_update(self, appliance: GeAppliance):
         """When an appliance first becomes ready, let the system know and schedule periodic updates."""
@@ -267,9 +294,9 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         self.maybe_add_appliance_api(appliance)
         await self.async_maybe_trigger_all_ready()
         _LOGGER.debug(f'Requesting updates for {appliance.mac_addr}')
-        while self.client and not self.client.websocket.closed and appliance.available:
+        while self.connected and appliance.available:
             await asyncio.sleep(UPDATE_INTERVAL)
-            if self.client and not self.client.websocket.closed:
+            if self.connected:
                 await appliance.async_request_update()
 
         _LOGGER.debug(f'No longer requesting updates for {appliance.mac_addr}')
