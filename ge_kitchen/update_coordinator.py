@@ -294,7 +294,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         self.maybe_add_appliance_api(appliance)
         await self.async_maybe_trigger_all_ready()
         _LOGGER.debug(f'Requesting updates for {appliance.mac_addr}')
-        while self.connected and appliance.available:
+        while self.connected:
             await asyncio.sleep(UPDATE_INTERVAL)
             if self.connected:
                 await appliance.async_request_update()
