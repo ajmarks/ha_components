@@ -90,7 +90,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         Indicates whether the services is online.  If it's retried several times, it's assumed
         that it's offline for some reason
         """
-        return self.client is not None or self._retry_count <= RETRY_OFFLINE_COUNT
+        return self.connected or self._retry_count <= RETRY_OFFLINE_COUNT
 
     @property
     def connected(self) -> bool:
