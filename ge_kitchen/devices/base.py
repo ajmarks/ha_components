@@ -45,6 +45,10 @@ class ApplianceApi:
     def appliance(self) -> GeAppliance:
         return self._appliance
 
+    @appliance.setter
+    def appliance(self, value: GeAppliance):
+        self._appliance = value
+
     @property
     def available(self) -> bool:
         #Note - online will be there since we're using the GE coordinator

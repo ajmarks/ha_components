@@ -47,13 +47,18 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         self._config_entry = config_entry
         self._username = config_entry.data[CONF_USERNAME]
         self._password = config_entry.data[CONF_PASSWORD]
+        self._appliance_apis = {}  # type: Dict[str, ApplianceApi]
+
         self._reset_initialization()
 
         super().__init__(hass, _LOGGER, name=DOMAIN)
 
     def _reset_initialization(self):
         self.client = None  # type: Optional[GeWebsocketClient]
-        self._appliance_apis = {}  # type: Dict[str, ApplianceApi]
+
+        # Mark all appliances as not initialized yet
+        for a in self.appliance_apis.values():
+            a.appliance.initialized = False
 
         # Some record keeping to let us know when we can start generating entities
         self._got_roster = False
@@ -117,6 +122,10 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
             api = self._get_appliance_api(appliance)
             api.build_entities_list()
             self.appliance_apis[mac_addr] = api
+        else:
+            #if we already have the API, switch out its appliance reference for this one
+            api = self.appliance_apis[mac_addr]
+            api.appliance = appliance            
         
     async def get_client(self) -> GeWebsocketClient:
         """Get a new GE Websocket client."""
