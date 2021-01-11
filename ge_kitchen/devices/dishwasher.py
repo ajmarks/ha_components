@@ -19,12 +19,12 @@ class DishwasherApi(ApplianceApi):
 
         dishwasher_entities = [
             #GeDishwasherControlLockedSwitch(self, ErdCode.USER_INTERFACE_LOCKED),
-            GeErdSensor(self, ErdCode.CYCLE_NAME),
-            GeErdSensor(self, ErdCode.CYCLE_STATE),
-            GeErdSensor(self, ErdCode.OPERATING_MODE),
-            GeErdSensor(self, ErdCode.PODS_REMAINING_VALUE),
-            GeErdSensor(self, ErdCode.RINSE_AGENT, icon_override="mdi:sparkles"),
-            GeErdSensor(self, ErdCode.TIME_REMAINING),
+            GeErdSensor(self, ErdCode.DISHWASHER_CYCLE_NAME),
+            GeErdSensor(self, ErdCode.DISHWASHER_CYCLE_STATE),
+            GeErdSensor(self, ErdCode.DISHWASHER_OPERATING_MODE),
+            GeErdSensor(self, ErdCode.DISHWASHER_PODS_REMAINING_VALUE),
+            GeErdSensor(self, ErdCode.DISHWASHER_RINSE_AGENT, icon_override="mdi:sparkles"),
+            GeErdSensor(self, ErdCode.DISHWASHER_TIME_REMAINING),
         ]
         entities = base_entities + dishwasher_entities
         return entities
