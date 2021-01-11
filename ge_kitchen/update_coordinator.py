@@ -159,7 +159,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
             raise HaCannotConnect('Unknown connection failure')
 
         try:
-            with async_timeout.timeout(30):
+            with async_timeout.timeout(ASYNC_TIMEOUT):
                 await self.initialization_future
         except TimeoutError:
             raise HaCannotConnect('Initialization timed out')
@@ -202,7 +202,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         """Kill the client.  Leaving this in for testing purposes."""
         await asyncio.sleep(30)
         _LOGGER.critical('Killing the connection.  Popcorn time.')
-        await self.client.websocket.close()
+        await self.client.disconnect()
 
     @callback
     def reconnect(self, log=False) -> None:
