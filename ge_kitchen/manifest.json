@@ -3,6 +3,6 @@
   "name": "GE Kitchen",
   "config_flow": true,
   "documentation": "https://github.com/simbaja/ha_components",
-  "requirements": ["gekitchensdk==0.3.8","magicattr==0.1.5"],
+  "requirements": ["gekitchensdk==0.3.9","magicattr==0.1.5"],
   "codeowners": ["@simbaja"]
 }
