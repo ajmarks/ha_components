@@ -3,7 +3,7 @@ import logging
 from typing import Dict, List, Optional
 
 from gekitchensdk import GeAppliance
-from gekitchensdk.erd import ErdCode, ErdApplianceType
+from gekitchensdk.erd import ErdCode, ErdCodeType, ErdApplianceType
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
@@ -108,3 +108,10 @@ class ApplianceApi:
         for entity in entities:
             if entity.unique_id not in self._entities:
                 self._entities[entity.unique_id] = entity
+
+    def try_get_erd_value(self, code: ErdCodeType):
+        try:
+            return self.appliance.get_erd_value(code)
+        except:
+            return None
+    
