@@ -161,7 +161,7 @@ class GeKitchenUpdateCoordinator(DataUpdateCoordinator):
         try:
             with async_timeout.timeout(ASYNC_TIMEOUT):
                 await self.initialization_future
-        except TimeoutError:
+        except (asyncio.CancelledError, asyncio.TimeoutError):
             raise HaCannotConnect('Initialization timed out')
 
     async def async_start_client(self):
