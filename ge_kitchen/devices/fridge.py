@@ -41,12 +41,13 @@ class FridgeApi(ApplianceApi):
         dispenser_entities = []
 
         # Get the statuses used to determine presence
-        ice_maker_control: IceMakerControlStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_CONTROL)
-        ice_bucket_status: FridgeIceBucketStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_BUCKET_STATUS)
-        water_filter: ErdFilterStatus = self.appliance.get_erd_value(ErdCode.WATER_FILTER_STATUS)
-        air_filter: ErdFilterStatus = self.appliance.get_erd_value(ErdCode.AIR_FILTER_STATUS)
-        hot_water_status: HotWaterStatus = self.appliance.get_erd_value(ErdCode.HOT_WATER_STATUS)
-        fridge_model_info: FridgeModelInfo = self.appliance.get_erd_value(ErdCode.FRIDGE_MODEL_INFO)
+
+        ice_maker_control: IceMakerControlStatus = self.try_get_erd_value(ErdCode.ICE_MAKER_CONTROL)
+        ice_bucket_status: FridgeIceBucketStatus = self.try_get_erd_value(ErdCode.ICE_MAKER_BUCKET_STATUS)
+        water_filter: ErdFilterStatus = self.try_get_erd_value(ErdCode.WATER_FILTER_STATUS)
+        air_filter: ErdFilterStatus = self.try_get_erd_value(ErdCode.AIR_FILTER_STATUS)
+        hot_water_status: HotWaterStatus = self.try_get_erd_value(ErdCode.HOT_WATER_STATUS)
+        fridge_model_info: FridgeModelInfo = self.try_get_erd_value(ErdCode.FRIDGE_MODEL_INFO)
 
         # Common entities
         common_entities = [
@@ -59,7 +60,7 @@ class FridgeApi(ApplianceApi):
             common_entities.append(GeErdSensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS))
 
         # Fridge entities
-        if fridge_model_info.has_fridge:
+        if fridge_model_info is None or fridge_model_info.has_fridge:
             fridge_entities.extend([
                 GeErdPropertySensor(self, ErdCode.CURRENT_TEMPERATURE, "fridge"),
                 GeFridge(self),
@@ -71,18 +72,18 @@ class FridgeApi(ApplianceApi):
             if(air_filter and air_filter != ErdFilterStatus.NA):
                 fridge_entities.append(GeErdSensor(self, ErdCode.AIR_FILTER_STATUS))    
             if(ice_bucket_status and ice_bucket_status.is_present_fridge):
-                GeErdPropertySensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS, "state_full_fridge")
+                fridge_entities.append(GeErdPropertySensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS, "state_full_fridge"))
 
         # Freezer entities
-        if fridge_model_info.has_freezer:
+        if fridge_model_info is None or fridge_model_info.has_freezer:
             freezer_entities.extend([
                 GeErdPropertySensor(self, ErdCode.CURRENT_TEMPERATURE, "freezer"),
                 GeFreezer(self),                  
             ])
             if(ice_maker_control and ice_maker_control.status_freezer != ErdOnOff.NA):
-                GeErdPropertyBinarySensor(self, ErdCode.ICE_MAKER_CONTROL, "status_freezer")
+                freezer_entities.append(GeErdPropertyBinarySensor(self, ErdCode.ICE_MAKER_CONTROL, "status_freezer"))
             if(ice_bucket_status and ice_bucket_status.is_present_freezer):
-                GeErdPropertySensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS, "state_full_freezer")
+                freezer_entities.append(GeErdPropertySensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS, "state_full_freezer"))
 
         # Dispenser entities
         if(hot_water_status and hot_water_status.status != ErdHotWaterStatus.NA):
