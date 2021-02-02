@@ -1,0 +1,12 @@
+{
+  "name": "ge-kitchen",
+  "render_readme": true,
+  "homeassistant": 
+  "domains": [
+    "binary_sensor",
+    "sensor",
+    "switch",
+    "water_heater"
+  ],
+  "iot_class": "Cloud Polling"
+}
