@@ -18,6 +18,3 @@ Oven Controls:
 
 ![Fridge controls](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/oven_controls.png)
 
-## What happened to `shark_iq`?
-
-It's part of Home Assistant as of [0.115](https://www.home-assistant.io/blog/2020/09/17/release-115/)!
