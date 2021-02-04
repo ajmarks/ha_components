@@ -1,4 +1,4 @@
-# Custom Components for Home Assistant
+# GE Kitchen Appliances (SmartHQ)
 
 ## `ge_kitchen`
 Integration for GE WiFi-enabled kitchen appliances.  So far, I've only done fridges and ovens (because that's what I
