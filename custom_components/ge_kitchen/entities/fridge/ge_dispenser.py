@@ -122,3 +122,5 @@ class GeDispenser(GeWaterHeater):
             data["time_until_ready"] = self._stringify(self.hot_water_status.time_until_ready)
         if self.hot_water_status.tank_full != ErdFullNotFull.NA:
             data["tank_status"] = self._stringify(self.hot_water_status.tank_full)
+        
+        return data
