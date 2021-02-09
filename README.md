@@ -1,4 +1,4 @@
-# Custom Components for Home Assistant
+# GE Kitchen Appliances (SmartHQ)
 
 ## `ge_kitchen`
 Integration for GE WiFi-enabled kitchen appliances.  So far, I've only done fridges and ovens (because that's what I
@@ -18,6 +18,3 @@ Oven Controls:
 
 ![Fridge controls](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/oven_controls.png)
 
-## What happened to `shark_iq`?
-
-It's part of Home Assistant as of [0.115](https://www.home-assistant.io/blog/2020/09/17/release-115/)!
