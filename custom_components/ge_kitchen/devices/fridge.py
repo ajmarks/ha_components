@@ -18,7 +18,8 @@ from gekitchensdk import (
 
 from .base import ApplianceApi
 from ..entities import (
-    GeErdSensor, 
+    GeErdSensor,
+    GeErdBinarySensor,
     GeErdSwitch, 
     GeFridge, 
     GeFreezer, 
@@ -88,7 +89,7 @@ class FridgeApi(ApplianceApi):
         # Dispenser entities
         if(hot_water_status and hot_water_status.status != ErdHotWaterStatus.NA):
             dispenser_entities.extend([
-                GeErdSensor(self, ErdCode.HOT_WATER_IN_USE),
+                GeErdBinarySensor(self, ErdCode.HOT_WATER_IN_USE),
                 GeErdSensor(self, ErdCode.HOT_WATER_SET_TEMP),
                 GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "status"),
                 GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "time_until_ready", icon_override="mdi:timer-outline"),
