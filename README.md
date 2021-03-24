@@ -18,6 +18,10 @@ Oven Controls:
 
 ![Fridge controls](https://raw.githubusercontent.com/ajmarks/ha_components/master/img/oven_controls.png)
 
+## How to install
+1. Create a folder name "custom_components" in your /config folder (where your configuration.yaml file lives). 
+2. Add the "ge_kitchen" folder to this new custom_compoents folder
+3. Restart Home Assistant and then go to Configuration -> Integration and try to add GE Kitchen as a new integration. If you don't see it, clear your browser cache and restart Home Assistant again and try again. 
 ## What happened to `shark_iq`?
 
 It's part of Home Assistant as of [0.115](https://www.home-assistant.io/blog/2020/09/17/release-115/)!
