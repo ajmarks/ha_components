@@ -31,7 +31,7 @@ from ..entities import (
 _LOGGER = logging.getLogger(__name__)
 
 class FridgeApi(ApplianceApi):
-    """API class for oven objects"""
+    """API class for fridge objects"""
     APPLIANCE_TYPE = ErdApplianceType.FRIDGE
 
     def get_all_entities(self) -> List[Entity]:

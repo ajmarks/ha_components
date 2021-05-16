@@ -11,8 +11,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class DishwasherApi(ApplianceApi):
-    """API class for oven objects"""
-    APPLIANCE_TYPE = ErdApplianceType.DISH_WASHER
+    """API class for dishwasher objects"""
+    APPLIANCE_TYPE = ErdApplianceType.WASHER
 
     def get_all_entities(self) -> List[Entity]:
         base_entities = super().get_all_entities()
