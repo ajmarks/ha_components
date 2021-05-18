@@ -4,6 +4,6 @@
   "config_flow": true,
   "documentation": "https://github.com/simbaja/ha_components",
   "requirements": ["gekitchensdk==0.3.11","magicattr==0.1.5"],
-  "codeowners": ["@simbaja"]
+  "codeowners": ["@simbaja"],	
   "version": "0.3.11"
 }
