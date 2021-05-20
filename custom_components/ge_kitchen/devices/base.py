@@ -81,7 +81,7 @@ class ApplianceApi:
             "name": self.name,
             "manufacturer": "GE",
             "model": self.model_number,
-            "sw_version": self.appliance.get_erd_value(ErdCode.WIFI_MODULE_SW_VERSION),
+            "sw_version": self.appliance.get_erd_value(ErdCode.APPLIANCE_SW_VERSION),
         }
 
     @property
