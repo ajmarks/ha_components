@@ -65,6 +65,13 @@ class ApplianceApi:
         return self.appliance.get_erd_value(ErdCode.MODEL_NUMBER)
 
     @property
+    def sw_version(self) -> str:
+        appVer = self.try_get_erd_value(ErdCode.APPLIANCE_SW_VERSION)
+        wifiVer = self.try_get_erd_value(ErdCode.WIFI_MODULE_SW_VERSION)
+
+        return 'Appliance=' + str(appVer or 'Unknown') + '/Wifi=' + str(wifiVer or 'Unknown')
+
+    @property
     def name(self) -> str:
         appliance_type = self.appliance.appliance_type
         if appliance_type is None or appliance_type == ErdApplianceType.UNKNOWN:
@@ -76,12 +83,13 @@ class ApplianceApi:
     @property
     def device_info(self) -> Dict:
         """Device info dictionary."""
+
         return {
             "identifiers": {(DOMAIN, self.serial_number)},
             "name": self.name,
             "manufacturer": "GE",
             "model": self.model_number,
-            "sw_version": self.appliance.get_erd_value(ErdCode.APPLIANCE_SW_VERSION),
+            "sw_version": self.sw_version
         }
 
     @property
