@@ -1,4 +1,3 @@
-from custom_components.ge_home.entities.common.ge_erd_binary_sensor import GeErdBinarySensor
 import logging
 from typing import List
 
@@ -35,4 +34,4 @@ class WasherApi(ApplianceApi):
         ]
         entities = base_entities + washer_entities
         return entities
-        
+
