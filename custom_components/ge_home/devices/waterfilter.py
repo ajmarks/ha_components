@@ -1,3 +1,4 @@
+from homeassistant.components.select import SelectEntity
 import logging
 from typing import List
 
@@ -10,6 +11,7 @@ from ..entities import (
     GeErdBinarySensor,
     ErdFlowRateSensor,
     ErdFilterLifeRemainingSensor,
+    ErdFilterPositionSelect,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,6 +27,8 @@ class WaterFilterApi(ApplianceApi):
 
         wf_entities = [
             GeErdSensor(self, ErdCode.WH_FILTER_MODE),
+            GeErdSensor(self, ErdCode.WH_FILTER_VALVE_STATE),
+            ErdFilterPositionSelect(self, ErdCode.WH_FILTER_POSITION),
             GeErdBinarySensor(self, ErdCode.WH_FILTER_MANUAL_MODE),
             ErdFlowRateSensor(self, ErdCode.WH_FILTER_FLOW_RATE),
             GeErdSensor(self, ErdCode.WH_FILTER_DAY_USAGE),

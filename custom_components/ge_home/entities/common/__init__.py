@@ -6,3 +6,4 @@ from .ge_erd_sensor import GeErdSensor
 from .ge_erd_property_sensor import GeErdPropertySensor
 from .ge_erd_switch import GeErdSwitch
 from .ge_water_heater import GeWaterHeater
+from .ge_erd_select import GeErdSelect
