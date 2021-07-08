@@ -10,7 +10,7 @@ from .dishwasher import DishwasherApi
 from .washer import WasherApi
 from .dryer import DryerApi
 from .washer_dryer import WasherDryerApi
-from .waterfilter import WaterFilterApi
+from .water_filter import WaterFilterApi
 
 _LOGGER = logging.getLogger(__name__)
 

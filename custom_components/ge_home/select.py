@@ -1,4 +1,4 @@
-"""GE Home Sensor Entities"""
+"""GE Home Select Entities"""
 import async_timeout
 import logging
 from typing import Callable

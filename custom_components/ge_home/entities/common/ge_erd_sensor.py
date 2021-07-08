@@ -55,6 +55,11 @@ class GeErdSensor(GeErdEntity, Entity):
             return "%"
         if self.device_class == DEVICE_CLASS_POWER_FACTOR:
             return "%"
+        if self.erd_code_class == ErdCodeClass.FLOW_RATE:
+            if self._temp_measurement_system == ErdMeasurementUnits.METRIC:
+                return "lpm"
+            return "gpm"        
+
         return None
 
     def _get_device_class(self) -> Optional[str]:

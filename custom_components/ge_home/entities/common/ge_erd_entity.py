@@ -1,7 +1,6 @@
 from datetime import timedelta
 from typing import Optional
 
-from homeassistant.const import DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
 
 from ...const import DOMAIN
@@ -116,5 +115,7 @@ class GeErdEntity(GeEntity):
             return "mdi:dishwasher"
         if self.erd_code_class == ErdCodeClass.WATERFILTER_SENSOR:
             return "mdi:water"
+        if self.erd_code_class == ErdCodeClass.FLOW_RATE:
+            return "mdi:water"            
 
         return None
