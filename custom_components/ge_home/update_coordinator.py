@@ -80,9 +80,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
             self._password,
             event_loop=event_loop,
         )
-        client.add_event_handler(
-            EVENT_APPLIANCE_INITIAL_UPDATE, self.on_device_initial_update
-        )
+        client.add_event_handler(EVENT_APPLIANCE_INITIAL_UPDATE, self.on_device_initial_update)
         client.add_event_handler(EVENT_APPLIANCE_UPDATE_RECEIVED, self.on_device_update)
         client.add_event_handler(EVENT_GOT_APPLIANCE_LIST, self.on_appliance_list)
         client.add_event_handler(EVENT_DISCONNECTED, self.on_disconnect)
@@ -125,9 +123,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
     def maybe_add_appliance_api(self, appliance: GeAppliance):
         mac_addr = appliance.mac_addr
         if mac_addr not in self.appliance_apis:
-            _LOGGER.debug(
-                f"Adding appliance api for appliance {mac_addr} ({appliance.appliance_type})"
-            )
+            _LOGGER.debug(f"Adding appliance api for appliance {mac_addr} ({appliance.appliance_type})")
             api = self._get_appliance_api(appliance)
             api.build_entities_list()
             self.appliance_apis[mac_addr] = api
@@ -195,9 +191,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Beginning session")
         session = self._hass.helpers.aiohttp_client.async_get_clientsession()
         await self.client.async_get_credentials(session)
-        fut = asyncio.ensure_future(
-            self.client.async_run_client(), loop=self._hass.loop
-        )
+        fut = asyncio.ensure_future(self.client.async_run_client(), loop=self._hass.loop)
         _LOGGER.debug("Client running")
         return fut
 
@@ -241,9 +235,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
             with async_timeout.timeout(ASYNC_TIMEOUT):
                 await self.async_start_client()
         except Exception as err:
-            _LOGGER.warn(
-                f"could not reconnect: {err}, will retry in {self._get_retry_delay()} seconds"
-            )
+            _LOGGER.warn(f"could not reconnect: {err}, will retry in {self._get_retry_delay()} seconds")
             self.hass.loop.call_later(self._get_retry_delay(), self.reconnect)
             _LOGGER.debug("forcing a state refresh while disconnected")
             try:
@@ -279,14 +271,10 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         ]
         for entity in entities:
             try:
-                _LOGGER.debug(
-                    f"Refreshing state for {entity} ({entity.unique_id}, {entity.entity_id}"
-                )
+                _LOGGER.debug(f"Refreshing state for {entity} ({entity.unique_id}, {entity.entity_id}")
                 entity.async_write_ha_state()
             except:
-                _LOGGER.debug(
-                    f"Could not refresh state for {entity} ({entity.unique_id}, {entity.entity_id}"
-                )
+                _LOGGER.debug(f"Could not refresh state for {entity} ({entity.unique_id}, {entity.entity_id}")
 
     @property
     def all_appliances_updated(self) -> bool:
@@ -300,9 +288,8 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         if not self._got_roster:
             self._got_roster = True
             # TODO: Probably should have a better way of confirming we're good to go...
-            await asyncio.sleep(
-                5
-            )  # After the initial roster update, wait a bit and hit go
+            await asyncio.sleep(5)  
+            # After the initial roster update, wait a bit and hit go
             await self.async_maybe_trigger_all_ready()
 
     async def on_device_initial_update(self, appliance: GeAppliance):
@@ -321,9 +308,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
 
     async def on_disconnect(self, _):
         """Handle disconnection."""
-        _LOGGER.debug(
-            f"Disconnected. Attempting to reconnect in {MIN_RETRY_DELAY} seconds"
-        )
+        _LOGGER.debug(f"Disconnected. Attempting to reconnect in {MIN_RETRY_DELAY} seconds")
         self.last_update_success = False
         self.hass.loop.call_later(MIN_RETRY_DELAY, self.reconnect, True)
 
@@ -338,9 +323,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
             # Been here, done this
             return
         if self._got_roster and self.all_appliances_updated:
-            _LOGGER.debug(
-                "Ready to go.  Waiting 2 seconds and setting init future result."
-            )
+            _LOGGER.debug("Ready to go.  Waiting 2 seconds and setting init future result.")
             # The the flag and wait to prevent two different fun race conditions
             self._init_done = True
             await asyncio.sleep(2)
