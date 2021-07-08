@@ -45,6 +45,8 @@ class GeErdSensor(GeErdEntity, Entity):
             return TEMP_FAHRENHEIT
         if self.erd_code_class == ErdCodeClass.BATTERY or self.device_class == DEVICE_CLASS_BATTERY:
             return "%"
+        if self.erd_code_class == ErdCodeClass.PERCENTAGE:
+            return "%"
         if self.device_class == DEVICE_CLASS_POWER_FACTOR:
             return "%"
         return None
