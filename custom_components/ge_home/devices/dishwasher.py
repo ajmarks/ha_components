@@ -1,5 +1,3 @@
-from custom_components.ge_home.entities.common.ge_erd_binary_sensor import GeErdBinarySensor
-from custom_components.ge_home.entities.common.ge_erd_property_binary_sensor import GeErdPropertyBinarySensor
 import logging
 from typing import List
 
@@ -7,7 +5,7 @@ from homeassistant.helpers.entity import Entity
 from gehomesdk.erd import ErdCode, ErdApplianceType
 
 from .base import ApplianceApi
-from ..entities import GeErdSensor, GeErdPropertySensor, GeDishwasherControlLockedSwitch
+from ..entities import GeErdSensor, GeErdBinarySensor, GeErdPropertySensor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,16 +28,16 @@ class DishwasherApi(ApplianceApi):
             GeErdBinarySensor(self, ErdCode.DISHWASHER_DOOR_STATUS),
 
             #User Setttings
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sound"),
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "lock_control"),
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sabbath"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sound", icon_override="mdi:volume-high"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "lock_control", icon_override="mdi:lock"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sabbath", icon_override="mdi:star-david"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "cycle_mode"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "presoak"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "bottle_jet"),
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "wash_temp"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "wash_temp", icon_override="mdi:coolant-temperature"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "dry_option"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "wash_zone"),
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "delay_hours")
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "delay_hours", icon_override="mdi:clock-fast")
         ]
         entities = base_entities + dishwasher_entities
         return entities
