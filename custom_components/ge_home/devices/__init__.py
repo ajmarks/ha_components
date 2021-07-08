@@ -10,8 +10,10 @@ from .dishwasher import DishwasherApi
 from .washer import WasherApi
 from .dryer import DryerApi
 from .washer_dryer import WasherDryerApi
+from .waterfilter import WaterFilterApi
 
 _LOGGER = logging.getLogger(__name__)
+
 
 def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
     _LOGGER.debug(f"Found device type: {appliance_type}")
@@ -28,5 +30,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return DryerApi
     if appliance_type == ErdApplianceType.COMBINATION_WASHER_DRYER:
         return WasherDryerApi
+    if appliance_type == ErdApplianceType.POE_WATER_FILTER:
+        return WaterFilterApi
+
     # Fallback
     return ApplianceApi
