@@ -177,6 +177,8 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         except (asyncio.CancelledError, asyncio.TimeoutError):
             raise HaCannotConnect("Initialization timed out")
 
+        return True
+
     async def async_start_client(self):
         """Start a new GeClient in the HASS event loop."""
         try:
