@@ -7,7 +7,6 @@ from gehomesdk import ErdCode, ErdApplianceType
 from .base import ApplianceApi
 from ..entities import (
     GeErdSensor,
-    GeErdPropertySensor,
     GeErdBinarySensor,
     GeErdFilterPositionSelect,
 )
