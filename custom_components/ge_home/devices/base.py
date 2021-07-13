@@ -98,7 +98,7 @@ class ApplianceApi:
 
     def get_all_entities(self) -> List[Entity]:
         """Create Entities for this device."""
-        return self.get_base_entties()
+        return self.get_base_entities()
 
     def get_base_entities(self) -> List[Entity]:
         """Create base entities (i.e. common between all appliances)."""

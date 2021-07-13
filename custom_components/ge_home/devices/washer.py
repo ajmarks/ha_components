@@ -47,5 +47,13 @@ class WasherApi(ApplianceApi):
             washer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_WASHER_TANK_STATUS)])           
         if self.has_erd_code(ErdCode.LAUNDRY_WASHER_TANK_SELECTED):
             washer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_WASHER_TANK_SELECTED)])
+        if self.has_erd_code(ErdCode.LAUNDRY_WASHER_TIMESAVER):
+            washer_entities.extend([GeErdBinarySensor(self, ErdCode.LAUNDRY_WASHER_TIMESAVER)])
+        if self.has_erd_code(ErdCode.LAUNDRY_WASHER_POWERSTEAM):
+            washer_entities.extend([GeErdBinarySensor(self, ErdCode.LAUNDRY_WASHER_POWERSTEAM)])
+        if self.has_erd_code(ErdCode.LAUNDRY_WASHER_PREWASH):
+            washer_entities.extend([GeErdBinarySensor(self, ErdCode.LAUNDRY_WASHER_PREWASH)])
+        if self.has_erd_code(ErdCode.LAUNDRY_WASHER_TUMBLECARE):
+            washer_entities.extend([GeErdBinarySensor(self, ErdCode.LAUNDRY_WASHER_TUMBLECARE)])
         
         return washer_entities
