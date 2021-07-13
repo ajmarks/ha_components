@@ -8,6 +8,7 @@ from ..common import GeErdSelect, OptionsConverter
 _LOGGER = logging.getLogger(__name__)
 
 class FilterPositionOptionsConverter(OptionsConverter):
+    @property
     def options(self) -> List[str]:
         return [i.name.title() for i in ErdWaterFilterPosition].remove("Unknown")
     def from_option_string(self, value: str) -> Any:
