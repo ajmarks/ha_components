@@ -1,6 +1,6 @@
 
 import logging
-from typing import Any, List
+from typing import Any, List, Optional
 
 from homeassistant.components.select import SelectEntity
 from gehomesdk import ErdCodeType
@@ -16,6 +16,8 @@ class OptionsConverter:
         return []
     def from_option_string(self, value: str) -> Any:
         return value
+    def to_option_string(self, value: Any) -> Optional[str]:
+        return str(value)
   
 class GeErdSelect(GeErdEntity, SelectEntity):
     """ERD-based selector entity"""
@@ -24,6 +26,9 @@ class GeErdSelect(GeErdEntity, SelectEntity):
     def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, converter: OptionsConverter, erd_override: str = None, icon_override: str = None, device_class_override: str = None):
         super().__init__(api, erd_code, erd_override=erd_override, icon_override=icon_override, device_class_override=device_class_override)
         self._converter = converter
+
+    def current_option(self):
+        return self._converter.to_option_string(self.appliance.get_erd_value(self.erd_code))
 
     def options(self) -> List[str]:
         "Return a list of options"

@@ -1,5 +1,5 @@
 import logging
-from typing import List, Any
+from typing import List, Any, Optional
 
 from gehomesdk import ErdCodeType, ErdWaterFilterPosition
 from ...devices import ApplianceApi
@@ -15,6 +15,13 @@ class FilterPositionOptionsConverter(OptionsConverter):
             return ErdWaterFilterPosition[value]
         except:
             return ErdWaterFilterPosition.UNKNOWN
+    def to_option_string(self, value: Any) -> Optional[str]:
+        try:
+            if value is not None:
+                return value.name.title()
+        except:
+            pass
+        return ErdWaterFilterPosition.UNKNOWN.name.title()
 
 class GeErdFilterPositionSelect(GeErdSelect):
     def __init__(self, api: ApplianceApi, erd_code: ErdCodeType):
