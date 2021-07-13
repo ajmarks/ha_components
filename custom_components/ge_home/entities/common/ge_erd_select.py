@@ -27,9 +27,11 @@ class GeErdSelect(GeErdEntity, SelectEntity):
         super().__init__(api, erd_code, erd_override=erd_override, icon_override=icon_override, device_class_override=device_class_override)
         self._converter = converter
 
+    @property
     def current_option(self):
         return self._converter.to_option_string(self.appliance.get_erd_value(self.erd_code))
 
+    @property
     def options(self) -> List[str]:
         "Return a list of options"
         return self._converter.options
