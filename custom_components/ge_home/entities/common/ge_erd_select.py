@@ -37,6 +37,7 @@ class GeErdSelect(GeErdEntity, SelectEntity):
         return self._converter.options
     
     async def async_select_option(self, option: str) -> None:
+        _LOGGER.debug(f"Setting select from {self.current_option} to {option}")
         """Change the selected option."""
         if option != self.current_option:
             await self.appliance.async_set_erd_value(self.erd_code, self._converter.from_option_string(option))

@@ -1,3 +1,4 @@
+from custom_components.ge_home.entities.advantium.ge_advantium import GeAdvantium
 import logging
 from typing import List
 
@@ -23,6 +24,7 @@ class AdvantiumApi(ApplianceApi):
             GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE)),
             GeErdSensor(self, ErdCode.ADVANTIUM_KITCHEN_TIME_REMAINING),
             GeErdSensor(self, ErdCode.ADVANTIUM_COOK_TIME_REMAINING),
+            GeAdvantium(self),
 
             #Cook Status
             GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "cook_mode"),
