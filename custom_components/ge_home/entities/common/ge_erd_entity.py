@@ -75,7 +75,11 @@ class GeErdEntity(GeEntity):
         return self.appliance.stringify_erd_value(value, **kwargs)
 
     @property
-    def _temp_measurement_system(self) -> Optional[ErdMeasurementUnits]:
+    def _measurement_system(self) -> Optional[ErdMeasurementUnits]:
+        """
+        Get the measurement system this appliance is using.  For now, uses the
+        temperature unit if available, otherwise assumes imperial.
+        """
         try:
             value = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
         except KeyError:
@@ -116,6 +120,8 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.WATERFILTER_SENSOR:
             return "mdi:water"
         if self.erd_code_class == ErdCodeClass.FLOW_RATE:
-            return "mdi:water"            
+            return "mdi:water"   
+        if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:
+            return "mdi:water"                        
 
         return None

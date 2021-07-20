@@ -13,7 +13,7 @@ class FilterPositionOptionsConverter(OptionsConverter):
         return [i.name.title() for i in ErdWaterFilterPosition if i != ErdWaterFilterPosition.UNKNOWN]
     def from_option_string(self, value: str) -> Any:
         try:
-            return ErdWaterFilterPosition[value]
+            return ErdWaterFilterPosition[value.upper()]
         except:
             return ErdWaterFilterPosition.UNKNOWN
     def to_option_string(self, value: Any) -> Optional[str]:

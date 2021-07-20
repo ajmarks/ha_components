@@ -32,7 +32,7 @@ class GeErdSensor(GeErdEntity, Entity):
 
     @property
     def _temp_units(self) -> Optional[str]:
-        if self._temp_measurement_system == ErdMeasurementUnits.METRIC:
+        if self._measurement_system == ErdMeasurementUnits.METRIC:
             return TEMP_CELSIUS
         return TEMP_FAHRENHEIT
 
@@ -43,7 +43,7 @@ class GeErdSensor(GeErdEntity, Entity):
             in [ErdCodeClass.RAW_TEMPERATURE, ErdCodeClass.NON_ZERO_TEMPERATURE]
             or self.device_class == DEVICE_CLASS_TEMPERATURE
         ):
-            if self._temp_measurement_system == ErdMeasurementUnits.METRIC:
+            if self._measurement_system == ErdMeasurementUnits.METRIC:
                 return TEMP_CELSIUS
             return TEMP_FAHRENHEIT
         if (
@@ -56,10 +56,13 @@ class GeErdSensor(GeErdEntity, Entity):
         if self.device_class == DEVICE_CLASS_POWER_FACTOR:
             return "%"
         if self.erd_code_class == ErdCodeClass.FLOW_RATE:
-            if self._temp_measurement_system == ErdMeasurementUnits.METRIC:
+            if self._measurement_system == ErdMeasurementUnits.METRIC:
                 return "lpm"
-            return "gpm"        
-
+            return "gpm" 
+        if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:       
+            if self._measurement_system == ErdMeasurementUnits.METRIC:
+                return "l"
+            return "g"
         return None
 
     def _get_device_class(self) -> Optional[str]:
