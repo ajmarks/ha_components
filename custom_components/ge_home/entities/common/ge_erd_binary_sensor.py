@@ -19,7 +19,7 @@ class GeErdBinarySensor(GeErdEntity, BinarySensorEntity):
         """Return True if entity is on."""
         return self._boolify(self.appliance.get_erd_value(self.erd_code))
 
-    def _get_erd_icon(self):
+    def _get_icon(self):
         if self._icon_on_override and self.is_on:
             return self._icon_on_override
         if self._icon_off_override and not self.is_on:
