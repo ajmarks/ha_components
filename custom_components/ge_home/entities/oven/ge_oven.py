@@ -191,13 +191,13 @@ class GeOven(GeWaterHeater):
         }
         if probe_present:
             data["probe_temperature"] = self.get_erd_value("PROBE_DISPLAY_TEMP")
-        if self.api.has_erd_code(self.get_erd_value("ELAPSED_COOK_TIME")):
+        if self.api.has_erd_code(self.get_erd_code("ELAPSED_COOK_TIME")):
             elapsed_time = self.get_erd_value("ELAPSED_COOK_TIME")
-        if self.api.has_erd_code(self.get_erd_value("COOK_TIME_REMAINING")):
+        if self.api.has_erd_code(self.get_erd_code("COOK_TIME_REMAINING")):
             cook_time_remaining = self.get_erd_value("COOK_TIME_REMAINING")
-        if self.api.has_erd_code(self.get_erd_value("KITCHEN_TIMER")):
+        if self.api.has_erd_code(self.get_erd_code("KITCHEN_TIMER")):
             kitchen_timer = self.get_erd_value("KITCHEN_TIMER")
-        if self.api.has_erd_code(self.get_erd_value("DELAY_TIME_REMAINING")):
+        if self.api.has_erd_code(self.get_erd_code("DELAY_TIME_REMAINING")):
             delay_time = self.get_erd_value("DELAY_TIME_REMAINING")
         if elapsed_time:
             data["cook_time_elapsed"] = self._stringify(elapsed_time)
