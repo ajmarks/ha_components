@@ -31,7 +31,10 @@ class OvenApi(ApplianceApi):
     def get_all_entities(self) -> List[Entity]:
         base_entities = super().get_all_entities()
         oven_config: OvenConfiguration = self.appliance.get_erd_value(ErdCode.OVEN_CONFIGURATION)
-        cooktop_config: ErdCooktopConfig = self.appliance.get_erd_value(ErdCode.COOKTOP_CONFIG)
+
+        cooktop_config = ErdCooktopConfig.NONE
+        if self.has_erd_code(ErdCode.COOKTOP_CONFIG):
+            cooktop_config: ErdCooktopConfig = self.appliance.get_erd_value(ErdCode.COOKTOP_CONFIG)
 
         _LOGGER.debug(f"Oven Config: {oven_config}")
         _LOGGER.debug(f"Cooktop Config: {cooktop_config}")
