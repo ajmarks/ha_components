@@ -191,6 +191,11 @@ class GeOven(GeWaterHeater):
         }
         if probe_present:
             data["probe_temperature"] = self.get_erd_value("PROBE_DISPLAY_TEMP")
+
+        elapsed_time = None
+        cook_time_remaining = None
+        kitchen_timer = None
+        delay_time = None
         if self.api.has_erd_code(self.get_erd_code("ELAPSED_COOK_TIME")):
             elapsed_time = self.get_erd_value("ELAPSED_COOK_TIME")
         if self.api.has_erd_code(self.get_erd_code("COOK_TIME_REMAINING")):
