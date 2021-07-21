@@ -3,7 +3,7 @@
   "name": "GE Home",
   "config_flow": true,
   "documentation": "https://github.com/simbaja/ha_components",
-  "requirements": ["gehomesdk==0.3.19","magicattr==0.1.5"],
+  "requirements": ["gehomesdk==0.3.20","magicattr==0.1.5"],
   "codeowners": ["@simbaja"],	
-  "version": "0.3.19"
+  "version": "0.3.20"
 }
