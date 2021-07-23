@@ -8,13 +8,25 @@ from homeassistant.const import (
     TEMP_FAHRENHEIT,
 )
 from homeassistant.helpers.entity import Entity
-from gehomesdk import ErdCode, ErdCodeClass, ErdMeasurementUnits
+from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
 
 from .ge_erd_entity import GeErdEntity
-
+from ...devices import ApplianceApi
 
 class GeErdSensor(GeErdEntity, Entity):
     """GE Entity for sensors"""
+
+    def __init__(
+        self, 
+        api: ApplianceApi, 
+        erd_code: ErdCodeType, 
+        erd_override: str, 
+        icon_override: str, 
+        device_class_override: str,
+        uom_override: str
+    ):
+        super().__init__(api, erd_code, erd_override, icon_override, device_class_override)
+        self._uom_override = uom_override
 
     @property
     def state(self) -> Optional[str]:
@@ -38,6 +50,11 @@ class GeErdSensor(GeErdEntity, Entity):
 
     def _get_uom(self):
         """Select appropriate units"""
+        
+        #if we have an override, just use it
+        if self._uom_override:
+            return self._uom_override
+
         if (
             self.erd_code_class
             in [ErdCodeClass.RAW_TEMPERATURE, ErdCodeClass.NON_ZERO_TEMPERATURE]

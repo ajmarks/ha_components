@@ -55,11 +55,11 @@ class DryerApi(ApplianceApi):
         if self.has_erd_code(ErdCode.LAUNDRY_DRYER_LEVEL_SENSOR_DISABLED):
             dryer_entities.extend([GeErdBinarySensor(self, ErdCode.LAUNDRY_DRYER_LEVEL_SENSOR_DISABLED)])
         if self.has_erd_code(ErdCode.LAUNDRY_DRYER_SHEET_USAGE_CONFIGURATION):
-            dryer_entities.extend([GeErdBinarySensor(self, ErdCode.LAUNDRY_DRYER_SHEET_USAGE_CONFIGURATION)])
+            dryer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_DRYER_SHEET_USAGE_CONFIGURATION)])
         if self.has_erd_code(ErdCode.LAUNDRY_DRYER_SHEET_INVENTORY):
-            dryer_entities.extend([GeErdBinarySensor(self, ErdCode.LAUNDRY_DRYER_SHEET_INVENTORY)])
+            dryer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_DRYER_SHEET_INVENTORY, uom_override="sheets")])
         if self.has_erd_code(ErdCode.LAUNDRY_DRYER_ECODRY_STATUS):
-            dryer_entities.extend([GeErdBinarySensor(self, ErdCode.LAUNDRY_DRYER_ECODRY_STATUS)])
+            dryer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_DRYER_ECODRY_STATUS)])
 
         return dryer_entities
         
