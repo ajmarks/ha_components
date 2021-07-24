@@ -28,15 +28,15 @@ class AdvantiumApi(ApplianceApi):
 
             #Cook Status
             GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "cook_mode"),
-            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "termination_reason"),
-            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "preheat_status"),
-            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "temperature"),
-            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "power_level"),
-            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "warm_status"),
-            GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "door_status"),
-            GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "sensing_active"),
-            GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "cooling_fan_status"),
-            GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "oven_light_status"),
+            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "termination_reason", icon_override="mdi:information-outline"),
+            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "preheat_status", icon_override="mdi:fire"),
+            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "temperature", icon_override="mdi:thermometer"),
+            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "power_level", icon_override="mdi:gauge"),
+            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "warm_status", icon_override="mdi:radiator"),
+            GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "door_status", device_class_override="door"),
+            GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "sensing_active", icon_on_override="mdi:flash-auto", icon_off_override="mdi:flash-off"),
+            GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "cooling_fan_status", icon_on_override="mdi:fan", icon_off_override="mdi:fan-off"),
+            GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "oven_light_status", icon_on_override="mdi:lightbulb-on", icon_off_override="mdi:lightbulb-off"),
         ]
         entities = base_entities + advantium_entities
         return entities
