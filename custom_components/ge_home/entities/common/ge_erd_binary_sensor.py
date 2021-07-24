@@ -28,7 +28,7 @@ class GeErdBinarySensor(GeErdEntity, BinarySensorEntity):
         if self._erd_code_class == ErdCodeClass.DOOR or self.device_class == "door":
             return "mdi:door-open" if self.is_on else "mdi:door-closed"
 
-        return None
+        return super()._get_icon()
 
     def _get_device_class(self) -> Optional[str]:
         if self._device_class_override:
