@@ -91,7 +91,7 @@ class FridgeApi(ApplianceApi):
             dispenser_entities.extend([
                 GeErdBinarySensor(self, ErdCode.HOT_WATER_IN_USE),
                 GeErdSensor(self, ErdCode.HOT_WATER_SET_TEMP),
-                GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "status"),
+                GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "status", icon_override="mdi:information-outline"),
                 GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "time_until_ready", icon_override="mdi:timer-outline"),
                 GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "current_temp", device_class_override=DEVICE_CLASS_TEMPERATURE),
                 GeErdPropertyBinarySensor(self, ErdCode.HOT_WATER_STATUS, "faulted", device_class_override=DEVICE_CLASS_PROBLEM),

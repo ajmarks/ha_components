@@ -27,7 +27,7 @@ class FilterPositionOptionsConverter(OptionsConverter):
 
 class GeErdFilterPositionSelect(GeErdSelect):
     def __init__(self, api: ApplianceApi, erd_code: ErdCodeType):
-        super().__init__(api, erd_code, FilterPositionOptionsConverter())
+        super().__init__(api, erd_code, FilterPositionOptionsConverter(), icon_override="mdi:valve")
 
     @property
     def current_option(self):
