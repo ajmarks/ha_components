@@ -30,7 +30,7 @@ class DishwasherApi(ApplianceApi):
             #User Setttings
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sound", icon_override="mdi:volume-high"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "lock_control", icon_override="mdi:lock"),
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sabbath", icon_override="mdi:star-david"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sabbath", icon_override="mdi:judaism"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "cycle_mode", icon_override="mdi:state-machine"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "presoak"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "bottle_jet"),
