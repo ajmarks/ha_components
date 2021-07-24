@@ -180,7 +180,7 @@ class GeOven(GeWaterHeater):
         return self._stringify(erd_value, temp_units=self.temperature_unit)
 
     @property
-    def device_state_attributes(self) -> Optional[Dict[str, Any]]:
+    def extra_state_attributes(self) -> Optional[Dict[str, Any]]:
         probe_present = False
         if self.api.has_erd_code(self.get_erd_code("PROBE_PRESENT")):
             probe_present: bool = self.get_erd_value("PROBE_PRESENT")

@@ -110,7 +110,7 @@ class GeDispenser(GeWaterHeater):
         return convert_temperature(self._max_temp, TEMP_FAHRENHEIT, self.temperature_unit)
 
     @property
-    def other_state_attrs(self) -> Dict[str, Any]:
+    def extra_state_attributes(self) -> Dict[str, Any]:
         data = {}
         
         data["target_temperature"] = self.target_temperature

@@ -60,9 +60,7 @@ class GeErdSensor(GeErdEntity, Entity):
             in [ErdCodeClass.RAW_TEMPERATURE, ErdCodeClass.NON_ZERO_TEMPERATURE]
             or self.device_class == DEVICE_CLASS_TEMPERATURE
         ):
-            if self._measurement_system == ErdMeasurementUnits.METRIC:
-                return TEMP_CELSIUS
-            return TEMP_FAHRENHEIT
+            return self._temp_units
         if (
             self.erd_code_class == ErdCodeClass.BATTERY
             or self.device_class == DEVICE_CLASS_BATTERY

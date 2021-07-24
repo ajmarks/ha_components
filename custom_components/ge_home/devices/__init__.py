@@ -16,8 +16,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
-    _LOGGER.debug(f"Found device type: {appliance_type}")
     """Get the appropriate appliance type"""
+    _LOGGER.debug(f"Found device type: {appliance_type}")
     if appliance_type == ErdApplianceType.OVEN:
         return OvenApi
     if appliance_type == ErdApplianceType.FRIDGE:
