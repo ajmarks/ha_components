@@ -1,7 +1,7 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
-## 0.3.x
+## 0.4.0
 
 - Implemented Laundry Support (@warrenrees, @ssindsd)
 - Implemented Water Filter Support (@bendavis, @tumtumsback, @rgabrielson11)
