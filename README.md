@@ -1,5 +1,10 @@
 # GE Home Appliances (SmartHQ)
 
+[![GitHub Release][releases-shield]][releases]
+[![GitHub Activity][commits-shield]][commits]
+[![License][license-shield]](LICENSE)
+[![hacs][hacsbadge]][hacs]
+
 Integration for GE WiFi-enabled appliances into Home Assistant.  This integration currently supports the following devices:
 
 - Fridge
@@ -44,3 +49,12 @@ Configuration is done via the HA user interface.
 ## Change Log
 
 Please click [here](CHANGELOG.md) for change information.
+
+[commits-shield]: https://img.shields.io/github/commit-activity/y/simbaja/ha_gehome.svg?style=for-the-badge
+[commits]: https://github.com/simbaja/ha_gehome/commits/master
+[hacs]: https://github.com/custom-components/hacs
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/simbaja/ha_gehome.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/badge/maintainer-Jack%20Simbach%20%40simbaja-blue.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/simbaja/ha_gehome.svg?style=for-the-badge
+[releases]: https://github.com/simbaja/ha_gehome/releases
