@@ -39,15 +39,20 @@ Oven Controls:
 - Implemented Laundry Support (@warrenrees, @ssindsd)
 - Implemented Water Filter Support (@bendavis, @tumtumsback, @rgabrielson11)
 - Implemented Initial Advantium Support (@ssinsd)
-- Bug fixes for ovens (@TKpizza)
 - Additional authentication error handling (@rgabrielson11)
 - Additional dishwasher functionality (@ssinsd)
 - Introduced new select entity (@bendavis)
-- Miscellaneous entity bug fixes/refinements
 - Integrated new version of SDK
 
 {% endif %}
 
 #### Bugfixes
+
+{% if version_installed.split('.') | map('int') < '0.4.1'.split('.') | map('int') %}
+
+- Bug fixes for ovens (@TKpizza)
+- Miscellaneous entity bug fixes/refinements
+
+{% endif %}
 
 {% endif %}
