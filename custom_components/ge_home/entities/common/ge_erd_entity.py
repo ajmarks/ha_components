@@ -119,6 +119,14 @@ class GeErdEntity(GeEntity):
             return "mdi:dishwasher"
         if self.erd_code_class == ErdCodeClass.WATERFILTER_SENSOR:
             return "mdi:water"
+        if self.erd_code_class == ErdCodeClass.LAUNDRY_SENSOR:
+            return "mdi:washing-machine"
+        if self.erd_code_class == ErdCodeClass.LAUNDRY_WASHER_SENSOR:
+            return "mdi:washing-machine"
+        if self.erd_code_class == ErdCodeClass.LAUNDRY_DRYER_SENSOR:
+            return "mdi:tumble-dryer"          
+        if self.erd_code_class == ErdCodeClass.ADVANTIUM_SENSOR:
+            return "mdi:microwave"              
         if self.erd_code_class == ErdCodeClass.FLOW_RATE:
             return "mdi:water"   
         if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:

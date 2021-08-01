@@ -17,14 +17,14 @@ class DryerApi(ApplianceApi):
         base_entities = super().get_all_entities()
 
         common_entities = [
-            GeErdSensor(self, ErdCode.LAUNDRY_MACHINE_STATE),
-            GeErdSensor(self, ErdCode.LAUNDRY_CYCLE),
-            GeErdSensor(self, ErdCode.LAUNDRY_SUB_CYCLE),
-            GeErdBinarySensor(self, ErdCode.LAUNDRY_END_OF_CYCLE),
+            GeErdSensor(self, ErdCode.LAUNDRY_MACHINE_STATE, icon_override="mdi:tumble-dryer"),
+            GeErdSensor(self, ErdCode.LAUNDRY_CYCLE, icon_override="mdi:state-machine"),
+            GeErdSensor(self, ErdCode.LAUNDRY_SUB_CYCLE, icon_override="mdi:state-machine"),
+            GeErdBinarySensor(self, ErdCode.LAUNDRY_END_OF_CYCLE, icon_override="mdi:tumble-dryer"),
             GeErdSensor(self, ErdCode.LAUNDRY_TIME_REMAINING),
             GeErdSensor(self, ErdCode.LAUNDRY_DELAY_TIME_REMAINING),
             GeErdBinarySensor(self, ErdCode.LAUNDRY_DOOR),
-            GeErdBinarySensor(self, ErdCode.LAUNDRY_REMOTE_STATUS),
+            GeErdBinarySensor(self, ErdCode.LAUNDRY_REMOTE_STATUS, icon_override="mdi:tumble-dryer"),
         ]
 
         dryer_entities = self.get_dryer_entities()
@@ -57,7 +57,7 @@ class DryerApi(ApplianceApi):
         if self.has_erd_code(ErdCode.LAUNDRY_DRYER_SHEET_USAGE_CONFIGURATION):
             dryer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_DRYER_SHEET_USAGE_CONFIGURATION)])
         if self.has_erd_code(ErdCode.LAUNDRY_DRYER_SHEET_INVENTORY):
-            dryer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_DRYER_SHEET_INVENTORY, uom_override="sheets")])
+            dryer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_DRYER_SHEET_INVENTORY, icon_override="mdi:tray-full", uom_override="sheets")])
         if self.has_erd_code(ErdCode.LAUNDRY_DRYER_ECODRY_STATUS):
             dryer_entities.extend([GeErdSensor(self, ErdCode.LAUNDRY_DRYER_ECODRY_STATUS)])
 
