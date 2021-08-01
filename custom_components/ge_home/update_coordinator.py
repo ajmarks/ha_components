@@ -34,7 +34,7 @@ from .const import (
 )
 from .devices import ApplianceApi, get_appliance_api_type
 
-PLATFORMS = ["binary_sensor", "sensor", "switch", "water_heater", "select"]
+PLATFORMS = ["binary_sensor", "sensor", "switch", "water_heater", "select", "climate"]
 _LOGGER = logging.getLogger(__name__)
 
 
