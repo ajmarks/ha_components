@@ -139,15 +139,17 @@ class GeAbstractFridge(GeWaterHeater):
         """Get state attributes for the ice maker, if applicable."""
         data = {}
 
-        erd_val: FridgeIceBucketStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_BUCKET_STATUS)
-        ice_bucket_status = getattr(erd_val, f"state_full_{self.heater_type}")
-        if ice_bucket_status != ErdFullNotFull.NA:
-            data["ice_bucket"] = self._stringify(ice_bucket_status)
+        if self.api.has_erd_code(ErdCode.ICE_MAKER_BUCKET_STATUS):
+            erd_val: FridgeIceBucketStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_BUCKET_STATUS)
+            ice_bucket_status = getattr(erd_val, f"state_full_{self.heater_type}")
+            if ice_bucket_status != ErdFullNotFull.NA:
+                data["ice_bucket"] = self._stringify(ice_bucket_status)
 
-        erd_val: IceMakerControlStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_CONTROL)
-        ice_control_status = getattr(erd_val, f"status_{self.heater_type}")
-        if ice_control_status != ErdOnOff.NA:
-            data["ice_maker"] = self._stringify(ice_control_status)
+        if self.api.has_erd_code(ErdCode.ICE_MAKER_CONTROL):
+            erd_val: IceMakerControlStatus = self.appliance.get_erd_value(ErdCode.ICE_MAKER_CONTROL)
+            ice_control_status = getattr(erd_val, f"status_{self.heater_type}")
+            if ice_control_status != ErdOnOff.NA:
+                data["ice_maker"] = self._stringify(ice_control_status)
 
         return data
 
@@ -157,8 +159,13 @@ class GeAbstractFridge(GeWaterHeater):
         return {}
 
     @property
-    def device_state_attributes(self) -> Dict[str, Any]:
+    def other_state_attrs(self) -> Dict[str, Any]:
+        """Other state attributes for the entity"""
+        return {}
+
+    @property
+    def extra_state_attributes(self) -> Dict[str, Any]:
         door_attrs = self.door_state_attrs
         ice_maker_attrs = self.ice_maker_state_attrs
-        other_attrs = self.other_state_attrs
-        return {**door_attrs, **ice_maker_attrs, **other_attrs}
+        other_state_attrs = self.other_state_attrs
+        return {**door_attrs, **ice_maker_attrs, **other_state_attrs}

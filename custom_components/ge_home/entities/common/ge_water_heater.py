@@ -42,13 +42,3 @@ class GeWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
     @property
     def supported_features(self):
         raise NotImplementedError
-
-    @property
-    def other_state_attrs(self) -> Dict[str, Any]:
-        """State attributes to be optionally overridden in subclasses."""
-        return {}
-
-    @property
-    def device_state_attributes(self) -> Dict[str, Any]:
-        other_attrs = self.other_state_attrs
-        return {**other_attrs}

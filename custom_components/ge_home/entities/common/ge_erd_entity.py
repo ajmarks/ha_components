@@ -1,7 +1,6 @@
 from datetime import timedelta
 from typing import Optional
 
-from homeassistant.const import DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
 
 from ...const import DOMAIN
@@ -11,7 +10,15 @@ from .ge_entity import GeEntity
 
 class GeErdEntity(GeEntity):
     """Parent class for GE entities tied to a specific ERD"""
-    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_override: str = None, icon_override: str = None, device_class_override: str = None):
+
+    def __init__(
+        self,
+        api: ApplianceApi,
+        erd_code: ErdCodeType,
+        erd_override: str = None,
+        icon_override: str = None,
+        device_class_override: str = None,
+    ):
         super().__init__(api)
         self._erd_code = api.appliance.translate_erd_code(erd_code)
         self._erd_code_class = api.appliance.get_erd_code_class(self._erd_code)
@@ -21,11 +28,11 @@ class GeErdEntity(GeEntity):
 
         if not self._erd_code_class:
             self._erd_code_class = ErdCodeClass.GENERAL
-        
+
     @property
     def erd_code(self) -> ErdCodeType:
         return self._erd_code
-    
+
     @property
     def erd_code_class(self) -> ErdCodeClass:
         return self._erd_code_class
@@ -40,8 +47,8 @@ class GeErdEntity(GeEntity):
     @property
     def name(self) -> Optional[str]:
         erd_string = self.erd_string
-        
-        #override the name if specified
+
+        # override the name if specified
         if self._erd_override != None:
             erd_string = self._erd_override
 
@@ -53,10 +60,10 @@ class GeErdEntity(GeEntity):
         return f"{DOMAIN}_{self.serial_number}_{self.erd_string.lower()}"
 
     def _stringify(self, value: any, **kwargs) -> Optional[str]:
-        """ Stringify a value """
+        """Stringify a value"""
         # perform special processing before passing over to the default method
         if self.erd_code == ErdCode.CLOCK_TIME:
-            return value.strftime("%H:%M:%S") if value else None        
+            return value.strftime("%H:%M:%S") if value else None
         if self.erd_code_class == ErdCodeClass.RAW_TEMPERATURE:
             return f"{value}"
         if self.erd_code_class == ErdCodeClass.NON_ZERO_TEMPERATURE:
@@ -68,7 +75,11 @@ class GeErdEntity(GeEntity):
         return self.appliance.stringify_erd_value(value, **kwargs)
 
     @property
-    def _temp_measurement_system(self) -> Optional[ErdMeasurementUnits]:
+    def _measurement_system(self) -> Optional[ErdMeasurementUnits]:
+        """
+        Get the measurement system this appliance is using.  For now, uses the
+        temperature unit if available, otherwise assumes imperial.
+        """
         try:
             value = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
         except KeyError:
@@ -106,5 +117,19 @@ class GeErdEntity(GeEntity):
             return "mdi:cup-water"
         if self.erd_code_class == ErdCodeClass.DISHWASHER_SENSOR:
             return "mdi:dishwasher"
+        if self.erd_code_class == ErdCodeClass.WATERFILTER_SENSOR:
+            return "mdi:water"
+        if self.erd_code_class == ErdCodeClass.LAUNDRY_SENSOR:
+            return "mdi:washing-machine"
+        if self.erd_code_class == ErdCodeClass.LAUNDRY_WASHER_SENSOR:
+            return "mdi:washing-machine"
+        if self.erd_code_class == ErdCodeClass.LAUNDRY_DRYER_SENSOR:
+            return "mdi:tumble-dryer"          
+        if self.erd_code_class == ErdCodeClass.ADVANTIUM_SENSOR:
+            return "mdi:microwave"              
+        if self.erd_code_class == ErdCodeClass.FLOW_RATE:
+            return "mdi:water"   
+        if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:
+            return "mdi:water"                        
 
         return None

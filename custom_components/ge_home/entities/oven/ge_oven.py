@@ -180,8 +180,10 @@ class GeOven(GeWaterHeater):
         return self._stringify(erd_value, temp_units=self.temperature_unit)
 
     @property
-    def device_state_attributes(self) -> Optional[Dict[str, Any]]:
-        probe_present = self.get_erd_value("PROBE_PRESENT")
+    def extra_state_attributes(self) -> Optional[Dict[str, Any]]:
+        probe_present = False
+        if self.api.has_erd_code(self.get_erd_code("PROBE_PRESENT")):
+            probe_present: bool = self.get_erd_value("PROBE_PRESENT")
         data = {
             "display_state": self.display_state,
             "probe_present": probe_present,
@@ -189,14 +191,23 @@ class GeOven(GeWaterHeater):
         }
         if probe_present:
             data["probe_temperature"] = self.get_erd_value("PROBE_DISPLAY_TEMP")
-        elapsed_time = self.get_erd_value("ELAPSED_COOK_TIME")
-        cook_time_left = self.get_erd_value("COOK_TIME_REMAINING")
-        kitchen_timer = self.get_erd_value("KITCHEN_TIMER")
-        delay_time = self.get_erd_value("DELAY_TIME_REMAINING")
+
+        elapsed_time = None
+        cook_time_remaining = None
+        kitchen_timer = None
+        delay_time = None
+        if self.api.has_erd_code(self.get_erd_code("ELAPSED_COOK_TIME")):
+            elapsed_time = self.get_erd_value("ELAPSED_COOK_TIME")
+        if self.api.has_erd_code(self.get_erd_code("COOK_TIME_REMAINING")):
+            cook_time_remaining = self.get_erd_value("COOK_TIME_REMAINING")
+        if self.api.has_erd_code(self.get_erd_code("KITCHEN_TIMER")):
+            kitchen_timer = self.get_erd_value("KITCHEN_TIMER")
+        if self.api.has_erd_code(self.get_erd_code("DELAY_TIME_REMAINING")):
+            delay_time = self.get_erd_value("DELAY_TIME_REMAINING")
         if elapsed_time:
             data["cook_time_elapsed"] = self._stringify(elapsed_time)
-        if cook_time_left:
-            data["cook_time_left"] = self._stringify(cook_time_left)
+        if cook_time_remaining:
+            data["cook_time_remaining"] = self._stringify(cook_time_remaining)
         if kitchen_timer:
             data["cook_time_remaining"] = self._stringify(kitchen_timer)
         if delay_time:

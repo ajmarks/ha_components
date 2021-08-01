@@ -98,12 +98,16 @@ class ApplianceApi:
 
     def get_all_entities(self) -> List[Entity]:
         """Create Entities for this device."""
+        return self.get_base_entities()
+
+    def get_base_entities(self) -> List[Entity]:
+        """Create base entities (i.e. common between all appliances)."""
         from ..entities import GeErdSensor, GeErdSwitch
         entities = [
             GeErdSensor(self, ErdCode.CLOCK_TIME),
             GeErdSwitch(self, ErdCode.SABBATH_MODE),
         ]
-        return entities
+        return entities        
 
     def build_entities_list(self) -> None:
         """Build the entities list, adding anything new."""
@@ -123,3 +127,9 @@ class ApplianceApi:
         except:
             return None
     
+    def has_erd_code(self, code: ErdCodeType):
+        try:
+            self.appliance.get_erd_value(code)
+            return True
+        except:
+            return False
