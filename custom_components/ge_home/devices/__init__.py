@@ -1,3 +1,4 @@
+from custom_components.ge_home.devices.advantium import AdvantiumApi
 import logging
 from typing import Type
 
@@ -32,6 +33,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return WasherDryerApi
     if appliance_type == ErdApplianceType.POE_WATER_FILTER:
         return WaterFilterApi
+    if appliance_type == ErdApplianceType.ADVANTIUM:
+        return AdvantiumApi
 
     # Fallback
     return ApplianceApi
