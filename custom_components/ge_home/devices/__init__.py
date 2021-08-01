@@ -1,4 +1,3 @@
-from custom_components.ge_home.devices.advantium import AdvantiumApi
 import logging
 from typing import Type
 
@@ -12,6 +11,7 @@ from .washer import WasherApi
 from .dryer import DryerApi
 from .washer_dryer import WasherDryerApi
 from .water_filter import WaterFilterApi
+from .advantium import AdvantiumApi
 
 _LOGGER = logging.getLogger(__name__)
 
