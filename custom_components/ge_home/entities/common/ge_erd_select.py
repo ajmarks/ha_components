@@ -7,17 +7,9 @@ from gehomesdk import ErdCodeType
 
 from ...devices import ApplianceApi
 from .ge_erd_entity import GeErdEntity
+from .options_converter import OptionsConverter
 
 _LOGGER = logging.getLogger(__name__)
-
-class OptionsConverter:
-    @property
-    def options(self) -> List[str]:
-        return []
-    def from_option_string(self, value: str) -> Any:
-        return value
-    def to_option_string(self, value: Any) -> Optional[str]:
-        return str(value)
   
 class GeErdSelect(GeErdEntity, SelectEntity):
     """ERD-based selector entity"""

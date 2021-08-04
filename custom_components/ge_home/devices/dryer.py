@@ -20,11 +20,11 @@ class DryerApi(ApplianceApi):
             GeErdSensor(self, ErdCode.LAUNDRY_MACHINE_STATE, icon_override="mdi:tumble-dryer"),
             GeErdSensor(self, ErdCode.LAUNDRY_CYCLE, icon_override="mdi:state-machine"),
             GeErdSensor(self, ErdCode.LAUNDRY_SUB_CYCLE, icon_override="mdi:state-machine"),
-            GeErdBinarySensor(self, ErdCode.LAUNDRY_END_OF_CYCLE, icon_override="mdi:tumble-dryer"),
+            GeErdBinarySensor(self, ErdCode.LAUNDRY_END_OF_CYCLE, icon_on_override="mdi:tumble-dryer", icon_off_override="mdi:tumble-dryer"),
             GeErdSensor(self, ErdCode.LAUNDRY_TIME_REMAINING),
             GeErdSensor(self, ErdCode.LAUNDRY_DELAY_TIME_REMAINING),
             GeErdBinarySensor(self, ErdCode.LAUNDRY_DOOR),
-            GeErdBinarySensor(self, ErdCode.LAUNDRY_REMOTE_STATUS, icon_override="mdi:tumble-dryer"),
+            GeErdBinarySensor(self, ErdCode.LAUNDRY_REMOTE_STATUS, icon_on_override="mdi:tumble-dryer", icon_off_override="mdi:tumble-dryer"),
         ]
 
         dryer_entities = self.get_dryer_entities()

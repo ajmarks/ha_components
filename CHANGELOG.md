@@ -1,6 +1,10 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.4.1
+
+- Fixed an issue with dryer entities causing an error in HA (@steveredden)
+
 ## 0.4.0
 
 - Implemented Laundry Support (@warrenrees, @ssindsd)
