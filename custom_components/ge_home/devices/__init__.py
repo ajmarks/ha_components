@@ -1,3 +1,4 @@
+from custom_components.ge_home.devices.wac import WacApi
 import logging
 from typing import Type
 
@@ -35,6 +36,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return WaterFilterApi
     if appliance_type == ErdApplianceType.ADVANTIUM:
         return AdvantiumApi
+    if appliance_type == ErdApplianceType.AIR_CONDITIONER:
+        return WacApi
 
     # Fallback
     return ApplianceApi
