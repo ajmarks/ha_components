@@ -1,4 +1,3 @@
-from custom_components.ge_home.devices.wac import WacApi
 import logging
 from typing import Type
 
@@ -13,6 +12,7 @@ from .dryer import DryerApi
 from .washer_dryer import WasherDryerApi
 from .water_filter import WaterFilterApi
 from .advantium import AdvantiumApi
+from .wac import WacApi
 
 _LOGGER = logging.getLogger(__name__)
 
