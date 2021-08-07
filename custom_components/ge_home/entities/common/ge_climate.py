@@ -8,6 +8,7 @@ from homeassistant.const import (
     TEMP_CELSIUS,
 )
 from homeassistant.components.climate.const import (
+    HVAC_MODE_FAN_ONLY,
     SUPPORT_TARGET_TEMPERATURE,
     SUPPORT_FAN_MODE,
     HVAC_MODE_OFF
@@ -29,7 +30,8 @@ class GeClimate(GeEntity, ClimateEntity):
         self, 
         api: ApplianceApi,
         hvac_mode_converter: OptionsConverter,
-        fan_mode_converter: OptionsConverter,        
+        fan_mode_converter: OptionsConverter,
+        fan_only_fan_mode_converter: OptionsConverter = None,
         power_status_erd_code: ErdCodeType = ErdCode.AC_POWER_STATUS,
         current_temperature_erd_code: ErdCodeType = ErdCode.AC_AMBIENT_TEMPERATURE,
         target_temperature_erd_code: ErdCodeType = ErdCode.AC_TARGET_TEMPERATURE,
@@ -40,6 +42,10 @@ class GeClimate(GeEntity, ClimateEntity):
         super().__init__(api)
         self._hvac_mode_converter = hvac_mode_converter
         self._fan_mode_converter = fan_mode_converter
+        self._fan_only_fan_mode_converter = (fan_only_fan_mode_converter 
+            if fan_only_fan_mode_converter is not None 
+            else fan_mode_converter
+        )
         self._power_status_erd_code = api.appliance.translate_erd_code(power_status_erd_code)
         self._current_temperature_erd_code = api.appliance.translate_erd_code(current_temperature_erd_code)
         self._target_temperature_erd_code = api.appliance.translate_erd_code(target_temperature_erd_code)
@@ -110,10 +116,14 @@ class GeClimate(GeEntity, ClimateEntity):
 
     @property
     def fan_mode(self):
+        if self.hvac_mode == HVAC_MODE_FAN_ONLY:
+            return self._fan_only_fan_mode_converter.to_option_string(self.appliance.get_erd_value(self.fan_mode_erd_code))
         return self._fan_mode_converter.to_option_string(self.appliance.get_erd_value(self.fan_mode_erd_code))
 
     @property
     def fan_modes(self) -> List[str]:
+        if self.hvac_mode == HVAC_MODE_FAN_ONLY:
+            return self._fan_only_fan_mode_converter.options
         return self._fan_mode_converter.options
 
     async def async_set_hvac_mode(self, hvac_mode: str) -> None:
@@ -130,9 +140,14 @@ class GeClimate(GeEntity, ClimateEntity):
     async def async_set_fan_mode(self, fan_mode: str) -> None:
         _LOGGER.debug(f"Setting Fan mode from {self.fan_mode} to {fan_mode}")
         if fan_mode != self.fan_mode:
+            converter = (self._fan_only_fan_mode_converter 
+                if self.hvac_mode == HVAC_MODE_FAN_ONLY
+                else self._fan_mode_converter
+            )
+
             await self.appliance.async_set_erd_value(
                 self.fan_mode_erd_code, 
-                self._fan_mode_converter.from_option_string(fan_mode)
+                converter.from_option_string(fan_mode)
             )
 
     async def async_set_temperature(self, **kwargs) -> None:
