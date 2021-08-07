@@ -2,6 +2,7 @@ import logging
 from typing import Any, List, Optional
 
 from homeassistant.components.climate import ClimateEntity
+from homeassistant.components.switch import is_on
 from homeassistant.const import (
     ATTR_TEMPERATURE,
     TEMP_FAHRENHEIT,
@@ -140,6 +141,11 @@ class GeClimate(GeEntity, ClimateEntity):
             if hvac_mode == HVAC_MODE_OFF:
                 await self.appliance.async_set_erd_value(self.power_status_erd_code, ErdOnOff.OFF)
             else:
+                #if it's not on, turn it on
+                if not self.is_on:
+                    await self.appliance.async_set_erd_value(self.power_status_erd_code, ErdOnOff.ON)
+
+                #then set the mode
                 await self.appliance.async_set_erd_value(
                     self.hvac_mode_erd_code, 
                     self._hvac_mode_converter.from_option_string(hvac_mode)
@@ -170,6 +176,12 @@ class GeClimate(GeEntity, ClimateEntity):
         _LOGGER.debug(f"Setting temperature from {self.target_temperature} to {temperature}")
         if self.target_temperature != temperature:
             await self.appliance.async_set_erd_value(self.target_temperature_erd_code, temperature)
+
+    async def async_turn_on(self):
+        await self.appliance.async_set_erd_value(self.power_status_erd_code, ErdOnOff.ON)
+
+    async def async_turn_off(self):
+        await self.appliance.async_set_erd_value(self.power_status_erd_code, ErdOnOff.OFF)
 
     def _convert_temp(self, temperature_f: int):
         if self.temperature_unit == TEMP_FAHRENHEIT:
