@@ -104,6 +104,14 @@ class GeClimate(GeEntity, ClimateEntity):
         return float(self.appliance.get_erd_value(self.current_temperature_erd_code))
 
     @property
+    def min_temp(self) -> float:
+        return self._convert_temp(64)
+
+    @property
+    def max_temp(self) -> float:
+        return self._convert_temp(86)
+
+    @property
     def hvac_mode(self):
         if not self.is_on:
             return HVAC_MODE_OFF
@@ -151,9 +159,20 @@ class GeClimate(GeEntity, ClimateEntity):
             )
 
     async def async_set_temperature(self, **kwargs) -> None:
+        #get the temperature if available
         temperature = kwargs.get(ATTR_TEMPERATURE)
         if temperature is None:
             return
+        
+        #convert to int (setting can only handle ints)
+        temperature = int(temperature)
+
         _LOGGER.debug(f"Setting temperature from {self.target_temperature} to {temperature}")
         if self.target_temperature != temperature:
             await self.appliance.async_set_erd_value(self.target_temperature_erd_code, temperature)
+
+    def _convert_temp(self, temperature_f: int):
+        if self.temperature_unit == TEMP_FAHRENHEIT:
+            return float(temperature_f)
+        else:
+            return (temperature_f - 32.0) * (5/9)
