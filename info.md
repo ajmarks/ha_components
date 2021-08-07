@@ -30,6 +30,12 @@ Oven Controls:
 
 #### Breaking Changes
 
+{% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}
+
+- Laundry support changes will cause entity names to be different, you will need to fix in HA
+
+{% endif %}
+
 #### Changes
 
 #### Features

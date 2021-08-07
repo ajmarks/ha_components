@@ -1,6 +1,13 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.4.x
+
+- Added support for Window A/C units (@mbrentrowe, @swcrawford1)
+- Fixed multiple binary sensors (bad conversion from enum) (@steveredden)
+- Fixed delay time interpretation for laundry (@steveredden, @sweichbr)
+- Enabled support for appliances without serial numbers
+
 ## 0.4.1
 
 - Fixed an issue with dryer entities causing an error in HA (@steveredden)
