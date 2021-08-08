@@ -11,7 +11,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class WacApi(ApplianceApi):
-    """API class for window AC objects"""
+    """API class for Window AC objects"""
     APPLIANCE_TYPE = ErdApplianceType.AIR_CONDITIONER
 
     def get_all_entities(self) -> List[Entity]:
