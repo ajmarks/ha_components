@@ -5,5 +5,5 @@
   "documentation": "https://github.com/simbaja/ha_gehome",
   "requirements": ["gehomesdk==0.4.2","magicattr==0.1.5"],
   "codeowners": ["@simbaja"],	
-  "version": "0.4.2"
+  "version": "0.4.3"
 }
