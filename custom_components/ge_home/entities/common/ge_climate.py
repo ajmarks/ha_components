@@ -187,3 +187,6 @@ class GeClimate(GeEntity, ClimateEntity):
             return float(temperature_f)
         else:
             return (temperature_f - 32.0) * (5/9)
+
+    def _get_icon(self) -> Optional[str]:
+        return "mdi:air-conditioner"

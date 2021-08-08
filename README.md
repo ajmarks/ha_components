@@ -29,6 +29,10 @@ Oven Controls:
 
 ![Fridge controls](https://raw.githubusercontent.com/simbaja/ha_components/master/img/oven_controls.png)
 
+A/C Controls:
+
+![A/C controls](https://raw.githubusercontent.com/simbaja/ha_components/master/img/ac_controls.png)
+
 ## Installation (Manual)
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).

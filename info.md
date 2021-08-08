@@ -24,6 +24,10 @@ Oven Controls:
 
 ![Fridge controls](https://raw.githubusercontent.com/simbaja/ha_components/master/img/oven_controls.png)
 
+A/C Controls:
+
+![A/C controls](https://raw.githubusercontent.com/simbaja/ha_components/master/img/ac_controls.png)
+
 
 {% if installed %}
 ### Changes as compared to your installed version:
@@ -31,7 +35,7 @@ Oven Controls:
 #### Breaking Changes
 
 {% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}
-- Laundry support changes will cause entity names to be different, you will need to fix in HA
+- Laundry support changes will cause entity names to be different, you will need to fix in HA (uninstall, reboot, delete leftover entitites, install, reboot)
 {% endif %}
 
 #### Changes
@@ -53,6 +57,10 @@ Oven Controls:
 {% endif %}
 
 #### Bugfixes
+
+{% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
+- Bug fixes for laundry (@steveredden, @sweichbr)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.1'.split('.') | map('int') %}
 - Fixed an issue with dryer entities causing an error in HA (@steveredden)

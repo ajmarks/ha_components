@@ -1,7 +1,7 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
-## 0.4.x
+## 0.4.3
 
 - Added support for Split A/C units (@RobertusIT)
 - Added support for Window A/C units (@mbrentrowe, @swcrawford1)
