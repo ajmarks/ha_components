@@ -1,8 +1,7 @@
 import logging
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from homeassistant.components.climate import ClimateEntity
-from homeassistant.components.switch import is_on
 from homeassistant.const import (
     ATTR_TEMPERATURE,
     TEMP_FAHRENHEIT,

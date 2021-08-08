@@ -5,7 +5,7 @@ from homeassistant.helpers.entity import Entity
 from gehomesdk.erd import ErdCode, ErdApplianceType
 
 from .base import ApplianceApi
-from ..entities import GeWacClimate, GeErdSensor, GeErdBinarySensor, GeErdOnOffSwitch
+from ..entities import GeWacClimate, GeErdSensor, GeErdBinarySensor, GeErdSwitch, ErdOnOffBoolConverter
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class WacApi(ApplianceApi):
             GeErdSensor(self, ErdCode.AC_AMBIENT_TEMPERATURE),
             GeErdSensor(self, ErdCode.AC_FAN_SETTING, icon_override="mdi:fan"),
             GeErdSensor(self, ErdCode.AC_OPERATION_MODE),
-            GeErdOnOffSwitch(self, ErdCode.AC_POWER_STATUS, icon_on_override="mdi:power-on", icon_off_override="mdi:power-off"),
+            GeErdSwitch(self, ErdCode.AC_POWER_STATUS, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:power-on", icon_off_override="mdi:power-off"),
             GeErdBinarySensor(self, ErdCode.AC_FILTER_STATUS, device_class_override="problem"),
             GeErdSensor(self, ErdCode.WAC_DEMAND_RESPONSE_STATE),
             GeErdSensor(self, ErdCode.WAC_DEMAND_RESPONSE_POWER),
