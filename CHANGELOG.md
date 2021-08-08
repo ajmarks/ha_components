@@ -3,6 +3,7 @@
 
 ## 0.4.x
 
+- Added support for Split A/C units (@RobertusIT)
 - Added support for Window A/C units (@mbrentrowe, @swcrawford1)
 - Fixed multiple binary sensors (bad conversion from enum) (@steveredden)
 - Fixed delay time interpretation for laundry (@steveredden, @sweichbr)

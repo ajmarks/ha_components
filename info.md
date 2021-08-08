@@ -31,17 +31,18 @@ Oven Controls:
 #### Breaking Changes
 
 {% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}
-
 - Laundry support changes will cause entity names to be different, you will need to fix in HA
-
 {% endif %}
 
 #### Changes
 
 #### Features
 
-{% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}
+{% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
+- Support for Split and Window AC units (@swcrawford1, @mbrentrowe, @RobertusIT)
+{% endif %}
 
+{% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}
 - Implemented Laundry Support (@warrenrees, @ssindsd)
 - Implemented Water Filter Support (@bendavis, @tumtumsback, @rgabrielson11)
 - Implemented Initial Advantium Support (@ssinsd)
@@ -49,22 +50,17 @@ Oven Controls:
 - Additional dishwasher functionality (@ssinsd)
 - Introduced new select entity (@bendavis)
 - Integrated new version of SDK
-
 {% endif %}
 
 #### Bugfixes
 
 {% if version_installed.split('.') | map('int') < '0.4.1'.split('.') | map('int') %}
-
 - Fixed an issue with dryer entities causing an error in HA (@steveredden)
-
 {% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}
-
 - Bug fixes for ovens (@TKpizza)
 - Miscellaneous entity bug fixes/refinements
-
 {% endif %}
 
 {% endif %}
