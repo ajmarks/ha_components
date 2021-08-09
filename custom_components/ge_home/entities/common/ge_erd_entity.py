@@ -132,6 +132,8 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:
             return "mdi:water" 
         if self.erd_code_class == ErdCodeClass.AC_SENSOR:
-            return "mdi:air-conditioner"                       
+            return "mdi:air-conditioner"    
+        if self.erd_code_class == ErdCodeClass.TEMPERATURE_CONTROL:
+            return "mdi:thermometer"            
 
         return None

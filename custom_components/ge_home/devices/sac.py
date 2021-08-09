@@ -27,9 +27,9 @@ class SacApi(ApplianceApi):
         ]
 
         if self.has_erd_code(ErdCode.SAC_SLEEP_MODE):
-            GeErdSwitch(self, ErdCode.SAC_SLEEP_MODE, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:sleep", icon_off_override="mdi:sleep-off"),
+            sac_entities.append(GeErdSwitch(self, ErdCode.SAC_SLEEP_MODE, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:sleep", icon_off_override="mdi:sleep-off"))
         if self.has_erd_code(ErdCode.SAC_AUTO_SWING_MODE):
-            GeErdSwitch(self, ErdCode.SAC_AUTO_SWING_MODE, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:arrow-decision-auto", icon_off_override="mdi:arrow-decision-auto-outline"),
+            sac_entities.append(GeErdSwitch(self, ErdCode.SAC_AUTO_SWING_MODE, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:arrow-decision-auto", icon_off_override="mdi:arrow-decision-auto-outline"))
 
 
         entities = base_entities + sac_entities
