@@ -1,6 +1,8 @@
 from typing import Optional
 
 from homeassistant.const import (
+    DEVICE_CLASS_ENERGY,
+    DEVICE_CLASS_POWER,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_POWER_FACTOR,
@@ -90,6 +92,10 @@ class GeErdSensor(GeErdEntity, Entity):
             return DEVICE_CLASS_TEMPERATURE
         if self.erd_code_class == ErdCodeClass.BATTERY:
             return DEVICE_CLASS_BATTERY
+        if self.erd_code_class == ErdCodeClass.POWER:
+            return DEVICE_CLASS_POWER
+        if self.erd_code_class == ErdCodeClass.ENERGY:
+            return DEVICE_CLASS_ENERGY
 
         return None
 

@@ -26,7 +26,7 @@ class WacApi(ApplianceApi):
             GeErdSwitch(self, ErdCode.AC_POWER_STATUS, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:power-on", icon_off_override="mdi:power-off"),
             GeErdBinarySensor(self, ErdCode.AC_FILTER_STATUS, device_class_override="problem"),
             GeErdSensor(self, ErdCode.WAC_DEMAND_RESPONSE_STATE),
-            GeErdSensor(self, ErdCode.WAC_DEMAND_RESPONSE_POWER),
+            GeErdSensor(self, ErdCode.WAC_DEMAND_RESPONSE_POWER, uom_override="kW"),
         ]
         entities = base_entities + wac_entities
         return entities
