@@ -3,11 +3,13 @@
 
 ## 0.4.3
 
+- Enabled support for appliances without serial numbers
 - Added support for Split A/C units (@RobertusIT)
 - Added support for Window A/C units (@mbrentrowe, @swcrawford1)
 - Fixed multiple binary sensors (bad conversion from enum) (@steveredden)
 - Fixed delay time interpretation for laundry (@steveredden, @sweichbr)
-- Enabled support for appliances without serial numbers
+- Fixed startup issue when encountering an unknown unit type(@chansearrington, @opie546)
+- Fixed interpretation of A/C demand response power (@garulf)
 
 ## 0.4.1
 

@@ -60,6 +60,8 @@ A/C Controls:
 
 {% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
 - Bug fixes for laundry (@steveredden, @sweichbr)
+- Fixed startup issue when encountering an unknown unit type(@chansearrington, @opie546)
+- Fixed interpretation of A/C demand response power (@garulf)
 {% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.1'.split('.') | map('int') %}
