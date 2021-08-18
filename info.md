@@ -43,7 +43,7 @@ A/C Controls:
 #### Features
 
 {% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
-- Support for Split and Window AC units (@swcrawford1, @mbrentrowe, @RobertusIT)
+- Support for Portable, Split, and Window AC units (@swcrawford1, @mbrentrowe, @RobertusIT, @luddystefenson)
 {% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}

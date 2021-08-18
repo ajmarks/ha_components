@@ -6,6 +6,7 @@
 - Enabled support for appliances without serial numbers
 - Added support for Split A/C units (@RobertusIT)
 - Added support for Window A/C units (@mbrentrowe, @swcrawford1)
+- Added support for Portable A/C units (@luddystefenson)
 - Fixed multiple binary sensors (bad conversion from enum) (@steveredden)
 - Fixed delay time interpretation for laundry (@steveredden, @sweichbr)
 - Fixed startup issue when encountering an unknown unit type(@chansearrington, @opie546)
