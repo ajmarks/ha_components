@@ -14,6 +14,7 @@ from .water_filter import WaterFilterApi
 from .advantium import AdvantiumApi
 from .wac import WacApi
 from .sac import SacApi
+from .pac import PacApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,6 +42,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return WacApi
     if appliance_type == ErdApplianceType.SPLIT_AIR_CONDITIONER:
         return SacApi
+    if appliance_type == ErdApplianceType.PORTABLE_AIR_CONDITIONER:
+        return PacApi
 
     # Fallback
     return ApplianceApi
