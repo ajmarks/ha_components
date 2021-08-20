@@ -11,6 +11,8 @@
 - Fixed delay time interpretation for laundry (@steveredden, @sweichbr)
 - Fixed startup issue when encountering an unknown unit type(@chansearrington, @opie546)
 - Fixed interpretation of A/C demand response power (@garulf)
+- Fixed issues with updating disabled entities (@willhayslett)
+- Advantium fixes (@willhayslett)
 
 ## 0.4.1
 
