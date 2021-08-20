@@ -262,19 +262,21 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         except KeyError:
             return
         for entity in api.entities:
-            _LOGGER.debug(f"Updating {entity} ({entity.unique_id}, {entity.entity_id})")
-            entity.async_write_ha_state()
+            if entity.enabled:
+                _LOGGER.debug(f"Updating {entity} ({entity.unique_id}, {entity.entity_id})")
+                entity.async_write_ha_state()
 
     async def _refresh_ha_state(self):
         entities = [
             entity for api in self.appliance_apis.values() for entity in api.entities
         ]
         for entity in entities:
-            try:
-                _LOGGER.debug(f"Refreshing state for {entity} ({entity.unique_id}, {entity.entity_id}")
-                entity.async_write_ha_state()
-            except:
-                _LOGGER.debug(f"Could not refresh state for {entity} ({entity.unique_id}, {entity.entity_id}")
+            if entity.enabled:
+                try:
+                    _LOGGER.debug(f"Refreshing state for {entity} ({entity.unique_id}, {entity.entity_id}")
+                    entity.async_write_ha_state()
+                except:
+                    _LOGGER.debug(f"Could not refresh state for {entity} ({entity.unique_id}, {entity.entity_id}")
 
     @property
     def all_appliances_updated(self) -> bool:
