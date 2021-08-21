@@ -134,6 +134,10 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.AC_SENSOR:
             return "mdi:air-conditioner"    
         if self.erd_code_class == ErdCodeClass.TEMPERATURE_CONTROL:
-            return "mdi:thermometer"            
+            return "mdi:thermometer"   
+        if self.erd_code_class == ErdCodeClass.FAN:
+            return "mdi:fan"
+        if self.erd_code_class == ErdCodeClass.LIGHT:
+            return "mdi:lightbulb"         
 
         return None
