@@ -40,6 +40,10 @@ A/C Controls:
 
 #### Changes
 
+{% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
+- Added logic to prevent multiple configurations of the same GE account
+{% endif %}
+
 #### Features
 
 {% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
@@ -62,6 +66,10 @@ A/C Controls:
 {% endif %}
 
 #### Bugfixes
+
+{% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
+- Advantium fixes (@willhayslett)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
 - Bug fixes for laundry (@steveredden, @sweichbr)

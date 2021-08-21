@@ -5,7 +5,7 @@
 
 - Initial support for oven hoods (@digitalbites)
 - Added extended mode support for ovens
-
+- Added logic to prevent multiple configurations of the same GE account
 
 ## 0.4.3
 
