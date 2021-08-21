@@ -42,6 +42,10 @@ A/C Controls:
 
 #### Features
 
+{% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
+- Support for Oven Hood units (@digitalbites)
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
 - Support for Portable, Split, and Window AC units (@swcrawford1, @mbrentrowe, @RobertusIT, @luddystefenson)
 {% endif %}

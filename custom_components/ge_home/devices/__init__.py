@@ -15,6 +15,7 @@ from .advantium import AdvantiumApi
 from .wac import WacApi
 from .sac import SacApi
 from .pac import PacApi
+from .hood import HoodApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,6 +45,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return SacApi
     if appliance_type == ErdApplianceType.PORTABLE_AIR_CONDITIONER:
         return PacApi
+    if appliance_type == ErdApplianceType.HOOD:
+        return HoodApi
 
     # Fallback
     return ApplianceApi

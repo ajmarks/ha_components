@@ -1,6 +1,10 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.5.0
+
+- Initial support for oven hoods (@digitalbites)
+
 ## 0.4.3
 
 - Enabled support for appliances without serial numbers
