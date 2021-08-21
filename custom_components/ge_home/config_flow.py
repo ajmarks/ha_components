@@ -14,7 +14,7 @@ from homeassistant import config_entries, core
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
 from .const import DOMAIN  # pylint:disable=unused-import
-from .exceptions import HaAuthError, HaCannotConnect
+from .exceptions import HaAuthError, HaCannotConnect, HaAlreadyConfigured
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ async def validate_input(hass: core.HomeAssistant, data):
         raise HaCannotConnect('Unknown connection failure')
 
     # Return info that you want to store in the config entry.
-    return {"title": f"GE Home ({data[CONF_USERNAME]:s})"}
+    return {"title": f"{data[CONF_USERNAME]:s}"}
 
 class GeHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for GE Home."""
@@ -62,19 +62,33 @@ class GeHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             except HaCannotConnect:
                 errors["base"] = "cannot_connect"
             except HaAuthError:
-                errors["base"] = "invalid_auth"
+                errors["base"] = "invalid_auth"      
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
         return info, errors
 
+    def _ensure_not_configured(self, username: str):
+        """Ensure that we haven't configured this account"""
+        existing_accounts = {
+            entry.data[CONF_USERNAME] for entry in self._async_current_entries()
+        }
+        _LOGGER.debug(f"Existing accounts: {existing_accounts}")
+        if username in existing_accounts:
+            raise HaAlreadyConfigured  
+
     async def async_step_user(self, user_input: Optional[Dict] = None):
         """Handle the initial step."""
         errors = {}
         if user_input is not None:
-            info, errors = await self._async_validate_input(user_input)
-            if info:
-                return self.async_create_entry(title=info["title"], data=user_input)
+            try:
+                self._ensure_not_configured(user_input[CONF_USERNAME])
+                info, errors = await self._async_validate_input(user_input)
+                if info:
+                    return self.async_create_entry(title=info["title"], data=user_input)
+            except HaAlreadyConfigured:
+                return self.async_abort(reason="already_configured_account")
+
 
         return self.async_show_form(
             step_id="user", data_schema=GEHOME_SCHEMA, errors=errors
