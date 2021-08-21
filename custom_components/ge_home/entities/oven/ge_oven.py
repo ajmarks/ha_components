@@ -99,6 +99,13 @@ class GeOven(GeWaterHeater):
         #lookup all the available cook modes
         erd_code = self.get_erd_code("AVAILABLE_COOK_MODES")
         cook_modes: Set[ErdOvenCookMode] = self.appliance.get_erd_value(erd_code)
+
+        #get the extended cook modes and add them to the list
+        ext_erd_code = self.get_erd_code("EXTENDED_COOK_MODES")
+        ext_cook_modes: Set[ErdOvenCookMode] = self.api.try_get_erd_value(ext_erd_code)
+        if ext_cook_modes:
+            cook_modes.union(ext_cook_modes)
+
         #make sure that we limit them to the list of known codes
         cook_modes = cook_modes.intersection(COOK_MODE_OP_MAP.keys())
         
