@@ -1,4 +1,5 @@
 from .options_converter import OptionsConverter
+from .bool_converter import BoolConverter, ErdOnOffBoolConverter
 from .ge_entity import GeEntity
 from .ge_erd_entity import GeErdEntity
 from .ge_erd_binary_sensor import GeErdBinarySensor

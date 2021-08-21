@@ -1,6 +1,19 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.4.3
+
+- Enabled support for appliances without serial numbers
+- Added support for Split A/C units (@RobertusIT)
+- Added support for Window A/C units (@mbrentrowe, @swcrawford1)
+- Added support for Portable A/C units (@luddystefenson)
+- Fixed multiple binary sensors (bad conversion from enum) (@steveredden)
+- Fixed delay time interpretation for laundry (@steveredden, @sweichbr)
+- Fixed startup issue when encountering an unknown unit type(@chansearrington, @opie546)
+- Fixed interpretation of A/C demand response power (@garulf)
+- Fixed issues with updating disabled entities (@willhayslett)
+- Advantium fixes (@willhayslett)
+
 ## 0.4.1
 
 - Fixed an issue with dryer entities causing an error in HA (@steveredden)

@@ -12,6 +12,9 @@ from .dryer import DryerApi
 from .washer_dryer import WasherDryerApi
 from .water_filter import WaterFilterApi
 from .advantium import AdvantiumApi
+from .wac import WacApi
+from .sac import SacApi
+from .pac import PacApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,6 +38,12 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return WaterFilterApi
     if appliance_type == ErdApplianceType.ADVANTIUM:
         return AdvantiumApi
+    if appliance_type == ErdApplianceType.AIR_CONDITIONER:
+        return WacApi
+    if appliance_type == ErdApplianceType.SPLIT_AIR_CONDITIONER:
+        return SacApi
+    if appliance_type == ErdApplianceType.PORTABLE_AIR_CONDITIONER:
+        return PacApi
 
     # Fallback
     return ApplianceApi

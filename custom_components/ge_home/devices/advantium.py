@@ -1,4 +1,3 @@
-from custom_components.ge_home.entities.advantium.ge_advantium import GeAdvantium
 import logging
 from typing import List
 
@@ -6,7 +5,7 @@ from homeassistant.helpers.entity import Entity
 from gehomesdk.erd import ErdCode, ErdApplianceType
 
 from .base import ApplianceApi
-from ..entities import GeErdSensor, GeErdBinarySensor, GeErdPropertySensor, GeErdPropertyBinarySensor, UPPER_OVEN
+from ..entities import GeAdvantium, GeErdSensor, GeErdBinarySensor, GeErdPropertySensor, GeErdPropertyBinarySensor, UPPER_OVEN
 
 _LOGGER = logging.getLogger(__name__)
 

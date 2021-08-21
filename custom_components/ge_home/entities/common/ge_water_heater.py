@@ -26,11 +26,11 @@ class GeWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
 
     @property
     def unique_id(self) -> str:
-        return f"{DOMAIN}_{self.serial_number}_{self.heater_type}"
+        return f"{DOMAIN}_{self.serial_or_mac}_{self.heater_type}"
 
     @property
     def name(self) -> Optional[str]:
-        return f"{self.serial_number} {self.heater_type.title()}"
+        return f"{self.serial_or_mac} {self.heater_type.title()}"
 
     @property
     def temperature_unit(self):

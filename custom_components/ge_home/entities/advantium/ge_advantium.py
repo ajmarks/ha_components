@@ -82,7 +82,10 @@ class GeAdvantium(GeWaterHeater):
         if not self._remote_config.warm_enable:
             invalid.append(CookMode.WARM)
 
-        return [v for _, v in ADVANTIUM_OPERATION_MODE_COOK_SETTING_MAPPING.items() if v.cook_mode not in invalid]
+        return [
+            k.stringify()
+            for k, v in ADVANTIUM_OPERATION_MODE_COOK_SETTING_MAPPING.items() 
+            if v.cook_mode not in invalid]
 
     @property
     def current_cook_setting(self) -> ErdAdvantiumCookSetting:

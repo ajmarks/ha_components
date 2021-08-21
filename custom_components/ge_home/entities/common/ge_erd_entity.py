@@ -53,11 +53,11 @@ class GeErdEntity(GeEntity):
             erd_string = self._erd_override
 
         erd_title = " ".join(erd_string.split("_")).title()
-        return f"{self.serial_number} {erd_title}"
+        return f"{self.serial_or_mac} {erd_title}"
 
     @property
     def unique_id(self) -> Optional[str]:
-        return f"{DOMAIN}_{self.serial_number}_{self.erd_string.lower()}"
+        return f"{DOMAIN}_{self.serial_or_mac}_{self.erd_string.lower()}"
 
     def _stringify(self, value: any, **kwargs) -> Optional[str]:
         """Stringify a value"""
@@ -130,6 +130,10 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.FLOW_RATE:
             return "mdi:water"   
         if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:
-            return "mdi:water"                        
+            return "mdi:water" 
+        if self.erd_code_class == ErdCodeClass.AC_SENSOR:
+            return "mdi:air-conditioner"    
+        if self.erd_code_class == ErdCodeClass.TEMPERATURE_CONTROL:
+            return "mdi:thermometer"            
 
         return None
