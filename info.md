@@ -44,6 +44,7 @@ A/C Controls:
 
 {% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
 - Support for Oven Hood units (@digitalbites)
+- Added extended mode support for ovens
 {% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}

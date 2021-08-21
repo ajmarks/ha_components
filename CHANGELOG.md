@@ -4,6 +4,8 @@
 ## 0.5.0
 
 - Initial support for oven hoods (@digitalbites)
+- Added extended mode support for ovens
+
 
 ## 0.4.3
 
