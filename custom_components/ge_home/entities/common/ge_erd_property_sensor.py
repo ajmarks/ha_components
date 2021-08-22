@@ -8,8 +8,17 @@ from .ge_erd_sensor import GeErdSensor
 
 class GeErdPropertySensor(GeErdSensor):
     """GE Entity for sensors"""
-    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str, erd_override: str = None, icon_override: str = None, device_class_override: str = None, uom_override: str = None):
-        super().__init__(api, erd_code, erd_override=erd_override, icon_override=icon_override, device_class_override=device_class_override, uom_override=uom_override)
+    def __init__(   
+        self, api: ApplianceApi, erd_code: ErdCodeType, erd_property: str, 
+        erd_override: str = None, icon_override: str = None, device_class_override: str = None, 
+        state_class_override: str = None, uom_override: str = None
+    ):
+        super().__init__(
+            api, erd_code, erd_override=erd_override, 
+            icon_override=icon_override, device_class_override=device_class_override, 
+            state_class_override=state_class_override,
+            uom_override=uom_override
+        )
         self.erd_property = erd_property
         self._erd_property_cleansed = erd_property.replace(".","_").replace("[","_").replace("]","_")
 

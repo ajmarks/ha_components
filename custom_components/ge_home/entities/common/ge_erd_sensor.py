@@ -1,4 +1,5 @@
 from typing import Optional
+from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT
 
 from homeassistant.const import (
     DEVICE_CLASS_ENERGY,
@@ -9,6 +10,16 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
+#from homeassistant.components.sensor import (
+#    STATE_CLASS_MEASUREMENT,
+#    STATE_CLASS_TOTAL_INCREASING
+#)
+# For now, let's not force the newer version, we'll use the same constants
+# but it'll be optional.
+# TODO: Force the usage of new HA
+STATE_CLASS_MEASUREMENT = "measurement"
+STATE_CLASS_TOTAL_INCREASING = 'total_increasing'
+
 from homeassistant.helpers.entity import Entity
 from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
 
@@ -25,10 +36,12 @@ class GeErdSensor(GeErdEntity, Entity):
         erd_override: str = None, 
         icon_override: str = None, 
         device_class_override: str = None,
-        uom_override: str = None
+        state_class_override: str = None,
+        uom_override: str = None,
     ):
         super().__init__(api, erd_code, erd_override, icon_override, device_class_override)
         self._uom_override = uom_override
+        self._state_class_override = state_class_override
 
     @property
     def state(self) -> Optional[str]:
@@ -43,6 +56,10 @@ class GeErdSensor(GeErdEntity, Entity):
     @property
     def unit_of_measurement(self) -> Optional[str]:
         return self._get_uom()
+
+    @property
+    def state_class(self) -> Optional[str]:
+        return self._get_state_class()
 
     @property
     def _temp_units(self) -> Optional[str]:
@@ -97,6 +114,19 @@ class GeErdSensor(GeErdEntity, Entity):
         if self.erd_code_class == ErdCodeClass.ENERGY:
             return DEVICE_CLASS_ENERGY
 
+        return None
+
+    def _get_state_class(self) -> Optional[str]:
+        if self._state_class_override:
+            return self._state_class_override
+
+        if self.device_class in [DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_ENERGY]:
+            return STATE_CLASS_MEASUREMENT
+        if self.erd_code_class in [ErdCodeClass.FLOW_RATE, ErdCodeClass.PERCENTAGE]:
+            return STATE_CLASS_MEASUREMENT
+        if self.erd_code_class in [ErdCodeClass.LIQUID_VOLUME]:
+            return STATE_CLASS_TOTAL_INCREASING
+        
         return None
 
     def _get_icon(self):
