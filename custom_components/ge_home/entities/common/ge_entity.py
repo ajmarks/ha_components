@@ -38,13 +38,11 @@ class GeEntity:
 
     @property
     def mac_addr(self) -> str:
-        return self.api.appliance.mac_addr
+        return self.api.mac_addr
 
     @property
     def serial_or_mac(self) -> str:
-        if self.serial_number and not self.serial_number.isspace():
-            return self.serial_number
-        return self.mac_addr
+        return self.api.serial_or_mac
 
     @property
     def name(self) -> Optional[str]:
