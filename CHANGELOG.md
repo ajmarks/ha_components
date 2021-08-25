@@ -7,6 +7,7 @@
 - Added extended mode support for ovens
 - Added logic to prevent multiple configurations of the same GE account
 - Fixed device info when serial not present (@Xe138)
+- Fixed issue with ovens when raw temperature not available (@chadohalloran)
 
 ## 0.4.3
 

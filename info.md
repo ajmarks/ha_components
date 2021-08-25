@@ -70,6 +70,7 @@ A/C Controls:
 {% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
 - Advantium fixes (@willhayslett)
 - Fixed device info when serial not present (@Xe138)
+- Fixed issue with ovens when raw temperature not available (@chadohalloran)
 {% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
