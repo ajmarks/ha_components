@@ -8,7 +8,7 @@
 - Added logic to prevent multiple configurations of the same GE account
 - Fixed device info when serial not present (@Xe138)
 - Fixed issue with ovens when raw temperature not available (@chadohalloran)
-
+- Fixed issue where Split A/C temperature sensors report UOM incorrectly (@RobertusIT)
 ## 0.4.3
 
 - Enabled support for appliances without serial numbers
