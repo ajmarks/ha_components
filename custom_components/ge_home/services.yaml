@@ -1,0 +1,31 @@
+# GE Home Services
+
+set_timer:
+  name: Set Timer
+  description: Sets a GE Home timer value
+  target:
+    entity:
+      integration: "ge_home"
+      domain: "sensor"
+      device_class: "timestamp"
+  fields:
+    duration:
+      name: Duration
+      description: Duration of the timer (minutes)
+      required: true
+      example: "90"
+      default: "30"
+      selector:
+        number:
+          min: 1
+          max: 360
+          unit_of_measurement: minutes
+          mode: slider
+clear_timer:
+  name: Clear Timer
+  description: Turns off a GE Home timer
+  target:
+    entity:
+      integration: "ge_home"
+      domain: "sensor"
+      device_class: "timestamp"

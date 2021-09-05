@@ -14,6 +14,7 @@ from gehomesdk import (
 from .base import ApplianceApi
 from ..entities import (
     GeErdSensor, 
+    GeErdTimerSensor,
     GeErdBinarySensor, 
     GeErdPropertySensor,
     GeErdPropertyBinarySensor,
@@ -48,14 +49,14 @@ class OvenApi(ApplianceApi):
             oven_entities.extend([
                 GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE),
                 GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING),
-                GeErdSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER),
+                GeErdTimerSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER),
                 GeErdSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET),
                 GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE),
                 GeErdBinarySensor(self, ErdCode.UPPER_OVEN_REMOTE_ENABLED),
 
                 GeErdSensor(self, ErdCode.LOWER_OVEN_COOK_MODE),
                 GeErdSensor(self, ErdCode.LOWER_OVEN_COOK_TIME_REMAINING),
-                GeErdSensor(self, ErdCode.LOWER_OVEN_KITCHEN_TIMER),
+                GeErdTimerSensor(self, ErdCode.LOWER_OVEN_KITCHEN_TIMER),
                 GeErdSensor(self, ErdCode.LOWER_OVEN_USER_TEMP_OFFSET),
                 GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE),
                 GeErdBinarySensor(self, ErdCode.LOWER_OVEN_REMOTE_ENABLED),
@@ -71,7 +72,7 @@ class OvenApi(ApplianceApi):
             oven_entities.extend([
                 GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE, self._single_name(ErdCode.UPPER_OVEN_COOK_MODE)),
                 GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, self._single_name(ErdCode.UPPER_OVEN_COOK_TIME_REMAINING)),
-                GeErdSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER, self._single_name(ErdCode.UPPER_OVEN_KITCHEN_TIMER)),
+                GeErdTimerSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER, self._single_name(ErdCode.UPPER_OVEN_KITCHEN_TIMER)),
                 GeErdSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, self._single_name(ErdCode.UPPER_OVEN_USER_TEMP_OFFSET)),
                 GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE)),
                 GeErdBinarySensor(self, ErdCode.UPPER_OVEN_REMOTE_ENABLED, self._single_name(ErdCode.UPPER_OVEN_REMOTE_ENABLED)),

@@ -7,6 +7,7 @@ from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_POWER_FACTOR,
+    DEVICE_CLASS_TIMESTAMP,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
@@ -113,6 +114,8 @@ class GeErdSensor(GeErdEntity, Entity):
             return DEVICE_CLASS_POWER
         if self.erd_code_class == ErdCodeClass.ENERGY:
             return DEVICE_CLASS_ENERGY
+        if self.erd_code_class == ErdCodeClass.TIMER:
+            return DEVICE_CLASS_TIMESTAMP
 
         return None
 
