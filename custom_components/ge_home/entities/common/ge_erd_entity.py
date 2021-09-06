@@ -69,7 +69,7 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.NON_ZERO_TEMPERATURE:
             return f"{value}" if value else ""
         if self.erd_code_class == ErdCodeClass.TIMER or isinstance(value, timedelta):
-            return str(value)[:-3] if value else ""
+            return str(value)[:-3] if value else "Off"
         if value is None:
             return None
         return self.appliance.stringify_erd_value(value, **kwargs)

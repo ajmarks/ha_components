@@ -114,8 +114,6 @@ class GeErdSensor(GeErdEntity, Entity):
             return DEVICE_CLASS_POWER
         if self.erd_code_class == ErdCodeClass.ENERGY:
             return DEVICE_CLASS_ENERGY
-        if self.erd_code_class == ErdCodeClass.TIMER:
-            return DEVICE_CLASS_TIMESTAMP
 
         return None
 

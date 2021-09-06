@@ -7,7 +7,6 @@ set_timer:
     entity:
       integration: "ge_home"
       domain: "sensor"
-      device_class: "timestamp"
   fields:
     duration:
       name: Duration
@@ -28,4 +27,3 @@ clear_timer:
     entity:
       integration: "ge_home"
       domain: "sensor"
-      device_class: "timestamp"
