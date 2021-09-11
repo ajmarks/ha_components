@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT
 
@@ -26,6 +27,8 @@ from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
 
 from .ge_erd_entity import GeErdEntity
 from ...devices import ApplianceApi
+
+_LOGGER = logging.getLogger(__name__)
 
 class GeErdSensor(GeErdEntity, Entity):
     """GE Entity for sensors"""
@@ -137,3 +140,10 @@ class GeErdSensor(GeErdEntity, Entity):
             if self.state.lower().endswith("closed"):
                 return "mdi:door-closed"
         return super()._get_icon()
+
+    async def set_value(self, value):
+        """Sets the ERD value, assumes that the data type is correct"""
+        try:
+            await self.appliance.async_set_erd_value(self.erd_code, value) 
+        except:
+            _LOGGER.warning(f"Could not set {self.name} to {value}")

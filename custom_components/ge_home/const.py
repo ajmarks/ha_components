@@ -13,3 +13,4 @@ RETRY_OFFLINE_COUNT = 5
 
 SERVICE_SET_TIMER = "set_timer"
 SERVICE_CLEAR_TIMER = "clear_timer"
+SERVICE_SET_INT_VALUE = "set_int_value"
