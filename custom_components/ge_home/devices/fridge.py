@@ -1,3 +1,4 @@
+from custom_components.ge_home.entities.common.bool_converter import ErdOnOffBoolConverter
 from homeassistant.components.binary_sensor import DEVICE_CLASS_PROBLEM
 from homeassistant.const import DEVICE_CLASS_TEMPERATURE
 import logging
@@ -49,6 +50,10 @@ class FridgeApi(ApplianceApi):
         air_filter: ErdFilterStatus = self.try_get_erd_value(ErdCode.AIR_FILTER_STATUS)
         hot_water_status: HotWaterStatus = self.try_get_erd_value(ErdCode.HOT_WATER_STATUS)
         fridge_model_info: FridgeModelInfo = self.try_get_erd_value(ErdCode.FRIDGE_MODEL_INFO)
+        
+        interior_light: ErdOnOff = self.try_get_erd_value(ErdCode.INTERIOR_LIGHT)
+        proximity_light: ErdOnOff = self.try_get_erd_value(ErdCode.PROXIMITY_LIGHT)
+
 
         # Common entities
         common_entities = [
@@ -74,7 +79,11 @@ class FridgeApi(ApplianceApi):
                 fridge_entities.append(GeErdSensor(self, ErdCode.AIR_FILTER_STATUS))    
             if(ice_bucket_status and ice_bucket_status.is_present_fridge):
                 fridge_entities.append(GeErdPropertySensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS, "state_full_fridge"))
-
+            if(interior_light and interior_light != ErdOnOff.NA):
+                fridge_entities.append(GeErdSwitch(self, ErdCode.INTERIOR_LIGHT, ErdOnOffBoolConverter(), icon_on_override="mdi:lightbulb-on", icon_off_override="mdi:lightbulb"))
+            if(proximity_light and proximity_light != ErdOnOff.NA):
+                fridge_entities.append(GeErdSwitch(self, ErdCode.PROXIMITY_LIGHT, ErdOnOffBoolConverter(), icon_on_override="mdi:lightbulb-on", icon_off_override="mdi:lightbulb"))
+                
         # Freezer entities
         if fridge_model_info is None or fridge_model_info.has_freezer:
             freezer_entities.extend([
