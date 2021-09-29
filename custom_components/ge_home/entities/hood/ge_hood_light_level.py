@@ -16,7 +16,7 @@ class HoodLightLevelOptionsConverter(OptionsConverter):
             self.excluded_levels.append(ErdHoodLightLevel.OFF)
         if not availability.dim_available:
             self.excluded_levels.append(ErdHoodLightLevel.DIM)
-        if not availability.on_available:
+        if not availability.high_available:
             self.excluded_levels.append(ErdHoodLightLevel.HIGH)
 
     @property
