@@ -24,6 +24,7 @@ from ..entities import (
     GeErdBinarySensor,
     GeErdSwitch, 
     GeErdSelect,
+    GeErdLight,
     GeFridge, 
     GeFreezer, 
     GeDispenser, 
@@ -83,7 +84,7 @@ class FridgeApi(ApplianceApi):
             if(ice_bucket_status and ice_bucket_status.is_present_fridge):
                 fridge_entities.append(GeErdPropertySensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS, "state_full_fridge"))
             if(interior_light and interior_light != 255):
-                fridge_entities.append(GeErdSensor(self, ErdCode.INTERIOR_LIGHT))
+                fridge_entities.append(GeErdLight(self, ErdCode.INTERIOR_LIGHT))
             if(proximity_light and proximity_light != ErdOnOff.NA):
                 fridge_entities.append(GeErdSwitch(self, ErdCode.PROXIMITY_LIGHT, ErdOnOffBoolConverter(), icon_on_override="mdi:lightbulb-on", icon_off_override="mdi:lightbulb"))
             if(convertable_drawer and convertable_drawer != ErdConvertableDrawerMode.NA):
