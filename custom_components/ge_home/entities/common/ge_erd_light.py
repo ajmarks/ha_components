@@ -57,9 +57,9 @@ class GeErdLight(GeErdEntity, LightEntity):
         brightness = kwargs.pop(ATTR_BRIGHTNESS, 255)
 
         _LOGGER.debug(f"Turning on {self.unique_id}")
-        await self._set_brightness(brightness, kwargs)
+        await self._set_brightness(brightness, **kwargs)
 
     async def async_turn_off(self, **kwargs):
         """Turn the light off."""
         _LOGGER.debug(f"Turning off {self.unique_id}")
-        await self._set_brightness(0, kwargs)
+        await self._set_brightness(0, **kwargs)
