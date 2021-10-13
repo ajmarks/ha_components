@@ -37,7 +37,7 @@ class GeErdLight(GeErdEntity, LightEntity):
     @property
     def supported_color_modes(self):
         """Flag supported color modes."""
-        return COLOR_MODE_BRIGHTNESS
+        return {COLOR_MODE_BRIGHTNESS}
     
     @property
     def color_mode(self):
