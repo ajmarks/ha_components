@@ -27,7 +27,7 @@ class GeErdLight(GeErdEntity, LightEntity):
 
     def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_override: str = None, color_mode = COLOR_MODE_BRIGHTNESS):
         super().__init__(api, erd_code, erd_override)
-        self._attr_color_mode = color_mode
+        self._color_mode = color_mode
 
     @property
     def supported_features(self):
@@ -38,6 +38,11 @@ class GeErdLight(GeErdEntity, LightEntity):
     def supported_color_modes(self):
         """Flag supported color modes."""
         return COLOR_MODE_BRIGHTNESS
+    
+    @property
+    def color_mode(self):
+        """Return the color mode of the light."""
+        return self._color_mode
 
     @property
     def brightness(self):
