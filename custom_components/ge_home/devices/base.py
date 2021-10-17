@@ -61,6 +61,16 @@ class ApplianceApi:
         return self.appliance.get_erd_value(ErdCode.SERIAL_NUMBER)
 
     @property
+    def mac_addr(self) -> str:
+        return self.appliance.mac_addr
+
+    @property
+    def serial_or_mac(self) -> str:
+        if self.serial_number and not self.serial_number.isspace():
+            return self.serial_number
+        return self.mac_addr        
+
+    @property
     def model_number(self) -> str:
         return self.appliance.get_erd_value(ErdCode.MODEL_NUMBER)
 
@@ -78,14 +88,14 @@ class ApplianceApi:
             appliance_type = "Appliance"
         else:
             appliance_type = appliance_type.name.replace("_", " ").title()
-        return f"GE {appliance_type} {self.serial_number}"
+        return f"GE {appliance_type} {self.serial_or_mac}"
 
     @property
     def device_info(self) -> Dict:
         """Device info dictionary."""
 
         return {
-            "identifiers": {(DOMAIN, self.serial_number)},
+            "identifiers": {(DOMAIN, self.serial_or_mac)},
             "name": self.name,
             "manufacturer": "GE",
             "model": self.model_number,

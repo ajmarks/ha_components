@@ -1,6 +1,15 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.5.0
+
+- Initial support for oven hoods (@digitalbites)
+- Added extended mode support for ovens
+- Added logic to prevent multiple configurations of the same GE account
+- Fixed device info when serial not present (@Xe138)
+- Fixed issue with ovens when raw temperature not available (@chadohalloran)
+- Fixed issue where Split A/C temperature sensors report UOM incorrectly (@RobertusIT)
+- Added convertable drawer mode, proximity light, and interior lights to fridge (@grotto27, @elwing00)
 ## 0.4.3
 
 - Enabled support for appliances without serial numbers

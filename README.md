@@ -12,6 +12,8 @@ Integration for GE WiFi-enabled appliances into Home Assistant.  This integratio
 - Dishwasher 
 - Laundry (Washer/Dryer)
 - Whole Home Water Filter
+- A/C (Portable, Split, Window)
+- Range Hoods
 - Advantium
 
 **Forked from Andrew Mark's [repository](https://github.com/ajmarks/ha_components).**

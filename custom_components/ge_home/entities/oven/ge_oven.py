@@ -23,12 +23,13 @@ class GeOven(GeWaterHeater):
 
     icon = "mdi:stove"
 
-    def __init__(self, api: ApplianceApi, oven_select: str = UPPER_OVEN, two_cavity: bool = False):
+    def __init__(self, api: ApplianceApi, oven_select: str = UPPER_OVEN, two_cavity: bool = False, temperature_erd_code: str = "RAW_TEMPERATURE"):
         if oven_select not in (UPPER_OVEN, LOWER_OVEN):
             raise ValueError(f"Invalid `oven_select` value ({oven_select})")
 
         self._oven_select = oven_select
         self._two_cavity = two_cavity
+        self._temperature_erd_code = temperature_erd_code
         super().__init__(api)
 
     @property
@@ -76,11 +77,13 @@ class GeOven(GeWaterHeater):
     def current_temperature(self) -> Optional[int]:
         #DISPLAY_TEMPERATURE appears to be out of line with what's
         #actually going on in the oven, RAW_TEMPERATURE seems to be
-        #accurate.
+        #accurate. However, it appears some devices don't have
+        #the raw temperature.  So, we'll allow an override to handle
+        #that situation (see constructor)
         #current_temp = self.get_erd_value("DISPLAY_TEMPERATURE")
         #if current_temp:
         #    return current_temp
-        return self.get_erd_value("RAW_TEMPERATURE")
+        return self.get_erd_value(self._temperature_erd_code)
 
     @property
     def current_operation(self) -> Optional[str]:
@@ -99,10 +102,19 @@ class GeOven(GeWaterHeater):
         #lookup all the available cook modes
         erd_code = self.get_erd_code("AVAILABLE_COOK_MODES")
         cook_modes: Set[ErdOvenCookMode] = self.appliance.get_erd_value(erd_code)
+        _LOGGER.debug(f"Available Cook Modes: {cook_modes}")
+
+        #get the extended cook modes and add them to the list
+        ext_erd_code = self.get_erd_code("EXTENDED_COOK_MODES")
+        ext_cook_modes: Set[ErdOvenCookMode] = self.api.try_get_erd_value(ext_erd_code)
+        _LOGGER.debug(f"Extended Cook Modes: {ext_cook_modes}")
+        if ext_cook_modes:
+            cook_modes = cook_modes.union(ext_cook_modes)
+
         #make sure that we limit them to the list of known codes
         cook_modes = cook_modes.intersection(COOK_MODE_OP_MAP.keys())
         
-        _LOGGER.debug(f"found cook modes {cook_modes}")
+        _LOGGER.debug(f"Final Cook Modes: {cook_modes}")
         op_modes = [o for o in (COOK_MODE_OP_MAP[c] for c in cook_modes) if o]
         op_modes = [OP_MODE_OFF] + op_modes
         return op_modes
@@ -187,8 +199,10 @@ class GeOven(GeWaterHeater):
         data = {
             "display_state": self.display_state,
             "probe_present": probe_present,
-            "raw_temperature": self.get_erd_value("RAW_TEMPERATURE"),
+            "display_temperature": self.get_erd_value("DISPLAY_TEMPERATURE")
         }
+        if self.api.has_erd_code(self.get_erd_code("RAW_TEMPERATURE")):
+            data["raw_temperature"] = self.get_erd_value("RAW_TEMPERATURE")
         if probe_present:
             data["probe_temperature"] = self.get_erd_value("PROBE_DISPLAY_TEMP")
 

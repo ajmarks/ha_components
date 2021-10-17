@@ -40,7 +40,16 @@ A/C Controls:
 
 #### Changes
 
+{% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
+- Added logic to prevent multiple configurations of the same GE account
+{% endif %}
+
 #### Features
+
+{% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
+- Support for Oven Hood units (@digitalbites)
+- Added extended mode support for ovens
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
 - Support for Portable, Split, and Window AC units (@swcrawford1, @mbrentrowe, @RobertusIT, @luddystefenson)
@@ -57,6 +66,14 @@ A/C Controls:
 {% endif %}
 
 #### Bugfixes
+
+{% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
+- Advantium fixes (@willhayslett)
+- Fixed device info when serial not present (@Xe138)
+- Fixed issue with ovens when raw temperature not available (@chadohalloran)
+- Fixed issue where Split A/C temperature sensors report UOM incorrectly (@RobertusIT)
+- Added convertable drawer mode, proximity light, and interior lights to fridge (@grotto27, @elwing00)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.3'.split('.') | map('int') %}
 - Bug fixes for laundry (@steveredden, @sweichbr)

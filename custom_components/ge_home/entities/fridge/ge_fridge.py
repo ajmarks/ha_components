@@ -49,7 +49,7 @@ class GeFridge(GeAbstractFridge):
         if door_left and door_left != ErdDoorStatus.NA:
             data["left_door"] = door_status.fridge_left.name.title()
         if drawer and drawer != ErdDoorStatus.NA:
-            data["drawer"] = door_status.fridge_left.name.title()
+            data["drawer"] = door_status.drawer.name.title()
 
         if data:
             all_closed = all(v == "Closed" for v in data.values())

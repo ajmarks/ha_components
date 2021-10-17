@@ -13,19 +13,24 @@ from gehomesdk import (
     IceMakerControlStatus,
     ErdFilterStatus,
     HotWaterStatus,
-    FridgeModelInfo
+    FridgeModelInfo,
+    ErdConvertableDrawerMode
 )
 
 from .base import ApplianceApi
 from ..entities import (
+    ErdOnOffBoolConverter,
     GeErdSensor,
     GeErdBinarySensor,
     GeErdSwitch, 
+    GeErdSelect,
+    GeErdLight,
     GeFridge, 
     GeFreezer, 
     GeDispenser, 
     GeErdPropertySensor,
-    GeErdPropertyBinarySensor
+    GeErdPropertyBinarySensor,
+    ConvertableDrawerModeOptionsConverter
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -49,6 +54,12 @@ class FridgeApi(ApplianceApi):
         air_filter: ErdFilterStatus = self.try_get_erd_value(ErdCode.AIR_FILTER_STATUS)
         hot_water_status: HotWaterStatus = self.try_get_erd_value(ErdCode.HOT_WATER_STATUS)
         fridge_model_info: FridgeModelInfo = self.try_get_erd_value(ErdCode.FRIDGE_MODEL_INFO)
+        convertable_drawer: ErdConvertableDrawerMode = self.try_get_erd_value(ErdCode.CONVERTABLE_DRAWER_MODE)
+
+        interior_light: int = self.try_get_erd_value(ErdCode.INTERIOR_LIGHT)
+        proximity_light: ErdOnOff = self.try_get_erd_value(ErdCode.PROXIMITY_LIGHT)
+
+        units = self.hass.config.units
 
         # Common entities
         common_entities = [
@@ -74,7 +85,13 @@ class FridgeApi(ApplianceApi):
                 fridge_entities.append(GeErdSensor(self, ErdCode.AIR_FILTER_STATUS))    
             if(ice_bucket_status and ice_bucket_status.is_present_fridge):
                 fridge_entities.append(GeErdPropertySensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS, "state_full_fridge"))
-
+            if(interior_light and interior_light != 255):
+                fridge_entities.append(GeErdLight(self, ErdCode.INTERIOR_LIGHT))
+            if(proximity_light and proximity_light != ErdOnOff.NA):
+                fridge_entities.append(GeErdSwitch(self, ErdCode.PROXIMITY_LIGHT, ErdOnOffBoolConverter(), icon_on_override="mdi:lightbulb-on", icon_off_override="mdi:lightbulb"))
+            if(convertable_drawer and convertable_drawer != ErdConvertableDrawerMode.NA):
+                fridge_entities.append(GeErdSelect(self, ErdCode.CONVERTABLE_DRAWER_MODE, ConvertableDrawerModeOptionsConverter(units)))        
+        
         # Freezer entities
         if fridge_model_info is None or fridge_model_info.has_freezer:
             freezer_entities.extend([
