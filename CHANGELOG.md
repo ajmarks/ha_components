@@ -9,7 +9,7 @@
 - Fixed device info when serial not present (@Xe138)
 - Fixed issue with ovens when raw temperature not available (@chadohalloran)
 - Fixed issue where Split A/C temperature sensors report UOM incorrectly (@RobertusIT)
-- Added convertable drawer mode, proximity light, and interior lights to fridge (@grotto27, @elwing00)
+- Added convertable drawer mode, proximity light, and interior lights to fridge (@groto27, @elwing00)
 ## 0.4.3
 
 - Enabled support for appliances without serial numbers
