@@ -59,6 +59,8 @@ class FridgeApi(ApplianceApi):
         interior_light: int = self.try_get_erd_value(ErdCode.INTERIOR_LIGHT)
         proximity_light: ErdOnOff = self.try_get_erd_value(ErdCode.PROXIMITY_LIGHT)
 
+        units = self.hass.config.units
+
         # Common entities
         common_entities = [
             GeErdSensor(self, ErdCode.FRIDGE_MODEL_INFO),
@@ -88,7 +90,7 @@ class FridgeApi(ApplianceApi):
             if(proximity_light and proximity_light != ErdOnOff.NA):
                 fridge_entities.append(GeErdSwitch(self, ErdCode.PROXIMITY_LIGHT, ErdOnOffBoolConverter(), icon_on_override="mdi:lightbulb-on", icon_off_override="mdi:lightbulb"))
             if(convertable_drawer and convertable_drawer != ErdConvertableDrawerMode.NA):
-                fridge_entities.append(GeErdSelect(self, ErdCode.CONVERTABLE_DRAWER_MODE, ConvertableDrawerModeOptionsConverter()))        
+                fridge_entities.append(GeErdSelect(self, ErdCode.CONVERTABLE_DRAWER_MODE, ConvertableDrawerModeOptionsConverter(units)))        
         
         # Freezer entities
         if fridge_model_info is None or fridge_model_info.has_freezer:
