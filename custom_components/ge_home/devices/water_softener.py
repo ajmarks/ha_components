@@ -30,6 +30,7 @@ class WaterSoftenerApi(ApplianceApi):
             GeErdSensor(self, ErdCode.WH_SOFTENER_ERROR_CODE, icon_override="mdi:alert-circle"),
             GeErdSensor(self, ErdCode.WH_SOFTENER_LOW_SALT, icon_override="mdi:grain"),
             GeErdSensor(self, ErdCode.WH_SOFTENER_SHUTOFF_VALVE_STATE, icon_override="mdi:state-machine"),
+            GeErdSensor(self, ErdCode.WH_SOFTENER_SALT_LIFE_REMAINING, icon_override="mdi:wrench-clock"),
             GeErdShutoffPositionSelect(self, ErdCode.WH_SOFTENER_SHUTOFF_VALVE_CONTROL),
         ]
         entities = base_entities + ws_entities
