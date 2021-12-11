@@ -138,6 +138,10 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.FAN:
             return "mdi:fan"
         if self.erd_code_class == ErdCodeClass.LIGHT:
-            return "mdi:lightbulb"         
+            return "mdi:lightbulb"   
+        if self.erd_code_class == ErdCodeClass.OIM_SENSOR:
+            return "mdi:snowflake"
+        if self.erd_code_class == ErdCodeClass.WATERSOFTENER_SENSOR:
+            return "mdi:water"      
 
         return None

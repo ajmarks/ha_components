@@ -7,3 +7,4 @@ from .advantium import *
 from .ac import *
 from .hood import *
 from .water_softener import *
+from .opal_ice_maker import *

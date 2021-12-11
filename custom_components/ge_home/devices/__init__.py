@@ -3,8 +3,6 @@ from typing import Type
 
 from gehomesdk.erd import ErdApplianceType
 
-from custom_components.ge_home.devices.water_softener import WaterSoftenerApi
-
 from .base import ApplianceApi
 from .oven import OvenApi
 from .fridge import FridgeApi
@@ -18,6 +16,8 @@ from .wac import WacApi
 from .sac import SacApi
 from .pac import PacApi
 from .hood import HoodApi
+from .water_softener import WaterSoftenerApi
+from .oim import OimApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,6 +51,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return PacApi
     if appliance_type == ErdApplianceType.HOOD:
         return HoodApi
+    if appliance_type == ErdApplianceType.OPAL_ICE_MAKER:
+        return OimApi
 
     # Fallback
     return ApplianceApi

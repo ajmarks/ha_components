@@ -1,0 +1,39 @@
+import logging
+from typing import List
+
+from homeassistant.helpers.entity import Entity
+from gehomesdk import (
+    ErdCode, 
+    ErdApplianceType,
+    ErdOnOff
+)
+
+from .base import ApplianceApi
+from ..entities import (
+    OimLightLevelOptionsConverter, 
+    GeErdSensor, 
+    GeErdSelect,
+    GeErdSwitch, 
+    ErdOnOffBoolConverter
+)
+
+_LOGGER = logging.getLogger(__name__)
+
+
+class OimApi(ApplianceApi):
+    """API class for Oven Hood objects"""
+    APPLIANCE_TYPE = ErdApplianceType.HOOD
+
+    def get_all_entities(self) -> List[Entity]:
+        base_entities = super().get_all_entities()
+
+        oim_entities = [
+            GeErdSensor(self, ErdCode.OIM_STATUS),
+            GeErdSensor(self, ErdCode.OIM_FILTER_STATUS),            
+            GeErdSelect(self, ErdCode.OIM_LIGHT_LEVEL, OimLightLevelOptionsConverter()),
+            GeErdSwitch(self, ErdCode.OIM_POWER, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:power-on", icon_off_override="mdi:power-off"),
+        ]
+
+        entities = base_entities + oim_entities
+        return entities
+        
