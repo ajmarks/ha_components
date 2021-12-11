@@ -104,7 +104,7 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.LOCK_CONTROL:
             return "mdi:lock-outline"
         if self.erd_code_class == ErdCodeClass.SABBATH_CONTROL:
-            return "mdi:judaism"
+            return "mdi:star-david"
         if self.erd_code_class == ErdCodeClass.COOLING_CONTROL:
             return "mdi:snowflake"
         if self.erd_code_class == ErdCodeClass.OVEN_SENSOR:
