@@ -5,7 +5,7 @@ from homeassistant.helpers.entity import Entity
 from gehomesdk.erd import ErdCode, ErdApplianceType
 
 from .base import ApplianceApi
-from ..entities import GeSacClimate, GeSacTemperatureSensor, GeErdSensor, GeErdSwitch, ErdOnOffBoolConverter
+from ..entities import GeSacClimate, GeErdSensor, GeErdSwitch, ErdOnOffBoolConverter
 
 _LOGGER = logging.getLogger(__name__)
 
