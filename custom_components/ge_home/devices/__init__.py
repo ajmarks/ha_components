@@ -3,6 +3,8 @@ from typing import Type
 
 from gehomesdk.erd import ErdApplianceType
 
+from custom_components.ge_home.devices.water_softener import WaterSoftenerApi
+
 from .base import ApplianceApi
 from .oven import OvenApi
 from .fridge import FridgeApi
@@ -37,6 +39,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return WasherDryerApi
     if appliance_type == ErdApplianceType.POE_WATER_FILTER:
         return WaterFilterApi
+    if appliance_type == ErdApplianceType.WATER_SOFTENER:
+        return WaterSoftenerApi
     if appliance_type == ErdApplianceType.ADVANTIUM:
         return AdvantiumApi
     if appliance_type == ErdApplianceType.AIR_CONDITIONER:

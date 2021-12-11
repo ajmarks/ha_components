@@ -5,6 +5,7 @@
 
 - Changed the sensors to use native value/uom
 - Changed the temperatures to always be natively fahrenheit (API appears to always use this system)
+- Initial support for Water Softeners (@npentell)
 
 ## 0.5.0
 
