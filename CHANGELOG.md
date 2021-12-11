@@ -7,6 +7,7 @@
 - Changed the temperatures to always be natively fahrenheit (API appears to always use this system)
 - Initial support for Water Softeners (@npentell)
 - Initial support for Opal Ice Makers (@mbcomer, @knobunc)
+- Updated deprecated icons (@mjmeli, @schmittx)
 
 ## 0.5.0
 

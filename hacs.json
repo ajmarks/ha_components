@@ -1,6 +1,6 @@
 {
   "name": "GE Home (SmartHQ)",
-  "homeassistant": "2021.7.1",
+  "homeassistant": "2021.11.0",
   "domains": ["binary_sensor", "sensor", "switch", "water_heater", "select"],
   "iot_class": "Cloud Polling"
 }

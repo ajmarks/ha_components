@@ -2,12 +2,17 @@
 
 Integration for GE WiFi-enabled appliances into Home Assistant.  This integration currently support the following devices:
 
-- Fridge 
+- Fridge
 - Oven
 - Dishwasher 
 - Laundry (Washer/Dryer)
 - Whole Home Water Filter
+- Whole Home Water Softener
+- A/C (Portable, Split, Window)
+- Range Hood
 - Advantium
+- Microwave
+- Opal Ice Maker
 
 **Forked from Andrew Mark's [repository](https://github.com/ajmarks/ha_components).**
 
@@ -34,6 +39,11 @@ A/C Controls:
 
 #### Breaking Changes
 
+{% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
+- Changed the sensors to use native value/uom
+- Changed the temperatures to always be natively fahrenheit (API appears to always use this system)
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}
 - Laundry support changes will cause entity names to be different, you will need to fix in HA (uninstall, reboot, delete leftover entitites, install, reboot)
 {% endif %}
@@ -45,6 +55,11 @@ A/C Controls:
 {% endif %}
 
 #### Features
+
+{% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
+- Initial support for Water Softeners (@npentell)
+- Initial support for Opal Ice Makers (@mbcomer, @knobunc)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
 - Support for Oven Hood units (@digitalbites)
@@ -66,6 +81,10 @@ A/C Controls:
 {% endif %}
 
 #### Bugfixes
+
+{% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
+- Updated deprecated icons (@mjmeli, @schmittx)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.5.0'.split('.') | map('int') %}
 - Advantium fixes (@willhayslett)
