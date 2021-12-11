@@ -82,10 +82,12 @@ class GeClimate(GeEntity, ClimateEntity):
 
     @property
     def temperature_unit(self):
-        measurement_system = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
-        if measurement_system == ErdMeasurementUnits.METRIC:
-            return TEMP_CELSIUS
+        #appears to always be Fahrenheit internally, hardcode this
         return TEMP_FAHRENHEIT
+        #measurement_system = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
+        #if measurement_system == ErdMeasurementUnits.METRIC:
+        #    return TEMP_CELSIUS
+        #return TEMP_FAHRENHEIT
 
     @property
     def supported_features(self):

@@ -1,6 +1,11 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.0
+
+- Changed the sensors to use native value/uom
+- Changed the temperatures to always be natively fahrenheit (API appears to always use this system)
+
 ## 0.5.0
 
 - Initial support for oven hoods (@digitalbites)

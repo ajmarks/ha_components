@@ -19,8 +19,8 @@ class SacApi(ApplianceApi):
 
         sac_entities = [
             GeSacClimate(self),
-            GeSacTemperatureSensor(self, ErdCode.AC_TARGET_TEMPERATURE),
-            GeSacTemperatureSensor(self, ErdCode.AC_AMBIENT_TEMPERATURE),
+            GeErdSensor(self, ErdCode.AC_TARGET_TEMPERATURE),
+            GeErdSensor(self, ErdCode.AC_AMBIENT_TEMPERATURE),
             GeErdSensor(self, ErdCode.AC_FAN_SETTING, icon_override="mdi:fan"),
             GeErdSensor(self, ErdCode.AC_OPERATION_MODE),
             GeErdSwitch(self, ErdCode.AC_POWER_STATUS, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:power-on", icon_off_override="mdi:power-off"),

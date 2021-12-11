@@ -2,7 +2,7 @@ import logging
 from typing import List
 
 from homeassistant.helpers.entity import Entity
-from gehomesdk.erd import ErdCode, ErdApplianceType
+from gehomesdk.erd import ErdCode, ErdApplianceType, ErdDataType
 
 from .base import ApplianceApi
 from ..entities import GeAdvantium, GeErdSensor, GeErdBinarySensor, GeErdPropertySensor, GeErdPropertyBinarySensor, UPPER_OVEN
@@ -29,8 +29,8 @@ class AdvantiumApi(ApplianceApi):
             GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "cook_mode"),
             GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "termination_reason", icon_override="mdi:information-outline"),
             GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "preheat_status", icon_override="mdi:fire"),
-            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "temperature", icon_override="mdi:thermometer"),
-            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "power_level", icon_override="mdi:gauge"),
+            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "temperature", icon_override="mdi:thermometer", data_type_override=ErdDataType.INT),
+            GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "power_level", icon_override="mdi:gauge", data_type_override=ErdDataType.INT),
             GeErdPropertySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "warm_status", icon_override="mdi:radiator"),
             GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "door_status", device_class_override="door"),
             GeErdPropertyBinarySensor(self, ErdCode.ADVANTIUM_COOK_STATUS, "sensing_active", icon_on_override="mdi:flash-auto", icon_off_override="mdi:flash-off"),

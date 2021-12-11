@@ -69,12 +69,6 @@ class GeSacClimate(GeClimate):
         #construct the converter based on the available modes
         self._hvac_mode_converter = SacHvacModeOptionsConverter(self._modes)
 
-
-    @property
-    def temperature_unit(self):
-        #SAC appears to be hard coded to use Fahrenheit internally, no matter what the display shows
-        return TEMP_FAHRENHEIT
-
     @property
     def min_temp(self) -> float:
         temp = 60
