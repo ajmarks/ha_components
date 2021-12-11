@@ -9,7 +9,8 @@ from gehomesdk import (
     ErdApplianceType, 
     OvenConfiguration, 
     ErdCooktopConfig, 
-    CooktopStatus
+    CooktopStatus,
+    ErdOvenLightLevelAvailability
 )
 
 from .base import ApplianceApi
@@ -20,6 +21,7 @@ from ..entities import (
     GeErdPropertySensor,
     GeErdPropertyBinarySensor,
     GeOven, 
+    GeOvenLightLevelSelect,
     UPPER_OVEN, 
     LOWER_OVEN
 )
@@ -40,6 +42,9 @@ class OvenApi(ApplianceApi):
 
         has_upper_raw_temperature = self.has_erd_code(ErdCode.UPPER_OVEN_RAW_TEMPERATURE)
         has_lower_raw_temperature = self.has_erd_code(ErdCode.LOWER_OVEN_RAW_TEMPERATURE)
+
+        upper_light_availability: ErdOvenLightLevelAvailability = self.try_get_erd_value(ErdCode.UPPER_OVEN_LIGHT_AVAILABILITY)
+        lower_light_availability: ErdOvenLightLevelAvailability = self.try_get_erd_value(ErdCode.LOWER_OVEN_LIGHT_AVAILABILITY)
 
         _LOGGER.debug(f"Oven Config: {oven_config}")
         _LOGGER.debug(f"Cooktop Config: {cooktop_config}")
@@ -69,6 +74,8 @@ class OvenApi(ApplianceApi):
                 oven_entities.append(GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE))
             if has_lower_raw_temperature:
                 oven_entities.append(GeErdSensor(self, ErdCode.LOWER_OVEN_RAW_TEMPERATURE))
+            if lower_light_availability is None or lower_light_availability.is_available:
+                oven_entities.append(GeOvenLightLevelSelect(self, ErdCode.LOWER_OVEN_LIGHT))
         else:
             oven_entities.extend([
                 GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE, self._single_name(ErdCode.UPPER_OVEN_COOK_MODE)),
@@ -81,6 +88,8 @@ class OvenApi(ApplianceApi):
             ])
             if has_upper_raw_temperature:
                 oven_entities.append(GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_RAW_TEMPERATURE)))
+            if upper_light_availability is None or upper_light_availability.is_available:
+                oven_entities.append(GeOvenLightLevelSelect(self, ErdCode.UPPER_OVEN_LIGHT, self._single_name(ErdCode.UPPER_OVEN_LIGHT)))
 
 
         if cooktop_config == ErdCooktopConfig.PRESENT:           
