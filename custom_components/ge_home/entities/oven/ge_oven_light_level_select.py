@@ -13,7 +13,7 @@ class OvenLightLevelOptionsConverter(OptionsConverter):
         self.availability = availability
         self.excluded_levels = [ErdOvenLightLevel.NOT_AVAILABLE]
 
-        if not availability or not availability.has_dimmed:
+        if not availability or not availability.dim_available:
             self.excluded_levels.append(ErdOvenLightLevel.DIM)
         
     @property
@@ -35,7 +35,7 @@ class OvenLightLevelOptionsConverter(OptionsConverter):
 
 class GeOvenLightLevelSelect(GeErdSelect):
 
-    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType):
+    def __init__(self, api: ApplianceApi, erd_code: ErdCodeType, erd_override: str = None):
         self._availability: ErdOvenLightLevelAvailability = api.try_get_erd_value(ErdCode.LOWER_OVEN_LIGHT_AVAILABILITY)
 
         #check to see if we have a status
@@ -43,8 +43,9 @@ class GeOvenLightLevelSelect(GeErdSelect):
         self._has_status = value is not None and value != ErdOvenLightLevel.NOT_AVAILABLE
         self._assumed_state = ErdOvenLightLevel.OFF
 
-        super().__init__(api, erd_code, OvenLightLevelOptionsConverter(self._availability))
+        super().__init__(api, erd_code, OvenLightLevelOptionsConverter(self._availability), erd_override=erd_override)
 
+    @property
     def assumed_state(self) -> bool:
         return not self._has_status
     
