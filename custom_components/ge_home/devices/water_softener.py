@@ -7,6 +7,7 @@ from gehomesdk import ErdCode, ErdApplianceType
 from .base import ApplianceApi
 from ..entities import (
     GeErdSensor,
+    GeErdPropertySensor,
     GeErdBinarySensor,
     GeErdShutoffPositionSelect,
 )
@@ -24,13 +25,13 @@ class WaterSoftenerApi(ApplianceApi):
 
         ws_entities = [
             GeErdBinarySensor(self, ErdCode.WH_FILTER_MANUAL_MODE, icon_on_override="mdi:human", icon_off_override="mdi:robot"),
-            GeErdSensor(self, ErdCode.WH_FILTER_FLOW_RATE),
+            GeErdPropertySensor(self, ErdCode.WH_FILTER_FLOW_RATE, "flow_rate"),
             GeErdBinarySensor(self, ErdCode.WH_FILTER_FLOW_ALERT, device_class_override="moisture"),
             GeErdSensor(self, ErdCode.WH_FILTER_DAY_USAGE),
             GeErdSensor(self, ErdCode.WH_SOFTENER_ERROR_CODE, icon_override="mdi:alert-circle"),
             GeErdSensor(self, ErdCode.WH_SOFTENER_LOW_SALT, icon_override="mdi:grain"),
             GeErdSensor(self, ErdCode.WH_SOFTENER_SHUTOFF_VALVE_STATE, icon_override="mdi:state-machine"),
-            GeErdSensor(self, ErdCode.WH_SOFTENER_SALT_LIFE_REMAINING, icon_override="mdi:wrench-clock"),
+            GeErdSensor(self, ErdCode.WH_SOFTENER_SALT_LIFE_REMAINING, icon_override="mdi:calendar-clock"),
             GeErdShutoffPositionSelect(self, ErdCode.WH_SOFTENER_SHUTOFF_VALVE_CONTROL),
         ]
         entities = base_entities + ws_entities
