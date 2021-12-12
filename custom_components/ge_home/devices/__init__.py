@@ -16,6 +16,7 @@ from .wac import WacApi
 from .sac import SacApi
 from .pac import PacApi
 from .hood import HoodApi
+from .microwave import MicrowaveApi
 from .water_softener import WaterSoftenerApi
 from .oim import OimApi
 
@@ -51,6 +52,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return PacApi
     if appliance_type == ErdApplianceType.HOOD:
         return HoodApi
+    if appliance_type == ErdApplianceType.MICROWAVE:
+        return MicrowaveApi        
     if appliance_type == ErdApplianceType.OPAL_ICE_MAKER:
         return OimApi
 

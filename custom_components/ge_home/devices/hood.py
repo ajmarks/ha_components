@@ -14,7 +14,7 @@ from .base import ApplianceApi
 from ..entities import (
     GeHoodLightLevelSelect, 
     GeHoodFanSpeedSelect, 
-    GeErdSensor, 
+    GeErdTimerSensor, 
     GeErdSwitch, 
     ErdOnOffBoolConverter
 )
@@ -45,7 +45,7 @@ class HoodApi(ApplianceApi):
         if light_availability and light_availability.is_available:
             hood_entities.append(GeHoodLightLevelSelect(self, ErdCode.HOOD_LIGHT_LEVEL))
         if timer_availability == ErdOnOff.ON:
-            hood_entities.append(GeErdSensor(self, ErdCode.HOOD_TIMER))
+            hood_entities.append(GeErdTimerSensor(self, ErdCode.HOOD_TIMER))
 
         entities = base_entities + hood_entities
         return entities
