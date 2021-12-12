@@ -19,6 +19,7 @@ from .hood import HoodApi
 from .microwave import MicrowaveApi
 from .water_softener import WaterSoftenerApi
 from .oim import OimApi
+from .coffee_maker import CcmApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,6 +57,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return MicrowaveApi        
     if appliance_type == ErdApplianceType.OPAL_ICE_MAKER:
         return OimApi
+    if appliance_type == ErdApplianceType.CAFE_COFFEE_MAKER:
+        return CcmApi
 
     # Fallback
     return ApplianceApi
