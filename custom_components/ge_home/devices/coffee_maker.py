@@ -11,7 +11,8 @@ from .base import ApplianceApi
 from ..entities import (
     GeCcmPotNotPresentBinarySensor,
     GeErdSensor, 
-    GeErdBinarySensor
+    GeErdBinarySensor,
+    GeCcm
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ class CcmApi(ApplianceApi):
             GeErdSensor(self, ErdCode.CCM_CURRENT_WATER_TEMPERATURE),
             GeErdBinarySensor(self, ErdCode.CCM_OUT_OF_WATER, device_class_override="problem"),                        
             GeCcmPotNotPresentBinarySensor(self, ErdCode.CCM_POT_PRESENT, device_class_override="problem"),
+            GeCcm(self)
         ]
 
         entities = base_entities + ccm_entities

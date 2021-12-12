@@ -1,1 +1,2 @@
 from .ge_ccm_pot_not_present_binary_sensor import GeCcmPotNotPresentBinarySensor
+from .ge_ccm import GeCcm
