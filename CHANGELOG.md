@@ -5,7 +5,7 @@
 
 - Requires HA 2021.12.x or later
 - Changed the sensors to use native value/uom
-- Changed the temperatures to always be natively fahrenheit (API appears to always use this system)
+- Changed the temperatures to always be natively fahrenheit (API appears to always use this system) (@vignatyuk)
 - Initial support for Water Softeners (@npentell)
 - Initial support for Opal Ice Makers (@mbcomer, @knobunc)
 - Updated deprecated icons (@mjmeli, @schmittx)

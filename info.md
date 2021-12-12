@@ -42,7 +42,7 @@ A/C Controls:
 {% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
 - Requires HA version 2021.12.0 or later
 - Changed the sensors to use native value/uom
-- Changed the temperatures to always be natively fahrenheit (API appears to always use this system)
+- Changed the temperatures to always be natively fahrenheit (API appears to always use this system) (@vignatyuk) 
 {% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.4.0'.split('.') | map('int') %}
