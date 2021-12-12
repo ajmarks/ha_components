@@ -29,7 +29,7 @@ class WaterSoftenerApi(ApplianceApi):
             GeErdBinarySensor(self, ErdCode.WH_FILTER_FLOW_ALERT, device_class_override="moisture"),
             GeErdSensor(self, ErdCode.WH_FILTER_DAY_USAGE),
             GeErdSensor(self, ErdCode.WH_SOFTENER_ERROR_CODE, icon_override="mdi:alert-circle"),
-            GeErdSensor(self, ErdCode.WH_SOFTENER_LOW_SALT, icon_override="mdi:grain"),
+            GeErdBinarySensor(self, ErdCode.WH_SOFTENER_LOW_SALT, icon_on_override="mdi:alert", icon_off_override="mdi:grain"),
             GeErdSensor(self, ErdCode.WH_SOFTENER_SHUTOFF_VALVE_STATE, icon_override="mdi:state-machine"),
             GeErdSensor(self, ErdCode.WH_SOFTENER_SALT_LIFE_REMAINING, icon_override="mdi:calendar-clock"),
             GeErdShutoffPositionSelect(self, ErdCode.WH_SOFTENER_SHUTOFF_VALVE_CONTROL),
