@@ -12,6 +12,7 @@ from .base import ApplianceApi
 from ..entities import (
     OimLightLevelOptionsConverter, 
     GeErdSensor, 
+    GeErdBinarySensor,
     GeErdSelect,
     GeErdSwitch, 
     ErdOnOffBoolConverter
@@ -29,7 +30,7 @@ class OimApi(ApplianceApi):
 
         oim_entities = [
             GeErdSensor(self, ErdCode.OIM_STATUS),
-            GeErdSensor(self, ErdCode.OIM_FILTER_STATUS),            
+            GeErdBinarySensor(self, ErdCode.OIM_FILTER_STATUS, device_class_override="problem"),            
             GeErdSelect(self, ErdCode.OIM_LIGHT_LEVEL, OimLightLevelOptionsConverter()),
             GeErdSwitch(self, ErdCode.OIM_POWER, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:power-on", icon_off_override="mdi:power-off"),
         ]
