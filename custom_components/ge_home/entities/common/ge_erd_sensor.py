@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 from gehomesdk.erd.erd_data_type import ErdDataType
-from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT
+from homeassistant.components.sensor import SensorEntity, SensorStateClass
 
 from homeassistant.const import (
     DEVICE_CLASS_ENERGY,
@@ -13,25 +13,13 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-#from homeassistant.components.sensor import (
-#    STATE_CLASS_MEASUREMENT,
-#    STATE_CLASS_TOTAL_INCREASING
-#)
-# For now, let's not force the newer version, we'll use the same constants
-# but it'll be optional.
-# TODO: Force the usage of new HA
-STATE_CLASS_MEASUREMENT = "measurement"
-STATE_CLASS_TOTAL_INCREASING = 'total_increasing'
-
-from homeassistant.helpers.entity import Entity
 from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
-
 from .ge_erd_entity import GeErdEntity
 from ...devices import ApplianceApi
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeErdSensor(GeErdEntity, Entity):
+class GeErdSensor(GeErdEntity, SensorEntity):
     """GE Entity for sensors"""
 
     def __init__(
@@ -149,11 +137,11 @@ class GeErdSensor(GeErdEntity, Entity):
             return self._state_class_override
 
         if self.device_class in [DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_ENERGY]:
-            return STATE_CLASS_MEASUREMENT
+            return SensorStateClass.MEASUREMENT
         if self.erd_code_class in [ErdCodeClass.FLOW_RATE, ErdCodeClass.PERCENTAGE]:
-            return STATE_CLASS_MEASUREMENT
+            return SensorStateClass.MEASUREMENT
         if self.erd_code_class in [ErdCodeClass.LIQUID_VOLUME]:
-            return STATE_CLASS_TOTAL_INCREASING
+            return SensorStateClass.TOTAL_INCREASING
         
         return None
 
