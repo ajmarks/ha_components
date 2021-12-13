@@ -11,6 +11,7 @@ from gehomesdk import (
 )
 
 from homeassistant.const import ATTR_TEMPERATURE
+from homeassistant.util.unit_system import UnitSystem
 
 from ...const import DOMAIN
 from ...devices import ApplianceApi
@@ -25,9 +26,9 @@ class GeCcm(GeWaterHeater):
 
     icon = "mdi:coffee-maker"
 
-    def __init__(self, api: ApplianceApi):
+    def __init__(self, api: ApplianceApi, units: UnitSystem):
         super().__init__(api)
-        self._options = CcmBrewOptionsConverter()
+        self._options = CcmBrewOptionsConverter(units)
 
     @property
     def supported_features(self):
@@ -122,7 +123,7 @@ class GeCcm(GeWaterHeater):
         try:
             if operation_mode not in ["Off","Descale"]:
                 new_mode = self._options.from_option_string(operation_mode)
-                new_mode.brew_temperature = self.target_temperature
+                new_mode = ErdCcmBrewSettings(new_mode.number_of_cups, new_mode.brew_strength, self.target_temperature)
 
                 await self.appliance.async_set_erd_value(ErdCode.CCM_BREW_SETTINGS, new_mode)
             elif operation_mode == "Off":
@@ -131,7 +132,7 @@ class GeCcm(GeWaterHeater):
             elif operation_mode == "Descale":
                 await self.appliance.async_set_erd_value(ErdCode.CCM_START_DESCALING, True)
         except:
-            _LOGGER.debug(f"Error Attempting to set mode to {operation_mode}.")
+            _LOGGER.error(f"Error Attempting to set mode to {operation_mode}.", exc_info=True)
 
     async def async_set_temperature(self, **kwargs):
         """Set the brew temperature"""

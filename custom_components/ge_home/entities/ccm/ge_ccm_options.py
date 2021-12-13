@@ -25,20 +25,22 @@ class CcmBrewOptionsConverter(OptionsConverter):
 
     @property
     def options(self) -> List[str]:
-        return (
-            ["Off"]
-            .extend([i.stringify() for i in self._options])
-            .extend("Descale")
-        )
+        options = ["Off"]
+        options.extend([i.stringify() for i in self._options])
+        options.extend(["Descale"])
+
+        return options
 
     def from_option_string(self, value: str) -> Optional[ErdCcmBrewSettings]:
         try:
             if value in ["Off","Descale"]:
                 return None
-            s = value.split(" -- ")[0]
+            s = value.split(" -- ")[0].upper()
             c = value.split(" -- ")[1].replace(" cups","")
-            return ErdCcmBrewSettings(int(c), ErdCcmBrewStrength(s), 200)
+            return ErdCcmBrewSettings(int(c), ErdCcmBrewStrength[s], 200)
         except:
+            _LOGGER.error(f"Could not convert brew options '{value}'", exc_info=True)
+
             #return a default if we can't interpret it
             return ErdCcmBrewSettings(4, ErdCcmBrewStrength.MEDIUM, 200)    
 
@@ -52,7 +54,8 @@ class CcmBrewOptionsConverter(OptionsConverter):
 
     def _build_options(self) -> List[CcmBrewOption]:
         options = []
-        for s in ErdCcmBrewStrength:
+        for s in filter(lambda x: x != ErdCcmBrewStrength.UNKNOWN, ErdCcmBrewStrength):
             for c in range(MIN_CUPS, MAX_CUPS, 2):
                 options.append(CcmBrewOption(s, c))
+
         return options
