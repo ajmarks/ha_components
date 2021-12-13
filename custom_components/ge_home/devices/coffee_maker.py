@@ -25,6 +25,8 @@ class CcmApi(ApplianceApi):
     def get_all_entities(self) -> List[Entity]:
         base_entities = super().get_all_entities()
 
+        units = self.hass.config.units
+
         ccm_entities = [
             GeErdBinarySensor(self, ErdCode.CCM_IS_BREWING, device_class_override="heat"),                        
             GeErdBinarySensor(self, ErdCode.CCM_IS_DESCALING),                        
@@ -34,7 +36,7 @@ class CcmApi(ApplianceApi):
             GeErdSensor(self, ErdCode.CCM_CURRENT_WATER_TEMPERATURE),
             GeErdBinarySensor(self, ErdCode.CCM_OUT_OF_WATER, device_class_override="problem"),                        
             GeCcmPotNotPresentBinarySensor(self, ErdCode.CCM_POT_PRESENT, device_class_override="problem"),
-            GeCcm(self)
+            GeCcm(self, units)
         ]
 
         entities = base_entities + ccm_entities
