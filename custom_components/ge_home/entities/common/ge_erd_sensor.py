@@ -9,13 +9,11 @@ from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_POWER_FACTOR,
-    DEVICE_CLASS_TIMESTAMP,
-    TEMP_CELSIUS,
-    TEMP_FAHRENHEIT,
 )
-from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
+from gehomesdk import ErdCodeType, ErdCodeClass, ErdMeasurementUnits
 from .ge_erd_entity import GeErdEntity
 from ...devices import ApplianceApi
+from ...const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,7 +43,7 @@ class GeErdSensor(GeErdEntity, SensorEntity):
 
             # if it's a numeric data type, return it directly            
             if self._data_type in [ErdDataType.INT, ErdDataType.FLOAT]:
-                return value
+                return self._convert_numeric_value_from_device(value)
 
             # otherwise, return a stringified version
             # TODO: perhaps enhance so that there's a list of variables available
@@ -71,14 +69,23 @@ class GeErdSensor(GeErdEntity, SensorEntity):
 
     @property
     def _temp_units(self) -> Optional[str]:
-        #based on testing, all API values are in Fahrenheit, so we'll redefine
-        #this property to be the configured temperature unit and set the native
-        #unit differently
-        return self.api.hass.config.units.temperature_unit
+        # Return the unit from device preferences
+        if self._measurement_system == ErdMeasurementUnits.METRIC:
+            return TEMP_CELSIUS
 
-        #if self._measurement_system == ErdMeasurementUnits.METRIC:
-        #    return TEMP_CELSIUS
-        #return TEMP_FAHRENHEIT
+        return TEMP_FAHRENHEIT
+
+    def _convert_numeric_value_from_device(self, value):
+        """Convert to expected temperature units and data type"""
+        
+        if (self._get_uom() == TEMP_CELSIUS):
+             # Convert to Celcius since device always returns temperature in Fahrenheit regardless of device preferences
+            value = (value - 32 ) * 5/9
+
+        if self._data_type == ErdDataType.INT:
+            return int(round(value))
+        else:
+            return value
 
     def _get_uom(self):
         """Select appropriate units"""
@@ -92,10 +99,7 @@ class GeErdSensor(GeErdEntity, SensorEntity):
             in [ErdCodeClass.RAW_TEMPERATURE, ErdCodeClass.NON_ZERO_TEMPERATURE]
             or self.device_class == DEVICE_CLASS_TEMPERATURE
         ):
-            #NOTE: it appears that the API only sets temperature in Fahrenheit,
-            #so we'll hard code this UOM instead of using the device configured
-            #settings
-            return TEMP_FAHRENHEIT
+            return self._temp_units
         if (
             self.erd_code_class == ErdCodeClass.BATTERY
             or self.device_class == DEVICE_CLASS_BATTERY
