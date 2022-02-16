@@ -1,7 +1,6 @@
 from gehomesdk import ErdCode
 from ...devices import ApplianceApi
 from ..common import GeErdNumber
-from ...const import TEMP_CELSIUS
 from .ge_ccm_cached_value import GeCcmCachedValue
 
 class GeCcmBrewTemperatureNumber(GeErdNumber, GeCcmCachedValue):
@@ -20,10 +19,4 @@ class GeCcmBrewTemperatureNumber(GeErdNumber, GeCcmCachedValue):
 
     @property
     def brew_temperature(self) -> int:
-
-        value = self.value
-        if self.unit_of_measurement == TEMP_CELSIUS:
-            # Convert to Fahrenheit
-            value = int(round(value * 9/5) + 32)
-        
-        return value
+        return self.value

@@ -5,11 +5,11 @@ from homeassistant.components.number import NumberEntity
 
 from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
+    TEMP_FAHRENHEIT,
 )
-from gehomesdk import ErdCodeType, ErdCodeClass, ErdMeasurementUnits
+from gehomesdk import ErdCodeType, ErdCodeClass
 from .ge_erd_entity import GeErdEntity
 from ...devices import ApplianceApi
-from ...const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,11 +74,7 @@ class GeErdNumber(GeErdEntity, NumberEntity):
         return self._mode
 
     def _convert_value_from_device(self, value):
-        """Convert to expected temperature units and data type"""
-        
-        if (self._get_uom() == TEMP_CELSIUS):
-             # Convert to Celcius
-            value = (value - 32 ) * 5/9
+        """Convert to expected data type"""
 
         if self._data_type == ErdDataType.INT:
             return int(round(value))
@@ -93,13 +89,10 @@ class GeErdNumber(GeErdEntity, NumberEntity):
             return self._uom_override
 
         if self.device_class == DEVICE_CLASS_TEMPERATURE:
-            if self._measurement_system == ErdMeasurementUnits.METRIC:
-
-                # Actual data from API is always in Fahrenhreit but since Device preferences are set to Celcius
-                # we return Celcius here and will do the conversion ourselves
-                return TEMP_CELSIUS
-            else:
-                return TEMP_FAHRENHEIT
+            #NOTE: it appears that the API only sets temperature in Fahrenheit,
+            #so we'll hard code this UOM instead of using the device configured
+            #settings
+            return TEMP_FAHRENHEIT
         
         return None
 
@@ -125,10 +118,6 @@ class GeErdNumber(GeErdEntity, NumberEntity):
 
     async def async_set_value(self, value):
         """Sets the ERD value, assumes that the data type is correct"""
-
-        if self._get_uom() == TEMP_CELSIUS:
-            # Convert to Fahrenheit
-            value = (value * 9/5) + 32
 
         if self._data_type == ErdDataType.INT:
             value = int(round(value))
