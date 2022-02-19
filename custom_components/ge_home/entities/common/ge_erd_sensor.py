@@ -9,11 +9,9 @@ from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_POWER_FACTOR,
-    DEVICE_CLASS_TIMESTAMP,
-    TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
+from gehomesdk import ErdCodeType, ErdCodeClass
 from .ge_erd_entity import GeErdEntity
 from ...devices import ApplianceApi
 
@@ -45,7 +43,7 @@ class GeErdSensor(GeErdEntity, SensorEntity):
 
             # if it's a numeric data type, return it directly            
             if self._data_type in [ErdDataType.INT, ErdDataType.FLOAT]:
-                return value
+                return self._convert_numeric_value_from_device(value)
 
             # otherwise, return a stringified version
             # TODO: perhaps enhance so that there's a list of variables available
@@ -79,6 +77,14 @@ class GeErdSensor(GeErdEntity, SensorEntity):
         #if self._measurement_system == ErdMeasurementUnits.METRIC:
         #    return TEMP_CELSIUS
         #return TEMP_FAHRENHEIT
+
+    def _convert_numeric_value_from_device(self, value):
+        """Convert to expected data type"""
+
+        if self._data_type == ErdDataType.INT:
+            return int(round(value))
+        else:
+            return value
 
     def _get_uom(self):
         """Select appropriate units"""

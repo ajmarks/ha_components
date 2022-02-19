@@ -9,6 +9,8 @@ from .ge_erd_light import GeErdLight
 from .ge_erd_timer_sensor import GeErdTimerSensor
 from .ge_erd_property_sensor import GeErdPropertySensor
 from .ge_erd_switch import GeErdSwitch
+from .ge_erd_button import GeErdButton
+from .ge_erd_number import GeErdNumber
 from .ge_water_heater import GeWaterHeater
 from .ge_erd_select import GeErdSelect
 from .ge_climate import GeClimate
