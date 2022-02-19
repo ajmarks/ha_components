@@ -42,6 +42,7 @@ A/C Controls:
 
 {% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
 - Requires HA version 2021.12.0 or later
+- Enabled authentication to both US and EU regions (may require re-auth)
 - Changed the sensors to use native value/uom
 - Changed the temperatures to always be natively fahrenheit (API appears to always use this system) (@vignatyuk) 
 {% endif %}
