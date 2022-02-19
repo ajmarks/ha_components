@@ -18,6 +18,7 @@ Integration for GE WiFi-enabled appliances into Home Assistant.  This integratio
 - Advantium
 - Microwave
 - Opal Ice Maker
+- Coffee Maker
 
 **Forked from Andrew Mark's [repository](https://github.com/ajmarks/ha_components).**
 

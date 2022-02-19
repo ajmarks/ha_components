@@ -9,6 +9,7 @@
 - Initial support for Microwaves (@mbcomer, @mnestor)
 - Initial support for Water Softeners (@npentell, @drjeff)
 - Initial support for Opal Ice Makers (@mbcomer, @knobunc)
+- Initial support for Coffee Makers (@alexanv1)
 - Updated deprecated icons (@mjmeli, @schmittx)
 
 ## 0.5.0
