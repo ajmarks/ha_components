@@ -12,12 +12,18 @@ Integration for GE WiFi-enabled appliances into Home Assistant.  This integratio
 - Dishwasher 
 - Laundry (Washer/Dryer)
 - Whole Home Water Filter
+- Whole Home Water Softener
 - A/C (Portable, Split, Window)
-- Range Hoods
+- Range Hood
 - Advantium
+- Microwave
+- Opal Ice Maker
+- Coffee Maker
 
 **Forked from Andrew Mark's [repository](https://github.com/ajmarks/ha_components).**
+## Updates
 
+Unfortunately, I'm pretty much at the end of what I can do without assistance from others with these devices that can help provide logs.  I'll do what I can to make updates if there's something broken, but I am not really able to add new functionality if I can't get a little help to do so.
 ## Home Assistant UI Examples 
 Entities card:
 

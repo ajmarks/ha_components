@@ -34,7 +34,7 @@ from .const import (
 )
 from .devices import ApplianceApi, get_appliance_api_type
 
-PLATFORMS = ["binary_sensor", "sensor", "switch", "water_heater", "select", "climate", "light"]
+PLATFORMS = ["binary_sensor", "sensor", "switch", "water_heater", "select", "climate", "light", "button", "number"]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -261,6 +261,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
             api = self.appliance_apis[appliance.mac_addr]
         except KeyError:
             return
+
         for entity in api.entities:
             if entity.enabled:
                 _LOGGER.debug(f"Updating {entity} ({entity.unique_id}, {entity.entity_id})")

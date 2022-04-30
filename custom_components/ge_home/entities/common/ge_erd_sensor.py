@@ -1,6 +1,7 @@
 import logging
 from typing import Optional
-from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT
+from gehomesdk.erd.erd_data_type import ErdDataType
+from homeassistant.components.sensor import SensorEntity, SensorStateClass
 
 from homeassistant.const import (
     DEVICE_CLASS_ENERGY,
@@ -8,29 +9,15 @@ from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_POWER_FACTOR,
-    DEVICE_CLASS_TIMESTAMP,
-    TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-#from homeassistant.components.sensor import (
-#    STATE_CLASS_MEASUREMENT,
-#    STATE_CLASS_TOTAL_INCREASING
-#)
-# For now, let's not force the newer version, we'll use the same constants
-# but it'll be optional.
-# TODO: Force the usage of new HA
-STATE_CLASS_MEASUREMENT = "measurement"
-STATE_CLASS_TOTAL_INCREASING = 'total_increasing'
-
-from homeassistant.helpers.entity import Entity
-from gehomesdk import ErdCode, ErdCodeType, ErdCodeClass, ErdMeasurementUnits
-
+from gehomesdk import ErdCodeType, ErdCodeClass
 from .ge_erd_entity import GeErdEntity
 from ...devices import ApplianceApi
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeErdSensor(GeErdEntity, Entity):
+class GeErdSensor(GeErdEntity, SensorEntity):
     """GE Entity for sensors"""
 
     def __init__(
@@ -42,23 +29,31 @@ class GeErdSensor(GeErdEntity, Entity):
         device_class_override: str = None,
         state_class_override: str = None,
         uom_override: str = None,
+        data_type_override: ErdDataType = None
     ):
         super().__init__(api, erd_code, erd_override, icon_override, device_class_override)
         self._uom_override = uom_override
         self._state_class_override = state_class_override
+        self._data_type_override = data_type_override
 
     @property
-    def state(self) -> Optional[str]:
+    def native_value(self):
         try:
             value = self.appliance.get_erd_value(self.erd_code)
+
+            # if it's a numeric data type, return it directly            
+            if self._data_type in [ErdDataType.INT, ErdDataType.FLOAT]:
+                return self._convert_numeric_value_from_device(value)
+
+            # otherwise, return a stringified version
+            # TODO: perhaps enhance so that there's a list of variables available
+            #       for the stringify function to consume...
+            return self._stringify(value, temp_units=self._temp_units)
         except KeyError:
             return None
-        # TODO: perhaps enhance so that there's a list of variables available
-        #       for the stringify function to consume...
-        return self._stringify(value, temp_units=self._temp_units)
 
     @property
-    def unit_of_measurement(self) -> Optional[str]:
+    def native_unit_of_measurement(self) -> Optional[str]:
         return self._get_uom()
 
     @property
@@ -66,10 +61,30 @@ class GeErdSensor(GeErdEntity, Entity):
         return self._get_state_class()
 
     @property
+    def _data_type(self) -> ErdDataType:
+        if self._data_type_override is not None:
+            return self._data_type_override
+
+        return self.appliance.get_erd_code_data_type(self.erd_code)
+
+    @property
     def _temp_units(self) -> Optional[str]:
-        if self._measurement_system == ErdMeasurementUnits.METRIC:
-            return TEMP_CELSIUS
-        return TEMP_FAHRENHEIT
+        #based on testing, all API values are in Fahrenheit, so we'll redefine
+        #this property to be the configured temperature unit and set the native
+        #unit differently
+        return self.api.hass.config.units.temperature_unit
+
+        #if self._measurement_system == ErdMeasurementUnits.METRIC:
+        #    return TEMP_CELSIUS
+        #return TEMP_FAHRENHEIT
+
+    def _convert_numeric_value_from_device(self, value):
+        """Convert to expected data type"""
+
+        if self._data_type == ErdDataType.INT:
+            return int(round(value))
+        else:
+            return value
 
     def _get_uom(self):
         """Select appropriate units"""
@@ -83,7 +98,10 @@ class GeErdSensor(GeErdEntity, Entity):
             in [ErdCodeClass.RAW_TEMPERATURE, ErdCodeClass.NON_ZERO_TEMPERATURE]
             or self.device_class == DEVICE_CLASS_TEMPERATURE
         ):
-            return self._temp_units
+            #NOTE: it appears that the API only sets temperature in Fahrenheit,
+            #so we'll hard code this UOM instead of using the device configured
+            #settings
+            return TEMP_FAHRENHEIT
         if (
             self.erd_code_class == ErdCodeClass.BATTERY
             or self.device_class == DEVICE_CLASS_BATTERY
@@ -94,12 +112,12 @@ class GeErdSensor(GeErdEntity, Entity):
         if self.device_class == DEVICE_CLASS_POWER_FACTOR:
             return "%"
         if self.erd_code_class == ErdCodeClass.FLOW_RATE:
-            if self._measurement_system == ErdMeasurementUnits.METRIC:
-                return "lpm"
+            #if self._measurement_system == ErdMeasurementUnits.METRIC:
+            #    return "lpm"
             return "gpm" 
         if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:       
-            if self._measurement_system == ErdMeasurementUnits.METRIC:
-                return "l"
+            #if self._measurement_system == ErdMeasurementUnits.METRIC:
+            #    return "l"
             return "g"
         return None
 
@@ -125,11 +143,11 @@ class GeErdSensor(GeErdEntity, Entity):
             return self._state_class_override
 
         if self.device_class in [DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_ENERGY]:
-            return STATE_CLASS_MEASUREMENT
+            return SensorStateClass.MEASUREMENT
         if self.erd_code_class in [ErdCodeClass.FLOW_RATE, ErdCodeClass.PERCENTAGE]:
-            return STATE_CLASS_MEASUREMENT
+            return SensorStateClass.MEASUREMENT
         if self.erd_code_class in [ErdCodeClass.LIQUID_VOLUME]:
-            return STATE_CLASS_TOTAL_INCREASING
+            return SensorStateClass.TOTAL_INCREASING
         
         return None
 

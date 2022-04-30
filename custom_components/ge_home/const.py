@@ -1,5 +1,4 @@
 """Constants for the gehome integration."""
-from gehomesdk.clients.const import LOGIN_URL
 
 DOMAIN = "ge_home"
 

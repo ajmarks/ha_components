@@ -34,9 +34,10 @@ class GeWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
 
     @property
     def temperature_unit(self):
-        measurement_system = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
-        if measurement_system == ErdMeasurementUnits.METRIC:
-            return TEMP_CELSIUS
+        #It appears that the GE API is alwasy Fehrenheit
+        #measurement_system = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
+        #if measurement_system == ErdMeasurementUnits.METRIC:
+        #    return TEMP_CELSIUS
         return TEMP_FAHRENHEIT
 
     @property

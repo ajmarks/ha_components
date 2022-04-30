@@ -1,18 +1,37 @@
 """The ge_home integration."""
 
+import logging
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.const import CONF_REGION
 from .const import DOMAIN
 from .update_coordinator import GeHomeUpdateCoordinator
 
+_LOGGER = logging.getLogger(__name__)
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
     return True
+
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+    """Migrate old entry."""
+    _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+    if config_entry.version == 1:
+
+        new = {**config_entry.data}
+        new[CONF_REGION] = "US"
+
+        config_entry.version = 2
+        hass.config_entries.async_update_entry(config_entry, data=new)
+
+    _LOGGER.info("Migration to version %s successful", config_entry.version)
+
+    return True    
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):

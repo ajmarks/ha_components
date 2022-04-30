@@ -7,6 +7,7 @@ from gehomesdk import ErdCode, ErdApplianceType
 from .base import ApplianceApi
 from ..entities import (
     GeErdSensor,
+    GeErdPropertySensor,
     GeErdBinarySensor,
     GeErdFilterPositionSelect,
 )
@@ -28,7 +29,7 @@ class WaterFilterApi(ApplianceApi):
             GeErdFilterPositionSelect(self, ErdCode.WH_FILTER_POSITION),
             GeErdBinarySensor(self, ErdCode.WH_FILTER_MANUAL_MODE, icon_on_override="mdi:human", icon_off_override="mdi:robot"),
             GeErdBinarySensor(self, ErdCode.WH_FILTER_LEAK_VALIDITY, device_class_override="moisture"),
-            GeErdSensor(self, ErdCode.WH_FILTER_FLOW_RATE),
+            GeErdPropertySensor(self, ErdCode.WH_FILTER_FLOW_RATE, "flow_rate"),
             GeErdSensor(self, ErdCode.WH_FILTER_DAY_USAGE),
             GeErdSensor(self, ErdCode.WH_FILTER_LIFE_REMAINING),
             GeErdBinarySensor(self, ErdCode.WH_FILTER_FLOW_ALERT, device_class_override="moisture"),

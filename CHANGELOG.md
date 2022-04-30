@@ -1,6 +1,18 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.0
+
+- Requires HA 2021.12.x or later
+- Enabled authentication to both US and EU regions
+- Changed the sensors to use native value/uom
+- Changed the temperatures to always be natively fahrenheit (API appears to always use this system) (@vignatyuk)
+- Initial support for Microwaves (@mbcomer, @mnestor)
+- Initial support for Water Softeners (@npentell, @drjeff)
+- Initial support for Opal Ice Makers (@mbcomer, @knobunc)
+- Initial support for Coffee Makers (@alexanv1)
+- Updated deprecated icons (@mjmeli, @schmittx)
+
 ## 0.5.0
 
 - Initial support for oven hoods (@digitalbites)
@@ -9,7 +21,7 @@
 - Fixed device info when serial not present (@Xe138)
 - Fixed issue with ovens when raw temperature not available (@chadohalloran)
 - Fixed issue where Split A/C temperature sensors report UOM incorrectly (@RobertusIT)
-- Added convertable drawer mode, proximity light, and interior lights to fridge (@grotto27, @elwing00)
+- Added convertable drawer mode, proximity light, and interior lights to fridge (@groto27, @elwing00)
 ## 0.4.3
 
 - Enabled support for appliances without serial numbers

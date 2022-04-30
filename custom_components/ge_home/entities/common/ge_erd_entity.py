@@ -83,7 +83,7 @@ class GeErdEntity(GeEntity):
         try:
             value = self.appliance.get_erd_value(ErdCode.TEMPERATURE_UNIT)
         except KeyError:
-            return None
+            return ErdMeasurementUnits.Imperial
         return value
 
     def _get_icon(self):
@@ -104,7 +104,7 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.LOCK_CONTROL:
             return "mdi:lock-outline"
         if self.erd_code_class == ErdCodeClass.SABBATH_CONTROL:
-            return "mdi:judaism"
+            return "mdi:star-david"
         if self.erd_code_class == ErdCodeClass.COOLING_CONTROL:
             return "mdi:snowflake"
         if self.erd_code_class == ErdCodeClass.OVEN_SENSOR:
@@ -138,6 +138,12 @@ class GeErdEntity(GeEntity):
         if self.erd_code_class == ErdCodeClass.FAN:
             return "mdi:fan"
         if self.erd_code_class == ErdCodeClass.LIGHT:
-            return "mdi:lightbulb"         
+            return "mdi:lightbulb"   
+        if self.erd_code_class == ErdCodeClass.OIM_SENSOR:
+            return "mdi:snowflake"
+        if self.erd_code_class == ErdCodeClass.WATERSOFTENER_SENSOR:
+            return "mdi:water"     
+        if self.erd_code_class == ErdCodeClass.CCM_SENSOR:
+            return "mdi:coffee-maker" 
 
         return None

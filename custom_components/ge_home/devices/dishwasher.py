@@ -23,14 +23,14 @@ class DishwasherApi(ApplianceApi):
             GeErdSensor(self, ErdCode.DISHWASHER_CYCLE_STATE, icon_override="mdi:state-machine"),
             GeErdSensor(self, ErdCode.DISHWASHER_OPERATING_MODE),
             GeErdSensor(self, ErdCode.DISHWASHER_PODS_REMAINING_VALUE, uom_override="pods"),
-            GeErdSensor(self, ErdCode.DISHWASHER_RINSE_AGENT, icon_override="mdi:sparkles"),
+            GeErdSensor(self, ErdCode.DISHWASHER_RINSE_AGENT, icon_override="mdi:shimmer"),
             GeErdSensor(self, ErdCode.DISHWASHER_TIME_REMAINING),
             GeErdBinarySensor(self, ErdCode.DISHWASHER_DOOR_STATUS),
 
             #User Setttings
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sound", icon_override="mdi:volume-high"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "lock_control", icon_override="mdi:lock"),
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sabbath", icon_override="mdi:judaism"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sabbath", icon_override="mdi:star-david"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "cycle_mode", icon_override="mdi:state-machine"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "presoak", icon_override="mdi:water"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "bottle_jet", icon_override="mdi:bottle-tonic-outline"),
