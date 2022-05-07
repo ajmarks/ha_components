@@ -1,6 +1,10 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.1
+
+- Fixed issue with water filter life sensor (@rgabrielson11)
+
 ## 0.6.0
 
 - Requires HA 2021.12.x or later
