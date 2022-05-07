@@ -31,7 +31,7 @@ class WaterFilterApi(ApplianceApi):
             GeErdBinarySensor(self, ErdCode.WH_FILTER_LEAK_VALIDITY, device_class_override="moisture"),
             GeErdPropertySensor(self, ErdCode.WH_FILTER_FLOW_RATE, "flow_rate"),
             GeErdSensor(self, ErdCode.WH_FILTER_DAY_USAGE),
-            GeErdSensor(self, ErdCode.WH_FILTER_LIFE_REMAINING),
+            GeErdPropertySensor(self, ErdCode.WH_FILTER_LIFE_REMAINING, "life_remaining"),
             GeErdBinarySensor(self, ErdCode.WH_FILTER_FLOW_ALERT, device_class_override="moisture"),
         ]
         entities = base_entities + wf_entities
