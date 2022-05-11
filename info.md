@@ -91,6 +91,10 @@ A/C Controls:
 
 #### Bugfixes
 
+{% if version_installed.split('.') | map('int') < '0.6.2'.split('.') | map('int') %}
+- Fixed issue with water heater naming when no serial is present
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.6.1'.split('.') | map('int') %}
 - Fixed issue with water filter life sensor (@rgabrielson11)
 {% endif %}

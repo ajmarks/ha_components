@@ -1,6 +1,10 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.2
+
+- Fixed issue with water heater naming when no serial is present
+
 ## 0.6.1
 
 - Fixed issue with water filter life sensor (@rgabrielson11)
