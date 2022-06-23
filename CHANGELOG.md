@@ -4,6 +4,7 @@
 ## 0.6.2
 
 - Fixed issue with water heater naming when no serial is present
+- Initial support for built-in air conditioners (@DaveZheng)
 
 ## 0.6.1
 

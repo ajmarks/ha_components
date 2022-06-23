@@ -15,6 +15,7 @@ from .advantium import AdvantiumApi
 from .wac import WacApi
 from .sac import SacApi
 from .pac import PacApi
+from .biac import BiacApi
 from .hood import HoodApi
 from .microwave import MicrowaveApi
 from .water_softener import WaterSoftenerApi
@@ -51,6 +52,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return SacApi
     if appliance_type == ErdApplianceType.PORTABLE_AIR_CONDITIONER:
         return PacApi
+    if appliance_type == ErdApplianceType.BUILT_IN_AIR_CONDITIONER:
+        return BiacApi
     if appliance_type == ErdApplianceType.HOOD:
         return HoodApi
     if appliance_type == ErdApplianceType.MICROWAVE:

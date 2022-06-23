@@ -66,9 +66,11 @@ class ApplianceApi:
 
     @property
     def serial_or_mac(self) -> str:
-        if self.serial_number and not self.serial_number.isspace():
+        if (self.serial_number and not 
+            self.serial_number.isspace() and not 
+            self.serial_number == "00000000"):
             return self.serial_number
-        return self.mac_addr        
+        return self.mac_addr
 
     @property
     def model_number(self) -> str:

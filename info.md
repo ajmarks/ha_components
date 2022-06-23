@@ -64,6 +64,10 @@ A/C Controls:
 #### Features
 
 {% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
+- Initial support for built-in air conditioners (@DaveZheng)
+{% endif %}
+
+{% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
 - Initial support for Water Softeners (@npentell, @drjeff)
 - Initial support for Opal Ice Makers (@mbcomer, @knobunc)
 - Initial support for Microwaves (@mbcomer, @mnestor)
