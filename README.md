@@ -13,7 +13,7 @@ Integration for GE WiFi-enabled appliances into Home Assistant.  This integratio
 - Laundry (Washer/Dryer)
 - Whole Home Water Filter
 - Whole Home Water Softener
-- A/C (Portable, Split, Window)
+- A/C (Portable, Split, Window, Built-In)
 - Range Hood
 - Advantium
 - Microwave
