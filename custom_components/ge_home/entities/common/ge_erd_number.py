@@ -39,7 +39,7 @@ class GeErdNumber(GeErdEntity, NumberEntity):
         self._mode = mode
 
     @property
-    def value(self):
+    def native_value(self):
         try:
             value = self.appliance.get_erd_value(self.erd_code)
             return self._convert_value_from_device(value)
