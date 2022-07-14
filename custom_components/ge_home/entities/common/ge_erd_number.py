@@ -67,7 +67,7 @@ class GeErdNumber(GeErdEntity, NumberEntity):
 
     @property
     def native_step(self) -> float:
-        return self._step_value
+        return self._native_step
 
     @property
     def mode(self) -> float:
