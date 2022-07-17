@@ -1,6 +1,11 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.3
+
+- Updated detection of invalid serial numbers (#89)
+- Updated implementation of number entities to fix deprecation warnings (#85)
+
 ## 0.6.2
 
 - Fixed issue with water heater naming when no serial is present
