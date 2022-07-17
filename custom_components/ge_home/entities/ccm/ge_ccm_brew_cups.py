@@ -10,10 +10,10 @@ class GeCcmBrewCupsNumber(GeErdNumber, GeCcmCachedValue):
 
         self._set_value = None
 
-    async def async_set_value(self, value):
+    async def async_set_native_value(self, value):
         GeCcmCachedValue.set_value(self, value)
         self.schedule_update_ha_state()
 
     @property
-    def value(self):
+    def native_value(self):
         return self.get_value(device_value = super().value)

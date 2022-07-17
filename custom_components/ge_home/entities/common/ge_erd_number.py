@@ -33,13 +33,13 @@ class GeErdNumber(GeErdEntity, NumberEntity):
         super().__init__(api, erd_code, erd_override, icon_override, device_class_override)
         self._uom_override = uom_override
         self._data_type_override = data_type_override
-        self._min_value = min_value
-        self._max_value = max_value
-        self._step_value = step_value
+        self._native_min_value = min_value
+        self._native_max_value = max_value
+        self._native_step = step_value
         self._mode = mode
 
     @property
-    def value(self):
+    def native_value(self):
         try:
             value = self.appliance.get_erd_value(self.erd_code)
             return self._convert_value_from_device(value)
@@ -47,7 +47,7 @@ class GeErdNumber(GeErdEntity, NumberEntity):
             return None
 
     @property
-    def unit_of_measurement(self) -> Optional[str]:
+    def native_unit_of_measurement(self) -> Optional[str]:
         return self._get_uom()
 
     @property
@@ -58,16 +58,16 @@ class GeErdNumber(GeErdEntity, NumberEntity):
         return self.appliance.get_erd_code_data_type(self.erd_code)
 
     @property
-    def min_value(self) -> float:
-        return self._convert_value_from_device(self._min_value)
+    def native_min_value(self) -> float:
+        return self._convert_value_from_device(self._native_min_value)
 
     @property
-    def max_value(self) -> float:
-        return self._convert_value_from_device(self._max_value)
+    def native_max_value(self) -> float:
+        return self._convert_value_from_device(self._native_max_value)
 
     @property
-    def step(self) -> float:
-        return self._step_value
+    def native_step(self) -> float:
+        return self._native_step
 
     @property
     def mode(self) -> float:
@@ -116,7 +116,7 @@ class GeErdNumber(GeErdEntity, NumberEntity):
                 return "mdi:door-closed"
         return super()._get_icon()
 
-    async def async_set_value(self, value):
+    async def async_set_native_value(self, value):
         """Sets the ERD value, assumes that the data type is correct"""
 
         if self._data_type == ErdDataType.INT:
