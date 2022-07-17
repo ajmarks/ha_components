@@ -64,6 +64,10 @@ A/C Controls:
 #### Features
 
 {% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
+- Initial support for built-in air conditioners (@DaveZheng)
+{% endif %}
+
+{% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
 - Initial support for Water Softeners (@npentell, @drjeff)
 - Initial support for Opal Ice Makers (@mbcomer, @knobunc)
 - Initial support for Microwaves (@mbcomer, @mnestor)
@@ -90,6 +94,15 @@ A/C Controls:
 {% endif %}
 
 #### Bugfixes
+
+{% if version_installed.split('.') | map('int') < '0.6.3'.split('.') | map('int') %}
+- Updated detection of invalid serial numbers (#89)
+- Updated implementation of number entities to fix deprecation warnings (#85)
+{% endif %}
+
+{% if version_installed.split('.') | map('int') < '0.6.2'.split('.') | map('int') %}
+- Fixed issue with water heater naming when no serial is present
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.6.1'.split('.') | map('int') %}
 - Fixed issue with water filter life sensor (@rgabrielson11)

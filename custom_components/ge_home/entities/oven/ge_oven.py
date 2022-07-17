@@ -41,7 +41,7 @@ class GeOven(GeWaterHeater):
 
     @property
     def unique_id(self) -> str:
-        return f"{DOMAIN}_{self.serial_number}_{self.oven_select.lower()}"
+        return f"{DOMAIN}_{self.serial_or_mac}_{self.oven_select.lower()}"
 
     @property
     def name(self) -> Optional[str]:
@@ -50,7 +50,7 @@ class GeOven(GeWaterHeater):
         else:
             oven_title = "Oven"
 
-        return f"{self.serial_number} {oven_title}"
+        return f"{self.serial_or_mac} {oven_title}"
 
     @property
     def temperature_unit(self):

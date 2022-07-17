@@ -48,7 +48,7 @@ class GeAbstractFridge(GeWaterHeater):
 
     @property
     def name(self) -> Optional[str]:
-        return f"{self.serial_number} {self.heater_type.title()}"
+        return f"{self.serial_or_mac} {self.heater_type.title()}"
 
     @property
     def target_temps(self) -> FridgeSetPoints:
