@@ -9,13 +9,17 @@ class GeCcmBrewTemperatureNumber(GeErdNumber, GeCcmCachedValue):
         GeErdNumber.__init__(self, api = api, erd_code = ErdCode.CCM_BREW_TEMPERATURE, min_value=min_temp, max_value=max_temp, mode="slider")
         GeCcmCachedValue.__init__(self)
 
-    async def async_set_value(self, value):
+    async def async_set_native_value(self, value):
         GeCcmCachedValue.set_value(self, value)
         self.schedule_update_ha_state()
 
     @property
-    def value(self):
+    def native_value(self):
         return int(self.get_value(device_value = super().value))
+    
+    @property
+    def native_unit_of_measurement(self):
+        return TEMP_FAHRENHEIT
 
     @property
     def brew_temperature(self) -> int:
