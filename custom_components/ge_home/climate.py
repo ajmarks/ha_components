@@ -14,7 +14,7 @@ from .update_coordinator import GeHomeUpdateCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: Callable):
-    """GE Home Water Heaters."""
+    """GE Climate Devices."""
     _LOGGER.debug('Adding GE Climate Entities')
     coordinator: GeHomeUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
