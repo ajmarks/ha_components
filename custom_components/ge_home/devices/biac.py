@@ -7,11 +7,12 @@ from gehomesdk.erd import ErdCode, ErdApplianceType
 from .base import ApplianceApi
 from ..entities import GeSacClimate, GeErdSensor, GeErdSwitch, ErdOnOffBoolConverter, GeErdBinarySensor
 
+
 _LOGGER = logging.getLogger(__name__)
 
 
 class BiacApi(ApplianceApi):
-    """API class for Built-in AC objects"""
+    """API class for Built-In AC objects"""
     APPLIANCE_TYPE = ErdApplianceType.BUILT_IN_AIR_CONDITIONER
 
     def get_all_entities(self) -> List[Entity]:
@@ -31,4 +32,4 @@ class BiacApi(ApplianceApi):
 
         entities = base_entities + sac_entities
         return entities
-        
+
