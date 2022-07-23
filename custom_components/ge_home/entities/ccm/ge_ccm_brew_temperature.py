@@ -2,6 +2,7 @@ from gehomesdk import ErdCode
 from ...devices import ApplianceApi
 from ..common import GeErdNumber
 from .ge_ccm_cached_value import GeCcmCachedValue
+from homeassistant.const import TEMP_FAHRENHEIT
 
 class GeCcmBrewTemperatureNumber(GeErdNumber, GeCcmCachedValue):
     def __init__(self, api: ApplianceApi):
@@ -15,7 +16,7 @@ class GeCcmBrewTemperatureNumber(GeErdNumber, GeCcmCachedValue):
 
     @property
     def native_value(self):
-        return int(self.get_value(device_value = super().value))
+        return int(self.get_value(device_value = super().native_value))
     
     @property
     def native_unit_of_measurement(self):
