@@ -3,10 +3,10 @@ from typing import Type
 
 from gehomesdk.erd import ErdApplianceType
 
-from custom_components.ge_home.devices.cooktop import CooktopApi
 
 from .base import ApplianceApi
 from .oven import OvenApi
+from .cooktop import CooktopApi
 from .fridge import FridgeApi
 from .dishwasher import DishwasherApi
 from .washer import WasherApi
