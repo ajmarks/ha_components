@@ -3,6 +3,8 @@ from typing import Type
 
 from gehomesdk.erd import ErdApplianceType
 
+from custom_components.ge_home.devices.cooktop import CooktopApi
+
 from .base import ApplianceApi
 from .oven import OvenApi
 from .fridge import FridgeApi
@@ -30,6 +32,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
     _LOGGER.debug(f"Found device type: {appliance_type}")
     if appliance_type == ErdApplianceType.OVEN:
         return OvenApi
+    if appliance_type == ErdApplianceType.COOKTOP:
+        return CooktopApi
     if appliance_type == ErdApplianceType.FRIDGE:
         return FridgeApi
     if appliance_type == ErdApplianceType.DISH_WASHER:
