@@ -6,6 +6,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
+from homeassistant.util.temperature import convert as convert_temperature
 
 from gehomesdk import (
     ErdCode,
@@ -26,6 +27,14 @@ _LOGGER = logging.getLogger(__name__)
 class GeAbstractFridge(GeWaterHeater):
     """Mock a fridge or freezer as a water heater."""
 
+    # These values are from the Fisher & Paykel RF610AA in imperial units
+    # They're to be used as hardcoded limits when ErdCode.SETPOINT_LIMITS is unavailable.
+    temp_limits = {}
+    temp_limits["fridge_min"] = 32
+    temp_limits["fridge_max"] = 46
+    temp_limits["freezer_min"] = -6
+    temp_limits["freezer_max"] = 7
+
     @property
     def heater_type(self) -> str:
         raise NotImplementedError
@@ -40,7 +49,11 @@ class GeAbstractFridge(GeWaterHeater):
 
     @property
     def operation_list(self) -> List[str]:
-        return [OP_MODE_NORMAL, OP_MODE_SABBATH, self.turbo_mode]
+        try:
+            return [OP_MODE_NORMAL, OP_MODE_SABBATH, self.turbo_mode]
+        except:
+            _LOGGER.debug("Turbo mode not supported.")
+            return [OP_MODE_NORMAL, OP_MODE_SABBATH]
 
     @property
     def unique_id(self) -> str:
@@ -63,11 +76,15 @@ class GeAbstractFridge(GeWaterHeater):
     @property
     def current_temperature(self) -> int:
         """Return the current temperature."""
-        current_temps = self.appliance.get_erd_value(ErdCode.CURRENT_TEMPERATURE)
-        current_temp = getattr(current_temps, self.heater_type)
-        if current_temp is None:
-            _LOGGER.exception(f"{self.name} has None for current_temperature (available: {self.available})!")
-        return current_temp
+        try:
+            current_temps = self.appliance.get_erd_value(ErdCode.CURRENT_TEMPERATURE)
+            current_temp = getattr(current_temps, self.heater_type)
+            if current_temp is None:
+                _LOGGER.exception(f"{self.name} has None for current_temperature (available: {self.available})!")
+            return current_temp
+        except:
+            _LOGGER.debug("Device doesn't report current temperature.")
+            return None
 
     async def async_set_temperature(self, **kwargs):
         target_temp = kwargs.get(ATTR_TEMPERATURE)
@@ -95,21 +112,32 @@ class GeAbstractFridge(GeWaterHeater):
 
     @property
     def min_temp(self):
-        """Return the minimum temperature."""
-        return getattr(self.setpoint_limits, f"{self.heater_type}_min")
+        """Return the minimum temperature if available, otherwise use hardcoded limits."""
+        try:
+            return getattr(self.setpoint_limits, f"{self.heater_type}_min")
+        except:
+            _LOGGER.debug("No temperature setpoint limits available. Using hardcoded limits.")
+            return convert_temperature(self.temp_limits[f"{self.heater_type}_min"], TEMP_FAHRENHEIT, self.temperature_unit)
 
     @property
     def max_temp(self):
-        """Return the maximum temperature."""
-        return getattr(self.setpoint_limits, f"{self.heater_type}_max")
+        """Return the maximum temperature if available, otherwise use hardcoded limits."""
+        try:
+            return getattr(self.setpoint_limits, f"{self.heater_type}_max")
+        except:
+            _LOGGER.debug("No temperature setpoint limits available. Using hardcoded limits.")
+            return convert_temperature(self.temp_limits[f"{self.heater_type}_max"], TEMP_FAHRENHEIT, self.temperature_unit)
 
     @property
     def current_operation(self) -> str:
         """Get the current operation mode."""
         if self.appliance.get_erd_value(ErdCode.SABBATH_MODE):
             return OP_MODE_SABBATH
-        if self.appliance.get_erd_value(self.turbo_erd_code):
-            return self.turbo_mode
+        try:
+            if self.appliance.get_erd_value(self.turbo_erd_code):
+                return self.turbo_mode
+        except:
+            _LOGGER.debug("Turbo mode not supported.")
         return OP_MODE_NORMAL
 
     async def async_set_sabbath_mode(self, sabbath_on: bool = True):
