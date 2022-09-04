@@ -1,6 +1,13 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.5
+
+- Added beverage cooler support (@kksligh)
+- Added dual dishwasher support (@jkili)
+- Added initial espresso maker support (@datagen24)
+- Added whole home water heater support (@seantibor)
+
 ## 0.6.3
 
 - Updated detection of invalid serial numbers (#89)

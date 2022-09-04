@@ -23,6 +23,7 @@ from .microwave import MicrowaveApi
 from .water_softener import WaterSoftenerApi
 from .oim import OimApi
 from .coffee_maker import CcmApi
+from .dual_dishwasher import DualDishwasherApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,8 +37,12 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return CooktopApi
     if appliance_type == ErdApplianceType.FRIDGE:
         return FridgeApi
+    if appliance_type == ErdApplianceType.BEVERAGE_CENTER:
+        return FridgeApi
     if appliance_type == ErdApplianceType.DISH_WASHER:
         return DishwasherApi
+    if appliance_type == ErdApplianceType.DUAL_DISH_WASHER:
+        return DualDishwasherApi
     if appliance_type == ErdApplianceType.WASHER:
         return WasherApi
     if appliance_type == ErdApplianceType.DRYER:

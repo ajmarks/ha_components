@@ -4,16 +4,18 @@ Integration for GE WiFi-enabled appliances into Home Assistant.  This integratio
 
 - Fridge
 - Oven
-- Dishwasher 
+- Dishwasher / F&P Dual Dishwasher
 - Laundry (Washer/Dryer)
 - Whole Home Water Filter
 - Whole Home Water Softener
+- Whole Home Water Heater
 - A/C (Portable, Split, Window)
 - Range Hood
 - Advantium
 - Microwave
 - Opal Ice Maker
-- Coffee Maker
+- Coffee Maker / Espresso Maker
+- Beverage Center
 
 **Forked from Andrew Mark's [repository](https://github.com/ajmarks/ha_components).**
 
@@ -62,6 +64,13 @@ A/C Controls:
 {% endif %}
 
 #### Features
+
+{% if version_installed.split('.') | map('int') < '0.6.5'.split('.') | map('int') %}
+- Added beverage cooler support (@kksligh)
+- Added dual dishwasher support (@jkili)
+- Added initial espresso maker support (@datagen24)
+- Added whole home water heater support (@seantibor)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
 - Initial support for built-in air conditioners (@DaveZheng)
