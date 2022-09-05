@@ -21,6 +21,7 @@ from .exceptions import HaAuthError, HaCannotConnect
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
@@ -64,7 +65,6 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         self._got_roster = False
         self._init_done = False
         self._retry_count = 0
-        self.initialization_future = asyncio.Future()
 
     def create_ge_client(
         self, event_loop: Optional[asyncio.AbstractEventLoop]
@@ -94,6 +94,11 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
     @property
     def appliance_apis(self) -> Dict[str, ApplianceApi]:
         return self._appliance_apis
+
+    @property
+    def signal_ready(self) -> str:
+        """Event specific per entry to signal readiness"""
+        return f"{DOMAIN}-ready-{self._config_entry.entry_id}"        
 
     @property
     def online(self) -> bool:
@@ -166,12 +171,6 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
             raise HaCannotConnect("Cannot connect (server error)")
         except Exception:
             raise HaCannotConnect("Unknown connection failure")
-
-        try:
-            with async_timeout.timeout(ASYNC_TIMEOUT):
-                await self.initialization_future
-        except (asyncio.CancelledError, asyncio.TimeoutError):
-            raise HaCannotConnect("Initialization timed out")
 
         return True
 
@@ -322,16 +321,17 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
 
     async def async_maybe_trigger_all_ready(self):
         """See if we're all ready to go, and if so, let the games begin."""
-        if self._init_done or self.initialization_future.done():
+        if self._init_done:
             # Been here, done this
             return
         if self._got_roster and self.all_appliances_updated:
-            _LOGGER.debug("Ready to go.  Waiting 2 seconds and setting init future result.")
-            # The the flag and wait to prevent two different fun race conditions
+            _LOGGER.debug("Ready to go, sending ready signal")
             self._init_done = True
-            await asyncio.sleep(2)
-            self.initialization_future.set_result(True)
             await self.client.async_event(EVENT_ALL_APPLIANCES_READY, None)
+            async_dispatcher_send(
+                self.hass, 
+                self.signal_ready, 
+                list(self.appliance_apis.values()))            
 
     def _get_retry_delay(self) -> int:
         delay = MIN_RETRY_DELAY * 2 ** (self._retry_count - 1)

@@ -6,7 +6,8 @@ import voluptuous as vol
 from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers import entity_platform
 
 from .const import (
@@ -16,6 +17,7 @@ from .const import (
     SERVICE_SET_INT_VALUE
 )
 from .entities import GeErdSensor
+from .devices import ApplianceApi
 from .update_coordinator import GeHomeUpdateCoordinator
 
 ATTR_DURATION = "duration"
@@ -31,21 +33,19 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
     # Get the platform
     platform = entity_platform.async_get_current_platform()
 
-    # This should be a NOP, but let's be safe
-    with async_timeout.timeout(20):
-        await coordinator.initialization_future
-    _LOGGER.debug('Coordinator init future finished')
+    @callback
+    def async_devices_discovered(apis: list[ApplianceApi]):
+        _LOGGER.debug(f'Found {len(apis):d} appliance APIs')
+        entities = [
+            entity
+            for api in apis
+            for entity in api.entities
+            if isinstance(entity, GeErdSensor) and entity.erd_code in api.appliance._property_cache
+        ]
+        _LOGGER.debug(f'Found {len(entities):d} sensors')
+        async_add_entities(entities)
 
-    apis = list(coordinator.appliance_apis.values())
-    _LOGGER.debug(f'Found {len(apis):d} appliance APIs')
-    entities = [
-        entity
-        for api in apis
-        for entity in api.entities
-        if isinstance(entity, GeErdSensor) and entity.erd_code in api.appliance._property_cache
-    ]
-    _LOGGER.debug(f'Found {len(entities):d} sensors')
-    async_add_entities(entities)
+    async_dispatcher_connect(hass, coordinator.signal_ready, async_devices_discovered)
 
     # register set_timer entity service
     platform.async_register_entity_service(

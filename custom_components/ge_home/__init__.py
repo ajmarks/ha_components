@@ -7,7 +7,9 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_REGION
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from .const import DOMAIN
+from .exceptions import HaAuthError, HaCannotConnect
 from .update_coordinator import GeHomeUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,9 +44,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     coordinator = GeHomeUpdateCoordinator(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
-    if not await coordinator.async_setup():
-        return False
-
+    try:
+        if not await coordinator.async_setup():
+            return False
+    except HaCannotConnect:
+        raise ConfigEntryNotReady("Could not connect to SmartHQ")
+    except HaAuthError:
+        raise ConfigEntryAuthFailed("Could not authenticate to SmartHQ")
+        
     hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, coordinator.shutdown)
 
     return True
