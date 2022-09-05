@@ -18,12 +18,12 @@ from gehomesdk import (
     IceMakerControlStatus
 )
 from ...const import DOMAIN
-from ..common import GeWaterHeater
+from ..common import GeAbstractWaterHeater
 from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeAbstractFridge(GeWaterHeater):
+class GeAbstractFridge(GeAbstractWaterHeater):
     """Mock a fridge or freezer as a water heater."""
 
     @property

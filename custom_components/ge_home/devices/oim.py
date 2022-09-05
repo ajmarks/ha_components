@@ -22,8 +22,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class OimApi(ApplianceApi):
-    """API class for Oven Hood objects"""
-    APPLIANCE_TYPE = ErdApplianceType.HOOD
+    """API class for Opal Ice Maker objects"""
+    APPLIANCE_TYPE = ErdApplianceType.OPAL_ICE_MAKER
 
     def get_all_entities(self) -> List[Entity]:
         base_entities = super().get_all_entities()

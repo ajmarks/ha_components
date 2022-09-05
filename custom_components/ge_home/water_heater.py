@@ -7,7 +7,7 @@ from homeassistant.components.water_heater import WaterHeaterEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .entities import GeWaterHeater
+from .entities import GeAbstractWaterHeater
 from .const import DOMAIN
 from .update_coordinator import GeHomeUpdateCoordinator
 
@@ -29,7 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
         entity 
         for api in apis 
         for entity in api.entities
-        if isinstance(entity, GeWaterHeater)
+        if isinstance(entity, GeAbstractWaterHeater)
     ]
     _LOGGER.debug(f'Found {len(entities):d} "water heaters"')
     async_add_entities(entities)

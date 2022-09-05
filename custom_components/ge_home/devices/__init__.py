@@ -21,6 +21,7 @@ from .biac import BiacApi
 from .hood import HoodApi
 from .microwave import MicrowaveApi
 from .water_softener import WaterSoftenerApi
+from .water_heater import WaterHeaterApi
 from .oim import OimApi
 from .coffee_maker import CcmApi
 from .dual_dishwasher import DualDishwasherApi
@@ -53,6 +54,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return WaterFilterApi
     if appliance_type == ErdApplianceType.WATER_SOFTENER:
         return WaterSoftenerApi
+    if appliance_type == ErdApplianceType.WATER_HEATER:
+        return WaterHeaterApi
     if appliance_type == ErdApplianceType.ADVANTIUM:
         return AdvantiumApi
     if appliance_type == ErdApplianceType.AIR_CONDITIONER:

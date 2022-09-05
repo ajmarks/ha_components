@@ -13,12 +13,12 @@ from gehomesdk import (
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from ...const import DOMAIN
 from ...devices import ApplianceApi
-from ..common import GeWaterHeater
+from ..common import GeAbstractWaterHeater
 from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeOven(GeWaterHeater):
+class GeOven(GeAbstractWaterHeater):
     """GE Appliance Oven"""
 
     icon = "mdi:stove"
