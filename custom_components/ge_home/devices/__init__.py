@@ -3,7 +3,6 @@ from typing import Type
 
 from gehomesdk.erd import ErdApplianceType
 
-
 from .base import ApplianceApi
 from .oven import OvenApi
 from .cooktop import CooktopApi
@@ -25,6 +24,8 @@ from .water_heater import WaterHeaterApi
 from .oim import OimApi
 from .coffee_maker import CcmApi
 from .dual_dishwasher import DualDishwasherApi
+from .espresso_maker import EspressoMakerApi
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,6 +75,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return OimApi
     if appliance_type == ErdApplianceType.CAFE_COFFEE_MAKER:
         return CcmApi
+    if appliance_type == ErdApplianceType.ESPRESSO_MAKER:
+        return EspressoMakerApi
 
     # Fallback
     return ApplianceApi
