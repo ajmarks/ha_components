@@ -33,6 +33,8 @@ class WaterHeaterApi(ApplianceApi):
             GeErdSensor(self, ErdCode.WH_HEATER_TARGET_TEMPERATURE),
             GeErdSensor(self, ErdCode.WH_HEATER_TEMPERATURE),
             GeErdSensor(self, ErdCode.WH_HEATER_MODE_HOURS_REMAINING),
+            GeErdSensor(self, ErdCode.WH_HEATER_ELECTRIC_MODE_MAX_TIME),
+            GeErdSensor(self, ErdCode.WH_HEATER_VACATION_MODE_MAX_TIME),
             GeWaterHeater(self)
         ]
 

@@ -61,16 +61,14 @@ class GeWaterHeater(GeAbstractWaterHeater):
     @property
     def min_temp(self) -> int:
         """Return the minimum temperature."""
-        #min_temp, _ = self.appliance.get_erd_value(ErdCode.OVEN_MODE_MIN_MAX_TEMP)
-        #return min_temp
-        return 100
+        min_temp, _ = self.appliance.get_erd_value(ErdCode.WH_HEATER_MIN_MAX_TEMPERATURE)
+        return min_temp
 
     @property
     def max_temp(self) -> int:
         """Return the maximum temperature."""
-        #_, max_temp = self.appliance.get_erd_value(ErdCode.OVEN_MODE_MIN_MAX_TEMP)
-        #return max_temp
-        return 200
+        _, max_temp = self.appliance.get_erd_value(ErdCode.WH_HEATER_MIN_MAX_TEMPERATURE)
+        return max_temp
 
     async def async_set_operation_mode(self, operation_mode: str):
         """Set the operation mode."""
