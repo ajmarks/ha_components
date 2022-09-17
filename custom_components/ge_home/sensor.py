@@ -1,5 +1,4 @@
 """GE Home Sensor Entities"""
-import async_timeout
 import logging
 from typing import Callable
 import voluptuous as vol
@@ -9,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers import entity_platform
+from homeassistant.helpers import entity_registry as er
 
 from .const import (
     DOMAIN, 
@@ -29,7 +29,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
     """GE Home sensors."""
     _LOGGER.debug('Adding GE Home sensors')
     coordinator: GeHomeUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
-    
+    registry = er.async_get(hass)
+
     # Get the platform
     platform = entity_platform.async_get_current_platform()
 
@@ -41,8 +42,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
             for api in apis
             for entity in api.entities
             if isinstance(entity, GeErdSensor) and entity.erd_code in api.appliance._property_cache
+            if not registry.async_is_registered(entity.entity_id)
         ]
-        _LOGGER.debug(f'Found {len(entities):d} sensors')
+        _LOGGER.debug(f'Found {len(entities):d} unregistered sensors')
         async_add_entities(entities)
 
     async_dispatcher_connect(hass, coordinator.signal_ready, async_devices_discovered)

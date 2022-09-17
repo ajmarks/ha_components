@@ -1,12 +1,11 @@
 """GE Home Select Entities"""
-import async_timeout
 import logging
 from typing import Callable
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-
+from homeassistant.helpers import entity_registry as er
 
 from .const import DOMAIN
 from .entities import GeErdLight
@@ -22,6 +21,7 @@ async def async_setup_entry(
     """GE Home lights."""
     _LOGGER.debug("Adding GE Home lights")
     coordinator: GeHomeUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
+    registry = er.async_get(hass)    
 
     @callback
     def async_devices_discovered(apis: list[ApplianceApi]):
@@ -32,8 +32,9 @@ async def async_setup_entry(
             for entity in api.entities
             if isinstance(entity, GeErdLight)
             and entity.erd_code in api.appliance._property_cache
+            if not registry.async_is_registered(entity.entity_id)
         ]
-        _LOGGER.debug(f"Found {len(entities):d} lights")
+        _LOGGER.debug(f"Found {len(entities):d} unregistered lights")
         async_add_entities(entities)
 
     async_dispatcher_connect(hass, coordinator.signal_ready, async_devices_discovered)
