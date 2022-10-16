@@ -17,11 +17,3 @@ class GeCcmBrewTemperatureNumber(GeErdNumber, GeCcmCachedValue):
     @property
     def native_value(self):
         return int(self.get_value(device_value = super().native_value))
-    
-    @property
-    def native_unit_of_measurement(self):
-        return TEMP_FAHRENHEIT
-
-    @property
-    def brew_temperature(self) -> int:
-        return self.value
