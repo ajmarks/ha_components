@@ -13,7 +13,7 @@ from .ge_erd_entity import GeEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
+class GeAbstractWaterHeater(GeEntity, WaterHeaterEntity, metaclass=abc.ABCMeta):
     """Mock temperature/operation mode supporting device as a water heater"""
 
     @property

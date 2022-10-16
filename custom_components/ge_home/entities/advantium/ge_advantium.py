@@ -18,12 +18,12 @@ from gehomesdk.erd.values.advantium.advantium_enums import CookAction, CookMode
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from ...const import DOMAIN
 from ...devices import ApplianceApi
-from ..common import GeWaterHeater
+from ..common import GeAbstractWaterHeater
 from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeAdvantium(GeWaterHeater):
+class GeAdvantium(GeAbstractWaterHeater):
     """GE Appliance Advantium"""
 
     icon = "mdi:microwave"

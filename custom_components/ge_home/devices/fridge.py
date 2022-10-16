@@ -59,6 +59,8 @@ class FridgeApi(ApplianceApi):
 
         interior_light: int = self.try_get_erd_value(ErdCode.INTERIOR_LIGHT)
         proximity_light: ErdOnOff = self.try_get_erd_value(ErdCode.PROXIMITY_LIGHT)
+        display_mode: ErdOnOff = self.try_get_erd_value(ErdCode.DISPLAY_MODE)
+        lockout_mode: ErdOnOff = self.try_get_erd_value(ErdCode.LOCKOUT_MODE)
 
         units = self.hass.config.units
 
@@ -92,6 +94,10 @@ class FridgeApi(ApplianceApi):
                 fridge_entities.append(GeErdSwitch(self, ErdCode.PROXIMITY_LIGHT, ErdOnOffBoolConverter(), icon_on_override="mdi:lightbulb-on", icon_off_override="mdi:lightbulb"))
             if(convertable_drawer and convertable_drawer != ErdConvertableDrawerMode.NA):
                 fridge_entities.append(GeErdSelect(self, ErdCode.CONVERTABLE_DRAWER_MODE, ConvertableDrawerModeOptionsConverter(units)))        
+            if(display_mode and display_mode != ErdOnOff.NA):
+                fridge_entities.append(GeErdSwitch(self, ErdCode.DISPLAY_MODE, ErdOnOffBoolConverter(), icon_on_override="mdi:lightbulb-on", icon_off_override="mdi:lightbulb"))
+            if(lockout_mode and lockout_mode != ErdOnOff.NA):
+                fridge_entities.append(GeErdSwitch(self, ErdCode.LOCKOUT_MODE, ErdOnOffBoolConverter(), icon_on_override="mdi:lock", icon_off_override="mdi:lock-open"))
         
         # Freezer entities
         if fridge_model_info is None or fridge_model_info.has_freezer:

@@ -93,16 +93,17 @@ class OvenApi(ApplianceApi):
 
 
         if cooktop_config == ErdCooktopConfig.PRESENT:           
-            cooktop_status: CooktopStatus = self.appliance.get_erd_value(ErdCode.COOKTOP_STATUS)
-            cooktop_entities.append(GeErdBinarySensor(self, ErdCode.COOKTOP_STATUS))
+            cooktop_status: CooktopStatus = self.try_get_erd_value(ErdCode.COOKTOP_STATUS)
+            if cooktop_status is not None:
+                cooktop_entities.append(GeErdBinarySensor(self, ErdCode.COOKTOP_STATUS))
             
-            for (k, v) in cooktop_status.burners.items():
-                if v.exists:
-                    prop = self._camel_to_snake(k)
-                    cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, prop+".on"))
-                    cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, prop+".synchronized"))                    
-                    if not v.on_off_only:
-                        cooktop_entities.append(GeErdPropertySensor(self, ErdCode.COOKTOP_STATUS, prop+".power_pct", icon_override="mdi:fire", device_class_override=DEVICE_CLASS_POWER_FACTOR, data_type_override=ErdDataType.INT))
+                for (k, v) in cooktop_status.burners.items():
+                    if v.exists:
+                        prop = self._camel_to_snake(k)
+                        cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, prop+".on"))
+                        cooktop_entities.append(GeErdPropertyBinarySensor(self, ErdCode.COOKTOP_STATUS, prop+".synchronized"))                    
+                        if not v.on_off_only:
+                            cooktop_entities.append(GeErdPropertySensor(self, ErdCode.COOKTOP_STATUS, prop+".power_pct", icon_override="mdi:fire", device_class_override=DEVICE_CLASS_POWER_FACTOR, data_type_override=ErdDataType.INT))
 
         return base_entities + oven_entities + cooktop_entities
 

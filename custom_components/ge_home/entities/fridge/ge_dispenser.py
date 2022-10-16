@@ -15,7 +15,7 @@ from gehomesdk import (
     HotWaterStatus
 )
 
-from ..common import GeWaterHeater
+from ..common import GeAbstractWaterHeater
 from .const import (
     HEATER_TYPE_DISPENSER, 
     OP_MODE_NORMAL,
@@ -25,7 +25,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-class GeDispenser(GeWaterHeater):
+class GeDispenser(GeAbstractWaterHeater):
     """Entity for in-fridge dispensers"""
     
     # These values are from FridgeHotWaterFragment.smali in the android app (in imperial units)

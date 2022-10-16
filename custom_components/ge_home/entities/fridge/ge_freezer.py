@@ -26,7 +26,10 @@ class GeFreezer(GeAbstractFridge):
 
     @property
     def door_state_attrs(self) -> Optional[Dict[str, Any]]:
-        door_status = self.door_status.freezer
-        if door_status and door_status != ErdDoorStatus.NA:
-            return {ATTR_DOOR_STATUS: self._stringify(door_status)}
+        try:
+            door_status = self.door_status.freezer
+            if door_status and door_status != ErdDoorStatus.NA:
+                return {ATTR_DOOR_STATUS: self._stringify(door_status)}
+        except:
+            _LOGGER.debug("Device does not report door status.")
         return {}
