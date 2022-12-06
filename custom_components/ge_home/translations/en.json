@@ -5,13 +5,15 @@
       "init": {
         "data": {
           "username": "Username",
-          "password": "Password"
+          "password": "Password",
+          "region": "Region"
         }
       },
       "user": {
         "data": {
           "username": "Username",
-          "password": "Password"
+          "password": "Password",
+          "region": "Region"
         }
       }
     },

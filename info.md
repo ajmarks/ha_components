@@ -104,6 +104,10 @@ A/C Controls:
 
 #### Bugfixes
 
+{% if version_installed.split('.') | map('int') < '0.6.6'.split('.') | map('int') %}
+- Fixed region issues after setup
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.6.3'.split('.') | map('int') %}
 - Updated detection of invalid serial numbers (#89)
 - Updated implementation of number entities to fix deprecation warnings (#85)

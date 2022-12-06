@@ -1,6 +1,10 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.6
+
+- Fixed issue with region setting (EU accounts) [#130]
+
 ## 0.6.5
 
 - Added beverage cooler support (@kksligh)
