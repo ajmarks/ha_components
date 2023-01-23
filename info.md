@@ -105,7 +105,8 @@ A/C Controls:
 #### Bugfixes
 
 {% if version_installed.split('.') | map('int') < '0.6.6'.split('.') | map('int') %}
-- Fixed region issues after setup
+- Fixed region issues after setup (#130)
+- Updated the temperature conversion (#137)
 {% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.6.3'.split('.') | map('int') %}
