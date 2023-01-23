@@ -4,6 +4,7 @@
 ## 0.6.6
 
 - Fixed issue with region setting (EU accounts) [#130]
+- Updated configuration documentation
 
 ## 0.6.5
 
