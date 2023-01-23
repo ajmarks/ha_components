@@ -6,6 +6,7 @@
 - Fixed issue with region setting (EU accounts) [#130]
 - Updated the temperature conversion (@partsdotpdf)
 - Updated configuration documentation
+- Modified dishwasher to include new functionality (@NickWaterton)
 
 ## 0.6.5
 

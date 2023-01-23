@@ -64,6 +64,9 @@ A/C Controls:
 {% endif %}
 
 #### Features
+{% if version_installed.split('.') | map('int') < '0.6.6'.split('.') | map('int') %}
+- Modified dishwasher to include new functionality (@NickWaterton)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.6.5'.split('.') | map('int') %}
 - Added beverage cooler support (@kksligh)
