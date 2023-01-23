@@ -1,13 +1,13 @@
 """GE Home Sensor Entities - Abstract Fridge"""
+import importlib
 import sys
 import os
 import abc
 import logging
 from typing import Any, Dict, List, Optional
 
-from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
-from homeassistant.util.temperature import convert as convert_temperature
-
+from homeassistant.const import ATTR_TEMPERATURE, TEMP_FAHRENHEIT
+from homeassistant.util.unit_conversion import TemperatureConverter
 from gehomesdk import (
     ErdCode,
     ErdOnOff,
@@ -117,7 +117,7 @@ class GeAbstractFridge(GeAbstractWaterHeater):
             return getattr(self.setpoint_limits, f"{self.heater_type}_min")
         except:
             _LOGGER.debug("No temperature setpoint limits available. Using hardcoded limits.")
-            return convert_temperature(self.temp_limits[f"{self.heater_type}_min"], TEMP_FAHRENHEIT, self.temperature_unit)
+            return TemperatureConverter.convert(self.temp_limits[f"{self.heater_type}_min"], TEMP_FAHRENHEIT, self.temperature_unit)
 
     @property
     def max_temp(self):
@@ -126,7 +126,7 @@ class GeAbstractFridge(GeAbstractWaterHeater):
             return getattr(self.setpoint_limits, f"{self.heater_type}_max")
         except:
             _LOGGER.debug("No temperature setpoint limits available. Using hardcoded limits.")
-            return convert_temperature(self.temp_limits[f"{self.heater_type}_max"], TEMP_FAHRENHEIT, self.temperature_unit)
+            return TemperatureConverter.convert(self.temp_limits[f"{self.heater_type}_max"], TEMP_FAHRENHEIT, self.temperature_unit)
 
     @property
     def current_operation(self) -> str:
