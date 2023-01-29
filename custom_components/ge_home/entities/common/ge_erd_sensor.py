@@ -118,7 +118,7 @@ class GeErdSensor(GeErdEntity, SensorEntity):
         if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:       
             #if self._measurement_system == ErdMeasurementUnits.METRIC:
             #    return "l"
-            return "g"
+            return "gal"
         return None
 
     def _get_device_class(self) -> Optional[str]:
