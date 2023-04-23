@@ -10,6 +10,7 @@ from gehomesdk import (
     OvenConfiguration, 
     ErdCooktopConfig, 
     CooktopStatus,
+    ErdOvenLightLevel,
     ErdOvenLightLevelAvailability
 )
 
@@ -43,7 +44,9 @@ class OvenApi(ApplianceApi):
         has_upper_raw_temperature = self.has_erd_code(ErdCode.UPPER_OVEN_RAW_TEMPERATURE)
         has_lower_raw_temperature = self.has_erd_code(ErdCode.LOWER_OVEN_RAW_TEMPERATURE)
 
+        upper_light : ErdOvenLightLevel = self.try_get_erd_value(ErdCode.UPPER_OVEN_LIGHT)
         upper_light_availability: ErdOvenLightLevelAvailability = self.try_get_erd_value(ErdCode.UPPER_OVEN_LIGHT_AVAILABILITY)
+        lower_light : ErdOvenLightLevel = self.try_get_erd_value(ErdCode.LOWER_OVEN_LIGHT)
         lower_light_availability: ErdOvenLightLevelAvailability = self.try_get_erd_value(ErdCode.LOWER_OVEN_LIGHT_AVAILABILITY)
 
         _LOGGER.debug(f"Oven Config: {oven_config}")
@@ -64,7 +67,7 @@ class OvenApi(ApplianceApi):
                 GeErdSensor(self, ErdCode.LOWER_OVEN_COOK_TIME_REMAINING),
                 GeErdTimerSensor(self, ErdCode.LOWER_OVEN_KITCHEN_TIMER),
                 GeErdSensor(self, ErdCode.LOWER_OVEN_USER_TEMP_OFFSET),
-                GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_DISPLAY_TEMPERATURE),
                 GeErdBinarySensor(self, ErdCode.LOWER_OVEN_REMOTE_ENABLED),
 
                 GeOven(self, LOWER_OVEN, True, self._temperature_code(has_lower_raw_temperature)),
@@ -74,7 +77,7 @@ class OvenApi(ApplianceApi):
                 oven_entities.append(GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE))
             if has_lower_raw_temperature:
                 oven_entities.append(GeErdSensor(self, ErdCode.LOWER_OVEN_RAW_TEMPERATURE))
-            if lower_light_availability is None or lower_light_availability.is_available:
+            if lower_light_availability is None or lower_light_availability.is_available or lower_light is not None:
                 oven_entities.append(GeOvenLightLevelSelect(self, ErdCode.LOWER_OVEN_LIGHT))
         else:
             oven_entities.extend([
@@ -88,7 +91,7 @@ class OvenApi(ApplianceApi):
             ])
             if has_upper_raw_temperature:
                 oven_entities.append(GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_RAW_TEMPERATURE)))
-            if upper_light_availability is None or upper_light_availability.is_available:
+            if upper_light_availability is None or upper_light_availability.is_available or upper_light is not None:
                 oven_entities.append(GeOvenLightLevelSelect(self, ErdCode.UPPER_OVEN_LIGHT, self._single_name(ErdCode.UPPER_OVEN_LIGHT)))
 
 

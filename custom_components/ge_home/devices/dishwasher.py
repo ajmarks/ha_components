@@ -23,9 +23,13 @@ class DishwasherApi(ApplianceApi):
             GeErdSensor(self, ErdCode.DISHWASHER_CYCLE_STATE, icon_override="mdi:state-machine"),
             GeErdSensor(self, ErdCode.DISHWASHER_OPERATING_MODE),
             GeErdSensor(self, ErdCode.DISHWASHER_PODS_REMAINING_VALUE, uom_override="pods"),
-            GeErdSensor(self, ErdCode.DISHWASHER_RINSE_AGENT, icon_override="mdi:shimmer"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_REMINDERS, "add_rinse_aid", icon_override="mdi:shimmer"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_REMINDERS, "clean_filter", icon_override="mdi:dishwasher-alert"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_REMINDERS, "sanitized", icon_override="mdi:silverware-clean"),
             GeErdSensor(self, ErdCode.DISHWASHER_TIME_REMAINING),
             GeErdBinarySensor(self, ErdCode.DISHWASHER_DOOR_STATUS),
+            GeErdBinarySensor(self, ErdCode.DISHWASHER_IS_CLEAN),
+            GeErdBinarySensor(self, ErdCode.DISHWASHER_REMOTE_START_ENABLE),
 
             #User Setttings
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sound", icon_override="mdi:volume-high"),
@@ -37,7 +41,12 @@ class DishwasherApi(ApplianceApi):
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "wash_temp", icon_override="mdi:coolant-temperature"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "dry_option", icon_override="mdi:fan"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "wash_zone", icon_override="mdi:dock-top"),
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "delay_hours", icon_override="mdi:clock-fast")
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "delay_hours", icon_override="mdi:clock-fast"),
+
+            #Cycle Counts
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_CYCLE_COUNTS, "started", icon_override="mdi:counter"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_CYCLE_COUNTS, "completed", icon_override="mdi:counter"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_CYCLE_COUNTS, "reset", icon_override="mdi:counter")
         ]
         entities = base_entities + dishwasher_entities
         return entities

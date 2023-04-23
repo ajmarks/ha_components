@@ -19,7 +19,7 @@ from gehomesdk import GeAuthFailedError, GeGeneralServerError, GeNotAuthenticate
 from .exceptions import HaAuthError, HaCannotConnect
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_REGION
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -48,6 +48,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         self._config_entry = config_entry
         self._username = config_entry.data[CONF_USERNAME]
         self._password = config_entry.data[CONF_PASSWORD]
+        self._region = config_entry.data[CONF_REGION]
         self._appliance_apis = {}  # type: Dict[str, ApplianceApi]
 
         self._reset_initialization()
@@ -78,6 +79,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         client = GeWebsocketClient(
             self._username,
             self._password,
+            self._region,
             event_loop=event_loop,
         )
         client.add_event_handler(EVENT_APPLIANCE_INITIAL_UPDATE, self.on_device_initial_update)
