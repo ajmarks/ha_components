@@ -64,7 +64,7 @@ class OvenApi(ApplianceApi):
                 GeErdSensor(self, ErdCode.LOWER_OVEN_COOK_TIME_REMAINING),
                 GeErdTimerSensor(self, ErdCode.LOWER_OVEN_KITCHEN_TIMER),
                 GeErdSensor(self, ErdCode.LOWER_OVEN_USER_TEMP_OFFSET),
-                GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_DISPLAY_TEMPERATURE),
                 GeErdBinarySensor(self, ErdCode.LOWER_OVEN_REMOTE_ENABLED),
 
                 GeOven(self, LOWER_OVEN, True, self._temperature_code(has_lower_raw_temperature)),
