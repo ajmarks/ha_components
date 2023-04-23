@@ -46,6 +46,10 @@ A/C Controls:
 
 #### Breaking Changes
 
+{% if version_installed.split('.') | map('int') < '0.6.6'.split('.') | map('int') %}
+- Requires HA version 2022.12.0 or later
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.6.0'.split('.') | map('int') %}
 - Requires HA version 2021.12.0 or later
 - Enabled authentication to both US and EU regions (may require re-auth)
@@ -110,6 +114,9 @@ A/C Controls:
 {% if version_installed.split('.') | map('int') < '0.6.6'.split('.') | map('int') %}
 - Fixed region issues after setup (#130)
 - Updated the temperature conversion (#137)
+- UoM updates (#138)
+- Fixed oven typo (#149)
+- Updated light control (#144)
 {% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.6.3'.split('.') | map('int') %}

@@ -3,10 +3,14 @@
 
 ## 0.6.6
 
-- Fixed issue with region setting (EU accounts) [#130]
+- Bugfix: Fixed issue with region setting (EU accounts) [#130]
 - Updated the temperature conversion (@partsdotpdf)
 - Updated configuration documentation
 - Modified dishwasher to include new functionality (@NickWaterton)
+- Bugfix: Fixed oven typo (@jdc0730) [#149]
+- Bugfix: UoM updates (@morlince) [#138]
+- Updated light control (@tcgoetz) [#144]
+- Dependency version bumps
 
 ## 0.6.5
 
