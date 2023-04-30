@@ -3,7 +3,7 @@
   "name": "GE Home (SmartHQ)",
   "config_flow": true,
   "documentation": "https://github.com/simbaja/ha_gehome",
-  "requirements": ["gehomesdk==0.5.9","magicattr==0.1.6","slixmpp==1.8.3"],
+  "requirements": ["gehomesdk==0.5.10","magicattr==0.1.6","slixmpp==1.8.3"],
   "codeowners": ["@simbaja"],	
-  "version": "0.6.6"
+  "version": "0.6.7"
 }

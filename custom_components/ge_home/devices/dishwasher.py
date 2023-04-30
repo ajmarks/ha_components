@@ -32,13 +32,14 @@ class DishwasherApi(ApplianceApi):
             GeErdBinarySensor(self, ErdCode.DISHWASHER_REMOTE_START_ENABLE),
 
             #User Setttings
-            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sound", icon_override="mdi:volume-high"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "mute", icon_override="mdi:volume-mute"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "lock_control", icon_override="mdi:lock"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "sabbath", icon_override="mdi:star-david"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "cycle_mode", icon_override="mdi:state-machine"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "presoak", icon_override="mdi:water"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "bottle_jet", icon_override="mdi:bottle-tonic-outline"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "wash_temp", icon_override="mdi:coolant-temperature"),
+            GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "rinse_aid", icon_override="mdi:shimmer"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "dry_option", icon_override="mdi:fan"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "wash_zone", icon_override="mdi:dock-top"),
             GeErdPropertySensor(self, ErdCode.DISHWASHER_USER_SETTING, "delay_hours", icon_override="mdi:clock-fast"),
