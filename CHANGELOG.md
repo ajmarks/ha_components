@@ -1,6 +1,11 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.7
+
+- Bugfix: fixed issues with dishwasher [#155]
+- Added OIM descaling sensor [#154]
+
 ## 0.6.6
 
 - Bugfix: Fixed issue with region setting (EU accounts) [#130]

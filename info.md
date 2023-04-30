@@ -68,6 +68,11 @@ A/C Controls:
 {% endif %}
 
 #### Features
+
+{% if version_installed.split('.') | map('int') < '0.6.7'.split('.') | map('int') %}
+- Added OIM descaling sensor (#154)
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.6.6'.split('.') | map('int') %}
 - Modified dishwasher to include new functionality (@NickWaterton)
 {% endif %}
@@ -110,6 +115,10 @@ A/C Controls:
 {% endif %}
 
 #### Bugfixes
+
+{% if version_installed.split('.') | map('int') < '0.6.7'.split('.') | map('int') %}
+- Bugfix: fixed issues with dishwasher (#155)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.6.6'.split('.') | map('int') %}
 - Fixed region issues after setup (#130)
