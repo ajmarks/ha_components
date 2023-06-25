@@ -79,21 +79,21 @@ class OvenApi(ApplianceApi):
                 oven_entities.append(GeOvenWarmingStateSelect(self, ErdCode.LOWER_OVEN_WARMING_DRAWER_STATE))
 
         oven_entities.extend([
-            GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE, self._single_name(ErdCode.UPPER_OVEN_COOK_MODE, oven_config.has_lower_oven)),
-            GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, self._single_name(ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, oven_config.has_lower_oven)),
-            GeErdTimerSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER, self._single_name(ErdCode.UPPER_OVEN_KITCHEN_TIMER, oven_config.has_lower_oven)),
-            GeErdSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, self._single_name(ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, oven_config.has_lower_oven)),
-            GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE, oven_config.has_lower_oven)),
-            GeErdBinarySensor(self, ErdCode.UPPER_OVEN_REMOTE_ENABLED, self._single_name(ErdCode.UPPER_OVEN_REMOTE_ENABLED, oven_config.has_lower_oven)),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE, self._single_name(ErdCode.UPPER_OVEN_COOK_MODE, ~oven_config.has_lower_oven)),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, self._single_name(ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, ~oven_config.has_lower_oven)),
+            GeErdTimerSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER, self._single_name(ErdCode.UPPER_OVEN_KITCHEN_TIMER, ~oven_config.has_lower_oven)),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, self._single_name(ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, ~oven_config.has_lower_oven)),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_DISPLAY_TEMPERATURE, ~oven_config.has_lower_oven)),
+            GeErdBinarySensor(self, ErdCode.UPPER_OVEN_REMOTE_ENABLED, self._single_name(ErdCode.UPPER_OVEN_REMOTE_ENABLED, ~oven_config.has_lower_oven)),
             
             GeOven(self, UPPER_OVEN, False, self._temperature_code(has_upper_raw_temperature))
         ])
         if has_upper_raw_temperature:
-            oven_entities.append(GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_RAW_TEMPERATURE)))
+            oven_entities.append(GeErdSensor(self, ErdCode.UPPER_OVEN_RAW_TEMPERATURE, self._single_name(ErdCode.UPPER_OVEN_RAW_TEMPERATURE, ~oven_config.has_lower_oven)))
         if upper_light_availability is None or upper_light_availability.is_available or upper_light is not None:
-            oven_entities.append(GeOvenLightLevelSelect(self, ErdCode.UPPER_OVEN_LIGHT, self._single_name(ErdCode.UPPER_OVEN_LIGHT)))
+            oven_entities.append(GeOvenLightLevelSelect(self, ErdCode.UPPER_OVEN_LIGHT, self._single_name(ErdCode.UPPER_OVEN_LIGHT, ~oven_config.has_lower_oven)))
         if upper_warm_drawer is not None:
-            oven_entities.append(GeOvenWarmingStateSelect(self, ErdCode.UPPER_OVEN_WARMING_DRAWER_STATE, self._single_name(ErdCode.UPPER_OVEN_WARMING_DRAWER_STATE)))
+            oven_entities.append(GeOvenWarmingStateSelect(self, ErdCode.UPPER_OVEN_WARMING_DRAWER_STATE, self._single_name(ErdCode.UPPER_OVEN_WARMING_DRAWER_STATE, ~oven_config.has_lower_oven)))
 
         if oven_config.has_warming_drawer and warm_drawer is not None:
             oven_entities.append(GeErdSensor(self, ErdCode.WARMING_DRAWER_STATE))
