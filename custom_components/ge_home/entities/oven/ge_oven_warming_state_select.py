@@ -1,7 +1,7 @@
 import logging
 from typing import List, Any, Optional
 
-from gehomesdk import ErdCodeType, ErdOvenWarmingStateAvailability, ErdOvenWarmingState, ErdCode
+from gehomesdk import ErdCodeType, ErdOvenWarmingState
 from ...devices import ApplianceApi
 from ..common import GeErdSelect, OptionsConverter
 
