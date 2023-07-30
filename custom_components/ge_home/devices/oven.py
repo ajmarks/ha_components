@@ -63,6 +63,7 @@ class OvenApi(ApplianceApi):
         if oven_config.has_lower_oven:
             oven_entities.extend([
                 GeErdSensor(self, ErdCode.LOWER_OVEN_COOK_MODE),
+                GeErdSensor(self, ErdCode.LOWER_OVEN_CURRENT_STATE),
                 GeErdSensor(self, ErdCode.LOWER_OVEN_COOK_TIME_REMAINING),
                 GeErdTimerSensor(self, ErdCode.LOWER_OVEN_KITCHEN_TIMER),
                 GeErdSensor(self, ErdCode.LOWER_OVEN_USER_TEMP_OFFSET),
@@ -80,6 +81,7 @@ class OvenApi(ApplianceApi):
 
         oven_entities.extend([
             GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_MODE, self._single_name(ErdCode.UPPER_OVEN_COOK_MODE, ~oven_config.has_lower_oven)),
+            GeErdSensor(self, ErdCode.UPPER_OVEN_CURRENT_STATE, self._single_name(ErdCode.UPPER_OVEN_CURRENT_STATE, ~oven_config.has_lower_oven)),
             GeErdSensor(self, ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, self._single_name(ErdCode.UPPER_OVEN_COOK_TIME_REMAINING, ~oven_config.has_lower_oven)),
             GeErdTimerSensor(self, ErdCode.UPPER_OVEN_KITCHEN_TIMER, self._single_name(ErdCode.UPPER_OVEN_KITCHEN_TIMER, ~oven_config.has_lower_oven)),
             GeErdSensor(self, ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, self._single_name(ErdCode.UPPER_OVEN_USER_TEMP_OFFSET, ~oven_config.has_lower_oven)),
