@@ -25,7 +25,7 @@ from .oim import OimApi
 from .coffee_maker import CcmApi
 from .dual_dishwasher import DualDishwasherApi
 from .espresso_maker import EspressoMakerApi
-
+from .dehumidifier import DehumidifierApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,6 +77,8 @@ def get_appliance_api_type(appliance_type: ErdApplianceType) -> Type:
         return CcmApi
     if appliance_type == ErdApplianceType.ESPRESSO_MAKER:
         return EspressoMakerApi
+    if appliance_type == ErdApplianceType.DEHUMIDIFIER:
+        return DehumidifierApi
 
     # Fallback
     return ApplianceApi
