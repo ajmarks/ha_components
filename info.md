@@ -69,6 +69,13 @@ A/C Controls:
 
 #### Features
 
+{% if version_installed.split('.') | map('int') < '0.6.8'.split('.') | map('int') %}
+- Added Dehumidifier (#114)
+- Added oven drawer sensors
+- Added oven current state sensors (#175)
+- Added descriptors to manifest (#181)
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.6.7'.split('.') | map('int') %}
 - Added OIM descaling sensor (#154)
 {% endif %}
@@ -115,6 +122,12 @@ A/C Controls:
 {% endif %}
 
 #### Bugfixes
+
+{% if version_installed.split('.') | map('int') < '0.6.8'.split('.') | map('int') %}
+- Bugfix: Fixed issue with oven lights (#174)
+- Bugfix: Fixed issues with dual dishwasher (#161)
+- Bugfix: Fixed disconnection issue (#169)
+{% endif %}
 
 {% if version_installed.split('.') | map('int') < '0.6.7'.split('.') | map('int') %}
 - Bugfix: fixed issues with dishwasher (#155)
