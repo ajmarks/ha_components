@@ -24,7 +24,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class DehumidifierApi(ApplianceApi):
     """API class for Dehumidifier objects"""
-    APPLIANCE_TYPE = ErdApplianceType.WATER_HEATER
+    APPLIANCE_TYPE = ErdApplianceType.DEHUMIDIFIER
 
     def get_all_entities(self) -> List[Entity]:
         base_entities = super().get_all_entities()
