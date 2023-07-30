@@ -2,6 +2,8 @@
   "domain": "ge_home",
   "name": "GE Home (SmartHQ)",
   "config_flow": true,
+  "integration_type": "hub",
+  "iot_class": "cloud_push",
   "documentation": "https://github.com/simbaja/ha_gehome",
   "requirements": ["gehomesdk==0.5.13","magicattr==0.1.6","slixmpp==1.8.3"],
   "codeowners": ["@simbaja"],	
