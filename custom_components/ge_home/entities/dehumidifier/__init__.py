@@ -1,2 +1,1 @@
-from .dehumidifier_target_select import DehumidifierTargetHumiditySelect
-from .dehumidifier_fan_options import DehumidifierFanSettingOptionsConverter
+from .dehumidifier import GeDehumidifier

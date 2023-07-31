@@ -9,6 +9,7 @@ from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_POWER_FACTOR,
+    DEVICE_CLASS_HUMIDITY,
     TEMP_FAHRENHEIT,
 )
 from gehomesdk import ErdCodeType, ErdCodeClass
@@ -111,6 +112,8 @@ class GeErdSensor(GeErdEntity, SensorEntity):
             return "%"
         if self.device_class == DEVICE_CLASS_POWER_FACTOR:
             return "%"
+        if self.erd_code_class == ErdCodeClass.HUMIDITY:
+            return "%"
         if self.erd_code_class == ErdCodeClass.FLOW_RATE:
             #if self._measurement_system == ErdMeasurementUnits.METRIC:
             #    return "lpm"
@@ -135,6 +138,8 @@ class GeErdSensor(GeErdEntity, SensorEntity):
             return DEVICE_CLASS_POWER
         if self.erd_code_class == ErdCodeClass.ENERGY:
             return DEVICE_CLASS_ENERGY
+        if self.erd_code_class == ErdCodeClass.HUMIDITY:
+            return DEVICE_CLASS_HUMIDITY
 
         return None
 
@@ -144,7 +149,7 @@ class GeErdSensor(GeErdEntity, SensorEntity):
 
         if self.device_class in [DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_ENERGY]:
             return SensorStateClass.MEASUREMENT
-        if self.erd_code_class in [ErdCodeClass.FLOW_RATE, ErdCodeClass.PERCENTAGE]:
+        if self.erd_code_class in [ErdCodeClass.FLOW_RATE, ErdCodeClass.PERCENTAGE, ErdCodeClass.HUMIDITY]:
             return SensorStateClass.MEASUREMENT
         if self.erd_code_class in [ErdCodeClass.LIQUID_VOLUME]:
             return SensorStateClass.TOTAL_INCREASING

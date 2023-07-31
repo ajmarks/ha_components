@@ -15,8 +15,7 @@ from ..entities import (
     GeErdPropertySensor,
     GeErdSwitch, 
     ErdOnOffBoolConverter,
-    DehumidifierTargetHumiditySelect,
-    DehumidifierFanSettingOptionsConverter
+    GeDehumidifier
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,11 +30,12 @@ class DehumidifierApi(ApplianceApi):
 
         dhum_entities = [
             GeErdSwitch(self, ErdCode.AC_POWER_STATUS, bool_converter=ErdOnOffBoolConverter(), icon_on_override="mdi:power-on", icon_off_override="mdi:power-off"),
-            GeErdSelect(self, ErdCode.AC_FAN_SETTING, DehumidifierFanSettingOptionsConverter(), icon_override="mdi:fan"),
-            GeErdSensor(self, ErdCode.DHUM_CURRENT_HUMIDITY, uom_override="%", icon_override="mdi:water-percent"),
-            DehumidifierTargetHumiditySelect(self, ErdCode.DHUM_TARGET_HUMIDITY, icon_override="mdi:water-percent"),
+            GeErdSensor(self, ErdCode.AC_FAN_SETTING, icon_override="mdi:fan"),
+            GeErdSensor(self, ErdCode.DHUM_CURRENT_HUMIDITY),
+            GeErdSensor(self, ErdCode.DHUM_TARGET_HUMIDITY),
             GeErdPropertySensor(self, ErdCode.DHUM_MAINTENANCE, "empty_bucket", device_class_override="problem"),
-            GeErdPropertySensor(self, ErdCode.DHUM_MAINTENANCE, "clean_filter", device_class_override="problem")
+            GeErdPropertySensor(self, ErdCode.DHUM_MAINTENANCE, "clean_filter", device_class_override="problem"),
+            GeDehumidifier(self)
         ]
 
         entities = base_entities + dhum_entities
