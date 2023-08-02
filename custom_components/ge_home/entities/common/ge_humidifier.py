@@ -65,11 +65,11 @@ class GeHumidifier(GeEntity, HumidifierEntity, metaclass=abc.ABCMeta):
 
     @property
     def is_on(self) -> bool:
-        return self.appliance.get_erd_value(self.power_status_erd_code) == ErdOnOff.ON
+        return self.appliance.get_erd_value(self._power_status_erd_code) == ErdOnOff.ON
 
     @property
     def device_class(self):
-        return self.device_class
+        return self._device_class
 
     async def async_set_humidity(self, humidity: int) -> Coroutine[Any, Any, None]:
         if self.target_humidity == humidity:
@@ -83,16 +83,16 @@ class GeHumidifier(GeEntity, HumidifierEntity, metaclass=abc.ABCMeta):
 
         # set the mode
         await self.appliance.async_set_erd_value(
-            self.target_humidity_erd_code,
-            self.humidity,
+            self._target_humidity_erd_code,
+            humidity,
         )
 
     async def async_turn_on(self):
         await self.appliance.async_set_erd_value(
-            self.power_status_erd_code, ErdOnOff.ON
+            self._power_status_erd_code, ErdOnOff.ON
         )
 
     async def async_turn_off(self):
         await self.appliance.async_set_erd_value(
-            self.power_status_erd_code, ErdOnOff.OFF
+            self._power_status_erd_code, ErdOnOff.OFF
         )
