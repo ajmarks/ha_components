@@ -71,4 +71,4 @@ class GeDehumidifier(GeHumidifier):
         _LOGGER.debug(f"Setting mode from {self.mode} to {mode}")
         
         new_state = self._mode_converter.from_option_string(mode)
-        await self.appliance.async_set_erd_value(self.erd_code, new_state)
+        await self.appliance.async_set_erd_value(ErdCode.AC_FAN_SETTING, new_state)
