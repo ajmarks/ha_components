@@ -145,5 +145,9 @@ class GeErdEntity(GeEntity):
             return "mdi:water"     
         if self.erd_code_class == ErdCodeClass.CCM_SENSOR:
             return "mdi:coffee-maker" 
+        if self.erd_code_class == ErdCodeClass.HUMIDITY:
+            return "mdi:water-percent"
+        if self.erd_code_class == ErdCodeClass.DEHUMIDIFIER_SENSOR:
+            return "mdi:air-humidifier"
 
         return None

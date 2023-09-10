@@ -1,6 +1,17 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.8
+
+- Added Dehumidifier [#114]
+- Added oven drawer sensors
+- Added oven current state sensors [#175]
+- Added descriptors to manifest [#181]
+- Bugfix: Fixed issue with oven lights [#174]
+- Bugfix: Fixed issues with dual dishwasher [#161]
+- Bugfix: Fixed disconnection issue [#169]
+
+
 ## 0.6.7
 
 - Bugfix: fixed issues with dishwasher [#155]

@@ -14,3 +14,4 @@ from .ge_erd_number import GeErdNumber
 from .ge_water_heater import GeAbstractWaterHeater
 from .ge_erd_select import GeErdSelect
 from .ge_climate import GeClimate
+from .ge_humidifier import GeHumidifier

@@ -10,3 +10,4 @@ from .water_softener import *
 from .water_heater import *
 from .opal_ice_maker import *
 from .ccm import *
+from .dehumidifier import *
