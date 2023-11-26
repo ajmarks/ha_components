@@ -10,7 +10,6 @@ class GeEntity:
 
     def __init__(self, api: ApplianceApi):
         self._api = api
-        self.hass = None
 
     @property
     def unique_id(self) -> str:
