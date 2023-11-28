@@ -3,7 +3,7 @@
 import asyncio
 import async_timeout
 import logging
-from typing import Any, Dict, Iterable, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple, List
 
 from gehomesdk import (
     EVENT_APPLIANCE_INITIAL_UPDATE,
@@ -62,6 +62,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         self._password = config_entry.data[CONF_PASSWORD]
         self._region = config_entry.data[CONF_REGION]
         self._appliance_apis = {}  # type: Dict[str, ApplianceApi]
+        self._signal_remove_callbacks = [] # type: List[Callable]
 
         self._reset_initialization()
 
@@ -149,6 +150,9 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
             api = self.appliance_apis[mac_addr]
             api.appliance = appliance
 
+    def add_signal_remove_callback(self, cb: Callable):
+        self._signal_remove_callbacks.append(cb)
+
     async def get_client(self) -> GeWebsocketClient:
         """Get a new GE Websocket client."""
         if self.client:
@@ -209,6 +213,12 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         """Resets the coordinator."""
         _LOGGER.debug("resetting the coordinator")
         entry = self._config_entry
+        
+        # remove all the callbacks for this coordinator
+        for c in self._signal_remove_callbacks:
+            c()
+        self._signal_remove_callbacks.clear()
+
         unload_ok = all(
             await asyncio.gather(
                 *[

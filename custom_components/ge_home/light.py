@@ -37,4 +37,6 @@ async def async_setup_entry(
         _LOGGER.debug(f"Found {len(entities):d} unregistered lights")
         async_add_entities(entities)
 
-    async_dispatcher_connect(hass, coordinator.signal_ready, async_devices_discovered)
+    # add the ready signal and register the remove callback
+    coordinator.add_signal_remove_callback(
+        async_dispatcher_connect(hass, coordinator.signal_ready, async_devices_discovered))

@@ -47,8 +47,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
         _LOGGER.debug(f'Found {len(entities):d} unregistered sensors')
         async_add_entities(entities)
 
-    async_dispatcher_connect(hass, coordinator.signal_ready, async_devices_discovered)
-
+    # add the ready signal and register the remove callback
+    coordinator.add_signal_remove_callback(
+        async_dispatcher_connect(hass, coordinator.signal_ready, async_devices_discovered))
+    
     # register set_timer entity service
     platform.async_register_entity_service(
     SERVICE_SET_TIMER,
