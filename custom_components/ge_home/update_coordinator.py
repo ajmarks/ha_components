@@ -293,7 +293,7 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
 
         self._update_entity_state(entities)
 
-    def _update_entity_state(entities: List[Entity]):
+    def _update_entity_state(self, entities: List[Entity]):
         from .entities import GeEntity
         for entity in entities:
             # if this is a GeEntity, check if it's been added
