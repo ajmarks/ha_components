@@ -10,6 +10,7 @@ class GeEntity:
 
     def __init__(self, api: ApplianceApi):
         self._api = api
+        self._added = False
 
     @property
     def unique_id(self) -> str:
@@ -54,6 +55,18 @@ class GeEntity:
     @property
     def device_class(self) -> Optional[str]:
         return self._get_device_class()    
+
+    @property
+    def added(self) -> bool:
+        return self._added
+
+    async def async_added_to_hass(self) -> None:
+        """Run when entity about to be added to hass."""
+        self._added = True
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Run when entity will be removed from hass."""
+        self._added = False
 
     def _stringify(self, value: any, **kwargs) -> Optional[str]:
         if isinstance(value, timedelta):

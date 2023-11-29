@@ -22,6 +22,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_REGION
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
@@ -280,24 +281,34 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
         try:
             api = self.appliance_apis[appliance.mac_addr]
         except KeyError:
+            _LOGGER.warn(f"Could not find appliance {appliance.mac_addr} in known device list.")
             return
-
-        for entity in api.entities:
-            if entity.enabled:
-                _LOGGER.debug(f"Updating {entity} ({entity.unique_id}, {entity.entity_id})")
-                entity.async_write_ha_state()
+        
+        self._update_entity_state(api.entities)
 
     async def _refresh_ha_state(self):
         entities = [
             entity for api in self.appliance_apis.values() for entity in api.entities
         ]
+
+        self._update_entity_state(entities)
+
+    def _update_entity_state(entities: List[Entity]):
+        from .entities import GeEntity
         for entity in entities:
+            # if this is a GeEntity, check if it's been added
+            #if not, don't try to refresh this entity
+            if isinstance(entity, GeEntity):
+                gee: GeEntity = entity
+                if not gee.added:
+                    _LOGGER.debug(f"Entity {entity} ({entity.unique_id}, {entity.entity_id}) not yet added, skipping update...")
+                    continue
             if entity.enabled:
                 try:
                     _LOGGER.debug(f"Refreshing state for {entity} ({entity.unique_id}, {entity.entity_id}")
                     entity.async_write_ha_state()
                 except:
-                    _LOGGER.debug(f"Could not refresh state for {entity} ({entity.unique_id}, {entity.entity_id}")
+                    _LOGGER.warn(f"Could not refresh state for {entity} ({entity.unique_id}, {entity.entity_id}", exc_info=1)
 
     @property
     def all_appliances_updated(self) -> bool:
