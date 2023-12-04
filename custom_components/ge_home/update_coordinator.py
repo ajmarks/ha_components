@@ -112,7 +112,11 @@ class GeHomeUpdateCoordinator(DataUpdateCoordinator):
     @property
     def signal_ready(self) -> str:
         """Event specific per entry to signal readiness"""
-        return f"{DOMAIN}-ready-{self._config_entry.entry_id}"        
+        return f"{DOMAIN}-ready-{self._config_entry.entry_id}"
+
+    @property
+    def initialized(self) -> bool:
+        return self._init_done 
 
     @property
     def online(self) -> bool:
