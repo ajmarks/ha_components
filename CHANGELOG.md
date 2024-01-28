@@ -4,6 +4,8 @@
 ## 0.6.9
 
 - Added additional fridge controls [#200]
+- Bugfix: Additional auth stability improvements [#215, #211]
+- Bugfix: Removed deprecated constants [#218]
 
 ## 0.6.8
 

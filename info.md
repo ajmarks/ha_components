@@ -127,6 +127,11 @@ A/C Controls:
 
 #### Bugfixes
 
+{% if version_installed.split('.') | map('int') < '0.6.9'.split('.') | map('int') %}
+- Bugfix: Additional auth stability improvements (#215, #211)
+- Bugfix: Removed deprecated constants (#218)
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.6.8'.split('.') | map('int') %}
 - Bugfix: Fixed issue with oven lights (#174)
 - Bugfix: Fixed issues with dual dishwasher (#161)
