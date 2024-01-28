@@ -1,5 +1,5 @@
 from homeassistant.components.binary_sensor import DEVICE_CLASS_PROBLEM
-from homeassistant.const import DEVICE_CLASS_TEMPERATURE
+from homeassistant.components.sensor import SensorDeviceClass
 import logging
 from typing import List
 
@@ -31,7 +31,8 @@ from ..entities import (
     GeDispenser, 
     GeErdPropertySensor,
     GeErdPropertyBinarySensor,
-    ConvertableDrawerModeOptionsConverter
+    ConvertableDrawerModeOptionsConverter,
+    GeFridgeIceControlSwitch
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -61,7 +62,10 @@ class FridgeApi(ApplianceApi):
         proximity_light: ErdOnOff = self.try_get_erd_value(ErdCode.PROXIMITY_LIGHT)
         display_mode: ErdOnOff = self.try_get_erd_value(ErdCode.DISPLAY_MODE)
         lockout_mode: ErdOnOff = self.try_get_erd_value(ErdCode.LOCKOUT_MODE)
-
+        turbo_cool: ErdOnOff = self.try_get_erd_value(ErdCode.TURBO_COOL_STATUS)
+        turbo_freeze: ErdOnOff = self.try_get_erd_value(ErdCode.TURBO_FREEZE_STATUS)
+        ice_boost: ErdOnOff = self.try_get_erd_value(ErdCode.FRIDGE_ICE_BOOST)
+        
         units = self.hass.config.units
 
         # Common entities
@@ -80,8 +84,11 @@ class FridgeApi(ApplianceApi):
                 GeErdPropertySensor(self, ErdCode.CURRENT_TEMPERATURE, "fridge"),
                 GeFridge(self),
             ])
+            if turbo_cool is not None:
+                fridge_entities.append(GeErdSwitch(self, ErdCode.FRIDGE_ICE_BOOST))
             if(ice_maker_control and ice_maker_control.status_fridge != ErdOnOff.NA):
                 fridge_entities.append(GeErdPropertyBinarySensor(self, ErdCode.ICE_MAKER_CONTROL, "status_fridge"))
+                fridge_entities.append(GeFridgeIceControlSwitch(self, "fridge"))
             if(water_filter and water_filter != ErdFilterStatus.NA):
                 fridge_entities.append(GeErdSensor(self, ErdCode.WATER_FILTER_STATUS))
             if(air_filter and air_filter != ErdFilterStatus.NA):
@@ -105,8 +112,13 @@ class FridgeApi(ApplianceApi):
                 GeErdPropertySensor(self, ErdCode.CURRENT_TEMPERATURE, "freezer"),
                 GeFreezer(self),                  
             ])
+            if turbo_freeze is not None:
+                freezer_entities.append(GeErdSwitch(self, ErdCode.TURBO_FREEZE_STATUS))
+            if ice_boost is not None:
+                freezer_entities.append(GeErdSwitch(self, ErdCode.FRIDGE_ICE_BOOST))
             if(ice_maker_control and ice_maker_control.status_freezer != ErdOnOff.NA):
                 freezer_entities.append(GeErdPropertyBinarySensor(self, ErdCode.ICE_MAKER_CONTROL, "status_freezer"))
+                freezer_entities.append(GeFridgeIceControlSwitch(self, "freezer"))
             if(ice_bucket_status and ice_bucket_status.is_present_freezer):
                 freezer_entities.append(GeErdPropertySensor(self, ErdCode.ICE_MAKER_BUCKET_STATUS, "state_full_freezer"))
 
@@ -117,7 +129,7 @@ class FridgeApi(ApplianceApi):
                 GeErdSensor(self, ErdCode.HOT_WATER_SET_TEMP),
                 GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "status", icon_override="mdi:information-outline"),
                 GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "time_until_ready", icon_override="mdi:timer-outline"),
-                GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "current_temp", device_class_override=DEVICE_CLASS_TEMPERATURE, data_type_override=ErdDataType.INT),
+                GeErdPropertySensor(self, ErdCode.HOT_WATER_STATUS, "current_temp", device_class_override=SensorDeviceClass.TEMPERATURE, data_type_override=ErdDataType.INT),
                 GeErdPropertyBinarySensor(self, ErdCode.HOT_WATER_STATUS, "faulted", device_class_override=DEVICE_CLASS_PROBLEM),
                 GeDispenser(self)
             ])
