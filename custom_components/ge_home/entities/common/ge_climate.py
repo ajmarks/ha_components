@@ -17,7 +17,7 @@ from .options_converter import OptionsConverter
 _LOGGER = logging.getLogger(__name__)
 
 #by default, we'll support target temp and fan mode (derived classes can override)
-GE_CLIMATE_SUPPORT = WaterHeaterEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.FAN_MODE
+GE_CLIMATE_SUPPORT = ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.FAN_MODE
 
 class GeClimate(GeEntity, ClimateEntity):
     """GE Climate Base Entity (Window AC, Portable AC, etc)"""
