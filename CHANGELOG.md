@@ -1,6 +1,11 @@
 
 # GE Home Appliances (SmartHQ) Changelog
 
+## 0.6.10
+
+- Bugfix: Removed additional deprecated constants [#229]
+- Bugfix: Fixed issue with climate entities [#228]
+
 ## 0.6.9
 
 - Added additional fridge controls [#200]

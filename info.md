@@ -127,6 +127,11 @@ A/C Controls:
 
 #### Bugfixes
 
+{% if version_installed.split('.') | map('int') < '0.6.10'.split('.') | map('int') %}
+- Bugfix: Removed additional deprecated constants (#229)
+- Bugfix: Fixed issue with climate entities (#228)
+{% endif %}
+
 {% if version_installed.split('.') | map('int') < '0.6.9'.split('.') | map('int') %}
 - Bugfix: Additional auth stability improvements (#215, #211)
 - Bugfix: Removed deprecated constants (#218)
