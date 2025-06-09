@@ -1,3 +1,4 @@
+from datetime import timedelta
 import logging
 from typing import Optional
 from gehomesdk.erd.erd_data_type import ErdDataType
@@ -14,29 +15,36 @@ class GeErdSensor(GeErdEntity, SensorEntity):
     """GE Entity for sensors"""
 
     def __init__(
-        self, 
-        api: ApplianceApi, 
-        erd_code: ErdCodeType, 
-        erd_override: str = None, 
-        icon_override: str = None, 
+        self,
+        api: ApplianceApi,
+        erd_code: ErdCodeType,
+        erd_override: str = None,
+        icon_override: str = None,
         device_class_override: str = None,
         state_class_override: str = None,
         uom_override: str = None,
-        data_type_override: ErdDataType = None
+        data_type_override: ErdDataType = None,
+        suggested_uom: str = None,
+        suggested_precision: int = None
     ):
         super().__init__(api, erd_code, erd_override, icon_override, device_class_override)
         self._uom_override = uom_override
         self._state_class_override = state_class_override
         self._data_type_override = data_type_override
+        self._suggested_uom = suggested_uom
+        self._suggested_precision = suggested_precision
 
     @property
     def native_value(self):
         try:
             value = self.appliance.get_erd_value(self.erd_code)
 
-            # if it's a numeric data type, return it directly            
+            # if it's a numeric data type, return it directly
             if self._data_type in [ErdDataType.INT, ErdDataType.FLOAT]:
                 return self._convert_numeric_value_from_device(value)
+
+            if self._data_type == ErdDataType.TIMESPAN:
+                return self._convert_timespan_value_from_device(value)
 
             # otherwise, return a stringified version
             # TODO: perhaps enhance so that there's a list of variables available
@@ -48,6 +56,14 @@ class GeErdSensor(GeErdEntity, SensorEntity):
     @property
     def native_unit_of_measurement(self) -> Optional[str]:
         return self._get_uom()
+
+    @property
+    def suggested_unit_of_measurement(self) -> Optional[str]:
+        return self._suggested_uom
+
+    @property
+    def suggested_precision(self) -> Optional[int]:
+        return self._suggested_precision
 
     @property
     def state_class(self) -> Optional[str]:
@@ -76,12 +92,20 @@ class GeErdSensor(GeErdEntity, SensorEntity):
 
         if self._data_type == ErdDataType.INT:
             return int(round(value))
-        else:
-            return value
+        return value
+
+    def _convert_timespan_value_from_device(self, value):
+        """Convert to expected data type"""
+
+        if value is None:
+            return 0
+        if not isinstance(value, timedelta):
+            raise ValueError(f"Expected timedelta, got {type(value)}")
+        return value.total_seconds()
 
     def _get_uom(self):
         """Select appropriate units"""
-        
+
         #if we have an override, just use it
         if self._uom_override:
             return self._uom_override
@@ -109,11 +133,13 @@ class GeErdSensor(GeErdEntity, SensorEntity):
         if self.erd_code_class == ErdCodeClass.FLOW_RATE:
             #if self._measurement_system == ErdMeasurementUnits.METRIC:
             #    return "lpm"
-            return "gpm" 
-        if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:       
+            return "gpm"
+        if self.erd_code_class == ErdCodeClass.LIQUID_VOLUME:
             #if self._measurement_system == ErdMeasurementUnits.METRIC:
             #    return "l"
             return "gal"
+        if self.erd_code_class == ErdCodeClass.TIMER:
+            return "s"
         return None
 
     def _get_device_class(self) -> Optional[str]:
@@ -132,6 +158,8 @@ class GeErdSensor(GeErdEntity, SensorEntity):
             return SensorDeviceClass.ENERGY
         if self.erd_code_class == ErdCodeClass.HUMIDITY:
             return SensorDeviceClass.HUMIDITY
+        if self.erd_code_class == ErdCodeClass.TIMER:
+            return SensorDeviceClass.DURATION
 
         return None
 
@@ -145,7 +173,7 @@ class GeErdSensor(GeErdEntity, SensorEntity):
             return SensorStateClass.MEASUREMENT
         if self.erd_code_class in [ErdCodeClass.LIQUID_VOLUME]:
             return SensorStateClass.TOTAL_INCREASING
-        
+
         return None
 
     def _get_icon(self):
@@ -159,6 +187,6 @@ class GeErdSensor(GeErdEntity, SensorEntity):
     async def set_value(self, value):
         """Sets the ERD value, assumes that the data type is correct"""
         try:
-            await self.appliance.async_set_erd_value(self.erd_code, value) 
+            await self.appliance.async_set_erd_value(self.erd_code, value)
         except:
             _LOGGER.warning(f"Could not set {self.name} to {value}")
